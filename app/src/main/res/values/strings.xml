@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Voyce</string>
+    <string name="title_home">Início</string>
+    <string name="title_search">Buscar</string>
+    <string name="title_profile">Perfil</string>
+    <string name="title_musician">Músico</string>
+</resources>
