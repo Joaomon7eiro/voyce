@@ -3,10 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryVeryDark"
     tools:context=".SearchFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_search_artists_grid"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

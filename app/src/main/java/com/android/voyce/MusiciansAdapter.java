@@ -7,42 +7,54 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.MusiciansAdapterViewHolder> {
 
-    private String[] mMusiciansData;
+    private ArrayList<Musician> mMusiciansData;
 
     @NonNull
     @Override
     public MusiciansAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.musicians_list_item,
                 viewGroup, false);
-
-        MusiciansAdapterViewHolder vh = new MusiciansAdapterViewHolder(view);
-        return vh;
+        return new MusiciansAdapterViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MusiciansAdapterViewHolder musiciansAdapterViewHolder, int i) {
-        musiciansAdapterViewHolder.mArtistsName.setText(mMusiciansData[i]);
+        Musician musician = mMusiciansData.get(i);
+        musiciansAdapterViewHolder.mName.setText(musician.getName());
+        musiciansAdapterViewHolder.mImage.setImageResource(musician.getProfileImageResourceId());
+        musiciansAdapterViewHolder.mFollowers.setText(String.valueOf(musician.getFollowersNumber()));
+        musiciansAdapterViewHolder.mSponsors.setText(String.valueOf(musician.getSponsorsNumber()));
     }
 
     @Override
     public int getItemCount() {
         if (mMusiciansData == null) return 0;
-        return mMusiciansData.length;
+        return mMusiciansData.size();
     }
 
     public static class MusiciansAdapterViewHolder extends RecyclerView.ViewHolder {
 
-        TextView mArtistsName;
+        CircleImageView mImage;
+        TextView mName;
+        TextView mFollowers;
+        TextView mSponsors;
 
         public MusiciansAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
-            mArtistsName = itemView.findViewById(R.id.musician_name);
+            mName = itemView.findViewById(R.id.musician_name);
+            mImage = itemView.findViewById(R.id.musician_image);
+            mFollowers = itemView.findViewById(R.id.musician_followers);
+            mSponsors = itemView.findViewById(R.id.musician_sponsors);
         }
     }
 
-    public void setData(String[] musiciansData) {
+    public void setData(ArrayList<Musician> musiciansData) {
         mMusiciansData = musiciansData;
         notifyDataSetChanged();
     }

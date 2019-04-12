@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -40,9 +42,23 @@ public class SearchFragment extends Fragment {
         mMusiciansGridRecyclerView.setHasFixedSize(true);
         mMusiciansGridRecyclerView.setAdapter(mMusiciansAdapter);
 
-        String[] musicians = new String[] {"joao", "vituxo", "leo", "biri"};
+        ArrayList<Musician> musicianArrayList = new ArrayList<>();
 
-        mMusiciansAdapter.setData(musicians);
+        musicianArrayList.add(new Musician(R.drawable.musician, "Clairo", "texto", 152224, 1244));
+        musicianArrayList.add(new Musician(R.drawable.musician, "Clairo", "texto", 152224, 1244));
+        musicianArrayList.add(new Musician(R.drawable.musician, "Clairo", "texto", 152224, 1244));
+        musicianArrayList.add(new Musician(R.drawable.musician, "Clairo", "texto", 152224, 1244));
+        musicianArrayList.add(new Musician(R.drawable.musician, "Clairo", "texto", 152224, 1244));
+        musicianArrayList.add(new Musician(R.drawable.musician, "Clairo", "texto", 152224, 1244));
+        musicianArrayList.add(new Musician(R.drawable.musician, "Clairo", "texto", 152224, 1244));
+        musicianArrayList.add(new Musician(R.drawable.musician, "Clairo", "texto", 152224, 1244));
+        musicianArrayList.add(new Musician(R.drawable.musician, "Clairo", "texto", 152224, 1244));
+        musicianArrayList.add(new Musician(R.drawable.musician, "Clairo", "texto", 152224, 1244));
+        musicianArrayList.add(new Musician(R.drawable.musician, "Clairo", "texto", 152224, 1244));
+        musicianArrayList.add(new Musician(R.drawable.musician, "Clairo", "texto", 152224, 1244));
+        musicianArrayList.add(new Musician(R.drawable.musician, "Clairo", "texto", 152224, 1244));
+
+        mMusiciansAdapter.setData(musicianArrayList);
 
         return view;
     }
