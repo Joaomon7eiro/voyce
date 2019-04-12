@@ -5,15 +5,19 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.MusiciansAdapterViewHolder> {
 
+    private final ListItemClickListener mOnClickListener;
     private ArrayList<Musician> mMusiciansData;
+
+    public MusiciansAdapter(ListItemClickListener listItemClickListener) {
+        mOnClickListener = listItemClickListener;
+    }
 
     @NonNull
     @Override
@@ -38,9 +42,9 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
         return mMusiciansData.size();
     }
 
-    public static class MusiciansAdapterViewHolder extends RecyclerView.ViewHolder {
+    class MusiciansAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        CircleImageView mImage;
+        ImageView mImage;
         TextView mName;
         TextView mFollowers;
         TextView mSponsors;
@@ -49,9 +53,19 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
             super(itemView);
             mName = itemView.findViewById(R.id.musician_name);
             mImage = itemView.findViewById(R.id.musician_image);
-            mFollowers = itemView.findViewById(R.id.musician_followers);
-            mSponsors = itemView.findViewById(R.id.musician_sponsors);
+            mFollowers = itemView.findViewById(R.id.followers);
+            mSponsors = itemView.findViewById(R.id.sponsors);
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View view) {
+            mOnClickListener.onListItemClick(getAdapterPosition());
+        }
+    }
+
+    public interface ListItemClickListener {
+        public void onListItemClick(int index);
     }
 
     public void setData(ArrayList<Musician> musiciansData) {

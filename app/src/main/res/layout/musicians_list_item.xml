@@ -7,9 +7,10 @@
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="215dp"
+        android:layout_height="295dp"
         android:layout_gravity="center"
-        android:backgroundTint="@color/colorPrimary"
+        android:padding="0dp"
+        app:cardBackgroundColor="@android:color/black"
         app:cardCornerRadius="10dp"
         app:cardElevation="8dp"
         app:cardUseCompatPadding="true">
@@ -17,66 +18,143 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="8dp"
             android:orientation="vertical">
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <ImageView
                 android:id="@+id/musician_image"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:scaleType="center"
                 android:src="@drawable/musician" />
 
-            <TextView
-                android:id="@+id/musician_name"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:padding="8dp"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <RelativeLayout
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal">
-
-                <ImageView
-                    android:id="@+id/icon_followers"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:src="@drawable/ic_action_followers" />
+                android:layout_height="match_parent"
+                android:background="@drawable/musician_card_gradient"
+                android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/musician_followers"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/musician_name"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentEnd="true"
-                    android:textColor="@android:color/white" />
+                    android:gravity="center"
+                    android:padding="8dp"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold" />
 
-                <ImageView
-                    android:id="@+id/icon_sponsors"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentBottom="true"
-                    android:src="@drawable/ic_action_sponsors" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/musician_sponsors"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="true"
-                    android:textColor="@android:color/white" />
+                    <TextView
+                        android:id="@+id/listeners_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:text="Ouvintes"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold" />
 
-            </RelativeLayout>
 
+                    <TextView
+                        android:id="@+id/listeners"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginStart="8dp"
+                        android:layout_toEndOf="@id/listeners_label"
+                        android:gravity="center"
+                        android:text="55164400"
+                        android:textColor="#ccc" />
+
+                    <TextView
+                        android:id="@+id/followers_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/listeners_label"
+                        android:layout_alignParentStart="true"
+                        android:text="Seguidores"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/followers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/listeners"
+                        android:layout_marginStart="8dp"
+                        android:layout_toEndOf="@id/followers_label"
+                        android:gravity="center"
+                        android:textColor="#ccc" />
+
+                    <TextView
+                        android:id="@+id/sponsors_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/followers_label"
+                        android:layout_alignParentStart="true"
+                        android:text="Patrocinadores"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/sponsors"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/followers"
+                        android:layout_marginStart="8dp"
+                        android:layout_toEndOf="@id/sponsors_label"
+                        android:gravity="center"
+                        android:textColor="#ccc" />
+
+                </RelativeLayout>
+
+                <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="0dp"-->
+                <!--android:layout_marginStart="8dp"-->
+                <!--android:layout_weight="1"-->
+                <!--android:orientation="horizontal">-->
+
+                <!--&lt;!&ndash;<ImageView&ndash;&gt;-->
+                <!--&lt;!&ndash;android:id="@+id/icon_followers"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_width="0dp"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_gravity="center"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_weight="1"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:src="@drawable/ic_action_followers" />&ndash;&gt;-->
+
+
+                <!--</LinearLayout>-->
+
+                <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="0dp"-->
+                <!--android:layout_marginStart="8dp"-->
+                <!--android:layout_marginBottom="8dp"-->
+                <!--android:layout_weight="1"-->
+                <!--android:orientation="horizontal">-->
+
+                <!--&lt;!&ndash;<ImageView&ndash;&gt;-->
+                <!--&lt;!&ndash;android:id="@+id/icon_sponsors"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_width="0dp"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_gravity="center"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_weight="1"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:src="@drawable/ic_action_sponsors" />&ndash;&gt;-->
+
+
+                <!--</LinearLayout>-->
+
+            </LinearLayout>
         </LinearLayout>
+
 
     </android.support.v7.widget.CardView>
 
