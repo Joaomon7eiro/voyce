@@ -1,8 +1,5 @@
 package com.android.voyce;
 
-import android.app.Activity;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -11,9 +8,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.TextView;
+
+import com.android.voyce.fragments.SearchFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,7 +23,6 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    mTextMessage.setVisibility(View.VISIBLE);
                     mTextMessage.setText(R.string.title_home);
                     return true;
                 case R.id.navigation_search:

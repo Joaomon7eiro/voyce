@@ -18,102 +18,101 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@drawable/musician_card_gradient"
             android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/musician_image"
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
-                android:scaleType="center"
+                android:scaleType="centerCrop"
                 android:src="@drawable/musician" />
+
+            <TextView
+                android:id="@+id/musician_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="8dp"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/musician_card_gradient"
-                android:orientation="vertical">
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:paddingBottom="8dp">
 
-                <TextView
-                    android:id="@+id/musician_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:padding="8dp"
-                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-                    android:textColor="@android:color/white"
-                    android:textStyle="bold" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.4"
+                    android:orientation="vertical"
+                    android:paddingStart="8dp">
 
                     <TextView
                         android:id="@+id/listeners_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentTop="true"
                         android:text="Ouvintes"
                         android:textColor="@android:color/white"
                         android:textStyle="bold" />
-
-
-                    <TextView
-                        android:id="@+id/listeners"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginStart="8dp"
-                        android:layout_toEndOf="@id/listeners_label"
-                        android:gravity="center"
-                        android:text="55164400"
-                        android:textColor="#ccc" />
 
                     <TextView
                         android:id="@+id/followers_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/listeners_label"
-                        android:layout_alignParentStart="true"
                         android:text="Seguidores"
                         android:textColor="@android:color/white"
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/followers"
+                        android:id="@+id/sponsors_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/listeners"
-                        android:layout_marginStart="8dp"
-                        android:layout_toEndOf="@id/followers_label"
+                        android:maxLines="1"
+                        android:text="Patrocinadores"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp">
+
+                    <TextView
+                        android:id="@+id/listeners"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
                         android:gravity="center"
                         android:textColor="#ccc" />
 
                     <TextView
-                        android:id="@+id/sponsors_label"
+                        android:id="@+id/followers"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/followers_label"
-                        android:layout_alignParentStart="true"
-                        android:text="Patrocinadores"
-                        android:textColor="@android:color/white"
-                        android:textStyle="bold" />
+                        android:maxLines="1"
+                        android:gravity="center"
+                        android:textColor="#ccc" />
+
 
                     <TextView
                         android:id="@+id/sponsors"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/followers"
-                        android:layout_marginStart="8dp"
-                        android:layout_toEndOf="@id/sponsors_label"
+                        android:maxLines="1"
                         android:gravity="center"
                         android:textColor="#ccc" />
 
-                </RelativeLayout>
+                </LinearLayout>
+
 
                 <!--<LinearLayout-->
                 <!--android:layout_width="match_parent"-->

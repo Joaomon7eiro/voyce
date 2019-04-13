@@ -6,14 +6,20 @@ public class Musician {
     private String mDescription;
     private int mFollowersNumber;
     private int mSponsorsNumber;
+    private int mListenersNumberNumber;
 
-    public Musician(int profileImageResourceId, String name, String description, int followersNumber,
+    public Musician(int profileImageResourceId, String name, String description, int listenersNumber, int followersNumber,
                     int sponsorsNumber) {
         mProfileImageResourceId = profileImageResourceId;
         mName = name;
         mDescription = description;
         mFollowersNumber = followersNumber;
         mSponsorsNumber = sponsorsNumber;
+        mListenersNumberNumber = listenersNumber;
+    }
+
+    public int getListenersNumberNumber() {
+        return mListenersNumberNumber;
     }
 
     public int getFollowersNumber() {

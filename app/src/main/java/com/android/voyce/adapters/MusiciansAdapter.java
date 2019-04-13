@@ -1,4 +1,4 @@
-package com.android.voyce;
+package com.android.voyce.adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.android.voyce.Musician;
+import com.android.voyce.R;
 
 import java.util.ArrayList;
 
@@ -32,6 +35,7 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
         Musician musician = mMusiciansData.get(i);
         musiciansAdapterViewHolder.mName.setText(musician.getName());
         musiciansAdapterViewHolder.mImage.setImageResource(musician.getProfileImageResourceId());
+        musiciansAdapterViewHolder.mListeners.setText(String.valueOf(musician.getListenersNumberNumber()));
         musiciansAdapterViewHolder.mFollowers.setText(String.valueOf(musician.getFollowersNumber()));
         musiciansAdapterViewHolder.mSponsors.setText(String.valueOf(musician.getSponsorsNumber()));
     }
@@ -46,6 +50,7 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
 
         ImageView mImage;
         TextView mName;
+        TextView mListeners;
         TextView mFollowers;
         TextView mSponsors;
 
@@ -53,6 +58,7 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
             super(itemView);
             mName = itemView.findViewById(R.id.musician_name);
             mImage = itemView.findViewById(R.id.musician_image);
+            mListeners = itemView.findViewById(R.id.listeners);
             mFollowers = itemView.findViewById(R.id.followers);
             mSponsors = itemView.findViewById(R.id.sponsors);
             itemView.setOnClickListener(this);
