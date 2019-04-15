@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
 import com.android.voyce.R;
 import com.android.voyce.adapters.ProposalsAdapter;
@@ -17,7 +16,7 @@ import com.android.voyce.adapters.ProposalsAdapter;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ProposalFragment extends Fragment {
+public class ProposalFragment extends Fragment{
 
     RecyclerView mRecyclerView;
     ProposalsAdapter mProposalAdapter;

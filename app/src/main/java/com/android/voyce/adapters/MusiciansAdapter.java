@@ -47,7 +47,6 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
     }
 
     class MusiciansAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
         ImageView mImage;
         TextView mName;
         TextView mListeners;
@@ -71,7 +70,7 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
     }
 
     public interface ListItemClickListener {
-        public void onListItemClick(int index);
+        void onListItemClick(int index);
     }
 
     public void setData(ArrayList<Musician> musiciansData) {

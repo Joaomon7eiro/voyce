@@ -13,7 +13,11 @@ import com.android.voyce.R;
 public class ProposalsAdapter extends RecyclerView.Adapter<ProposalsAdapter.ProposalAdapterViewHolder> {
 
     private String[] mProposalData;
-    private boolean mIsShowingDescriptionContainer = false;
+    private int mExpandedPosition = -1;
+
+    public ProposalsAdapter() {
+    }
+
     @NonNull
     @Override
     public ProposalAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -24,17 +28,16 @@ public class ProposalsAdapter extends RecyclerView.Adapter<ProposalsAdapter.Prop
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ProposalAdapterViewHolder proposalAdapterViewHolder, int i) {
-        proposalAdapterViewHolder.mCollapseIcon.setOnClickListener(new View.OnClickListener() {
+    public void onBindViewHolder(@NonNull final ProposalAdapterViewHolder proposalHolder, final int position) {
+        final boolean isExpanded = position == mExpandedPosition;
+        proposalHolder.mProposalDescriptionContainer.setVisibility(isExpanded? View.VISIBLE: View.GONE);
+        proposalHolder.mCollapseIcon.setImageResource(isExpanded? R.drawable.ic_action_drop_up : R.drawable.ic_action_drop_down);
+        proposalHolder.itemView.setActivated(isExpanded);
+        proposalHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mIsShowingDescriptionContainer) {
-                    proposalAdapterViewHolder.mProposalDescriptionContainer.setVisibility(View.VISIBLE);
-                } else {
-                    proposalAdapterViewHolder.mProposalDescriptionContainer.setVisibility(View.GONE);
-                }
-
-                mIsShowingDescriptionContainer = !mIsShowingDescriptionContainer;
+                mExpandedPosition = isExpanded ? -1: position;
+                notifyItemChanged(position);
             }
         });
     }
@@ -49,15 +52,15 @@ public class ProposalsAdapter extends RecyclerView.Adapter<ProposalsAdapter.Prop
 
         LinearLayout mProposalDescriptionContainer;
         ImageView mCollapseIcon;
-
         public ProposalAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
-            mCollapseIcon = itemView.findViewById(R.id.collapse_icon);
             mProposalDescriptionContainer = itemView.findViewById(R.id.proposal_description_container);
+            mCollapseIcon = itemView.findViewById(R.id.collapse_icon);
         }
     }
 
     public void setData(String[] data) {
         mProposalData = data;
+        notifyDataSetChanged();
     }
 }
