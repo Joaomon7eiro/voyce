@@ -54,28 +54,25 @@
 
                     <TextView
                         android:id="@+id/listeners_label"
+                        style="@style/CardMusicianLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Ouvintes"
-                        android:textColor="@android:color/white"
-                        android:textStyle="bold" />
+                        android:text="@string/listeners" />
 
                     <TextView
                         android:id="@+id/followers_label"
+                        style="@style/CardMusicianLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Seguidores"
-                        android:textColor="@android:color/white"
-                        android:textStyle="bold" />
+                        android:text="@string/followers" />
 
                     <TextView
                         android:id="@+id/sponsors_label"
+                        style="@style/CardMusicianLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:maxLines="1"
-                        android:text="Patrocinadores"
-                        android:textColor="@android:color/white"
-                        android:textStyle="bold" />
+                        android:text="@string/sponsors" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -88,72 +85,21 @@
 
                     <TextView
                         android:id="@+id/listeners"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:maxLines="1"
-                        android:gravity="center"
-                        android:textColor="#ccc" />
+                        style="@style/CardMusicianValues" />
 
                     <TextView
                         android:id="@+id/followers"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:maxLines="1"
-                        android:gravity="center"
-                        android:textColor="#ccc" />
-
+                        style="@style/CardMusicianValues" />
 
                     <TextView
                         android:id="@+id/sponsors"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:maxLines="1"
-                        android:gravity="center"
-                        android:textColor="#ccc" />
+                        style="@style/CardMusicianValues" />
 
                 </LinearLayout>
 
-
-                <!--<LinearLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="0dp"-->
-                <!--android:layout_marginStart="8dp"-->
-                <!--android:layout_weight="1"-->
-                <!--android:orientation="horizontal">-->
-
-                <!--&lt;!&ndash;<ImageView&ndash;&gt;-->
-                <!--&lt;!&ndash;android:id="@+id/icon_followers"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:layout_width="0dp"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:layout_gravity="center"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:layout_weight="1"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:src="@drawable/ic_action_followers" />&ndash;&gt;-->
-
-
-                <!--</LinearLayout>-->
-
-                <!--<LinearLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="0dp"-->
-                <!--android:layout_marginStart="8dp"-->
-                <!--android:layout_marginBottom="8dp"-->
-                <!--android:layout_weight="1"-->
-                <!--android:orientation="horizontal">-->
-
-                <!--&lt;!&ndash;<ImageView&ndash;&gt;-->
-                <!--&lt;!&ndash;android:id="@+id/icon_sponsors"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:layout_width="0dp"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:layout_gravity="center"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:layout_weight="1"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:src="@drawable/ic_action_sponsors" />&ndash;&gt;-->
-
-
-                <!--</LinearLayout>-->
-
             </LinearLayout>
-        </LinearLayout>
 
+        </LinearLayout>
 
     </android.support.v7.widget.CardView>
 

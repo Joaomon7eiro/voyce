@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.voyce.Musician;
+import com.android.voyce.models.Musician;
 import com.android.voyce.R;
 
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
         TextView mFollowers;
         TextView mSponsors;
 
-        public MusiciansAdapterViewHolder(@NonNull View itemView) {
+        private MusiciansAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
             mName = itemView.findViewById(R.id.musician_name);
             mImage = itemView.findViewById(R.id.musician_image);

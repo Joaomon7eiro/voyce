@@ -1,16 +1,20 @@
 package com.android.voyce.fragments;
 
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.voyce.Musician;
+import com.android.voyce.loaders.SearchFragmentLoader;
+import com.android.voyce.models.Musician;
 import com.android.voyce.adapters.MusiciansAdapter;
 import com.android.voyce.R;
 
@@ -20,16 +24,16 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SearchFragment extends Fragment implements MusiciansAdapter.ListItemClickListener {
+public class SearchFragment extends Fragment implements MusiciansAdapter.ListItemClickListener, LoaderManager.LoaderCallbacks<ArrayList<Musician>> {
 
     RecyclerView mMusiciansGridRecyclerView;
 
     ArrayList<Musician> mMusicianArrayList = new ArrayList<>();
     MusiciansAdapter mMusiciansAdapter;
 
-    public SearchFragment() {
-        // Required empty public constructor
-    }
+    private static final int LOADER_ID = 1;
+
+    public SearchFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,6 +77,8 @@ public class SearchFragment extends Fragment implements MusiciansAdapter.ListIte
 
         mMusiciansAdapter.setData(mMusicianArrayList);
 
+        //getLoaderManager().initLoader(LOADER_ID, null, this);
+
         return view;
     }
 
@@ -92,5 +98,28 @@ public class SearchFragment extends Fragment implements MusiciansAdapter.ListIte
         transaction.replace(R.id.fragments_container, musicianFragment);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+
+    @Override
+    public Loader<ArrayList<Musician>> onCreateLoader(int i, Bundle bundle) {
+        String baseUrl = ""; // api url
+
+        Uri uri = Uri.parse(baseUrl).buildUpon()
+                .build();
+
+        return new SearchFragmentLoader(getContext(), uri.toString());
+    }
+
+
+
+    @Override
+    public void onLoadFinished(Loader<ArrayList<Musician>> loader, ArrayList<Musician> musicians) {
+        mMusiciansAdapter.setData(musicians);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<ArrayList<Musician>> loader) {
+        mMusiciansAdapter.setData(null);
     }
 }

@@ -1,4 +1,4 @@
-package com.android.voyce;
+package com.android.voyce.activities;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.android.voyce.R;
 import com.android.voyce.fragments.SearchFragment;
 
 public class MainActivity extends AppCompatActivity {

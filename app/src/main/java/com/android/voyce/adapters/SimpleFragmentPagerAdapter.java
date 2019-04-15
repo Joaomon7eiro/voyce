@@ -1,4 +1,4 @@
-package com.android.voyce;
+package com.android.voyce.adapters;
 
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,10 +10,11 @@ import com.android.voyce.fragments.ProposalFragment;
 
 public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    private String[] pagesTitle = new String[] {"Planos", "Info"};
+    private String[] mTabsTitle;
 
-    public SimpleFragmentPagerAdapter(FragmentManager fragmentManager) {
+    public SimpleFragmentPagerAdapter(FragmentManager fragmentManager, String[] tabsTitle) {
         super(fragmentManager);
+        mTabsTitle = tabsTitle;
     }
 
     @Override
@@ -31,7 +32,7 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
-        return pagesTitle[position];
+        return mTabsTitle[position];
     }
 
     @Override

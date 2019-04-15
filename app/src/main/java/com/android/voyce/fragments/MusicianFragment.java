@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.voyce.R;
-import com.android.voyce.SimpleFragmentPagerAdapter;
+import com.android.voyce.adapters.SimpleFragmentPagerAdapter;
 import com.jgabrielfreitas.core.BlurImageView;
 
 /**
@@ -37,7 +37,10 @@ public class MusicianFragment extends Fragment {
 
         ViewPager viewPager = view.findViewById(R.id.view_pager);
 
-        SimpleFragmentPagerAdapter pagerAdapter = new SimpleFragmentPagerAdapter(getChildFragmentManager());
+        String[] tabsTitle = new String[] {"Planos", "Info"};
+        SimpleFragmentPagerAdapter pagerAdapter = new SimpleFragmentPagerAdapter(
+                getChildFragmentManager(), tabsTitle);
+
         viewPager.setAdapter(pagerAdapter);
 
         TabLayout tabLayout = view.findViewById(R.id.tab_layout);

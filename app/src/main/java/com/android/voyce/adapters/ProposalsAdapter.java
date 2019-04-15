@@ -48,11 +48,11 @@ public class ProposalsAdapter extends RecyclerView.Adapter<ProposalsAdapter.Prop
         return mProposalData.length;
     }
 
-    public class ProposalAdapterViewHolder extends RecyclerView.ViewHolder {
+    class ProposalAdapterViewHolder extends RecyclerView.ViewHolder {
 
         LinearLayout mProposalDescriptionContainer;
         ImageView mCollapseIcon;
-        public ProposalAdapterViewHolder(@NonNull View itemView) {
+        private ProposalAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
             mProposalDescriptionContainer = itemView.findViewById(R.id.proposal_description_container);
             mCollapseIcon = itemView.findViewById(R.id.collapse_icon);

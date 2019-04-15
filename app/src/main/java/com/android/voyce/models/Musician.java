@@ -1,4 +1,4 @@
-package com.android.voyce;
+package com.android.voyce.models;
 
 public class Musician {
     private int mProfileImageResourceId;
