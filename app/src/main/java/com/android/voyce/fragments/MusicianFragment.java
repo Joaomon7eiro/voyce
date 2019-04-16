@@ -9,7 +9,6 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -21,9 +20,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.voyce.R;
-import com.android.voyce.adapters.SimpleFragmentPagerAdapter;
+import com.android.voyce.activities.MainActivity;
+import com.android.voyce.adapters.MusicianFragmentPagerAdapter;
+import com.android.voyce.loaders.MusicianFragmentLoader;
 import com.android.voyce.models.Musician;
-import com.android.voyce.utils.NetworkUtils;
+import com.android.voyce.models.MusicianMainInfo;
+import com.android.voyce.utils.Constants;
 import com.jgabrielfreitas.core.BlurImageView;
 import com.squareup.picasso.Picasso;
 
@@ -34,62 +36,96 @@ public class MusicianFragment extends Fragment implements LoaderManager.LoaderCa
 
     Button mFollowButton;
     boolean isFollowing = false;
-    ProgressBar mProgressBar;
+
+    MusicianMainInfo mMusicianMainInfo;
+
     String mName;
-    SimpleFragmentPagerAdapter mPagerAdapter;
-    TabLayout mTabLayout;
-    ViewPager mViewPager;
-    String[] mTabsTitle = new String[]{"Info", "Planos"};
-    private static final int LOADER_ID = 1;
-    Musician mMusician;
+    String mImageUrl;
+    String[] mTabsTitle;
+
+    ProgressBar mProgressBar;
     AppBarLayout mAppBarLayout;
 
+    MusicianFragmentPagerAdapter mPagerAdapter;
+    TabLayout mTabLayout;
+    ViewPager mViewPager;
+
+    private static final int LOADER_ID = 1;
+
+    View.OnClickListener mFollowOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            isFollowing = !isFollowing;
+            if (isFollowing) {
+                mFollowButton.setBackground(getResources().getDrawable(R.drawable.rounded_background));
+                mFollowButton.setText(getString(R.string.following));
+            } else {
+                mFollowButton.setBackground(getResources().getDrawable(R.drawable.transparent_bg_bordered));
+                mFollowButton.setText(getString(R.string.follow));
+            }
+        }
+    };
+
     public MusicianFragment() {
+    }
+
+    public static MusicianFragment newInstance(MusicianMainInfo musician) {
+        MusicianFragment fragment = new MusicianFragment();
+
+        Bundle args = new Bundle();
+        args.putSerializable(Constants.KEY_MUSICIAN_MAIN_INFO, musician);
+
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Bundle args = getArguments();
+
+        if (args != null) {
+            mMusicianMainInfo = (MusicianMainInfo) args.getSerializable(Constants.KEY_MUSICIAN_MAIN_INFO);
+            mImageUrl = mMusicianMainInfo.getImageUrl();
+            mName = mMusicianMainInfo.getName();
+        }
+
+        mTabsTitle = new String[]{getString(R.string.info_tab), getString(R.string.proposal_tab)};
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        Bundle args = this.getArguments();
-
-        String imageUrl = args.getString("image_url");
-        mName = args.getString("name");
-
         View view = inflater.inflate(R.layout.fragment_musician, container, false);
 
         mFollowButton = view.findViewById(R.id.follow_button);
-        mProgressBar = view.findViewById(R.id.musician_details_progress_bar);
+        mFollowButton.setOnClickListener(mFollowOnClickListener);
 
+        mProgressBar = view.findViewById(R.id.musician_details_progress_bar);
         mAppBarLayout = view.findViewById(R.id.musician_details_appbar);
+
         mViewPager = view.findViewById(R.id.view_pager);
         mTabLayout = view.findViewById(R.id.tab_layout);
 
-        mFollowButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isFollowing = !isFollowing;
-                if (isFollowing) {
-                    mFollowButton.setBackground(getResources().getDrawable(R.drawable.rounded_background));
-                    mFollowButton.setText(getString(R.string.following));
-                } else {
-                    mFollowButton.setBackground(getResources().getDrawable(R.drawable.transparent_bg_bordered));
-                    mFollowButton.setText(getString(R.string.follow));
-                }
-            }
-        });
-
         BlurImageView backgroundImage = view.findViewById(R.id.musician_background_image);
         ImageView profileImage = view.findViewById(R.id.musician_profile_image);
-        TextView musicianName = view.findViewById(R.id.musician_name);
 
-        Picasso.get().load(imageUrl).into(profileImage);
-        Picasso.get().load(imageUrl).into(backgroundImage);
+        Picasso.get().load(mImageUrl).into(profileImage);
+        Picasso.get().load(mImageUrl).into(backgroundImage);
         backgroundImage.setBlur(2);
 
+        TextView musicianName = view.findViewById(R.id.musician_name);
         musicianName.setText(mName);
 
-        getLoaderManager().initLoader(LOADER_ID, null, this);
+        MainActivity activity = (MainActivity) getActivity();
+        activity.checkInternetConnectivity();
+
+        if (activity.isConnected()) {
+            getLoaderManager().initLoader(LOADER_ID, null, this);
+        }
+
         return view;
     }
 
@@ -98,26 +134,16 @@ public class MusicianFragment extends Fragment implements LoaderManager.LoaderCa
     public Loader<Musician> onCreateLoader(int i, @Nullable Bundle bundle) {
         mProgressBar.setVisibility(View.VISIBLE);
         mAppBarLayout.setVisibility(View.GONE);
+
         String baseUrl = "http://ws.audioscrobbler.com/2.0/";
-        final Uri uri = Uri.parse(baseUrl).buildUpon()
+        Uri url = Uri.parse(baseUrl).buildUpon()
                 .appendQueryParameter("method", "artist.getinfo")
                 .appendQueryParameter("api_key", getString(R.string.api_key))
                 .appendQueryParameter("format", "json")
                 .appendQueryParameter("artist", mName)
                 .build();
 
-        final AsyncTaskLoader<Musician> asyncTaskLoader = new AsyncTaskLoader(getContext()) {
-            @Override
-            protected void onStartLoading() {
-                forceLoad();
-            }
-
-            @Override
-            public Musician loadInBackground() {
-                return NetworkUtils.fetchMusicianDetailsData(uri.toString());
-            }
-        };
-        return asyncTaskLoader;
+        return new MusicianFragmentLoader(getContext(), url.toString());
     }
 
     @Override
@@ -125,15 +151,13 @@ public class MusicianFragment extends Fragment implements LoaderManager.LoaderCa
         mProgressBar.setVisibility(View.GONE);
         mAppBarLayout.setVisibility(View.VISIBLE);
 
-        mMusician = musician;
-        mPagerAdapter = new SimpleFragmentPagerAdapter(
-                getChildFragmentManager(), mTabsTitle, mMusician);
+        mPagerAdapter = new MusicianFragmentPagerAdapter(getChildFragmentManager(), mTabsTitle, musician);
         mViewPager.setAdapter(mPagerAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<Musician> loader) {
-        mMusician = null;
+        mPagerAdapter = null;
     }
 }

@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.voyce.R;
-import com.android.voyce.models.SearchMusicianInfo;
+import com.android.voyce.models.MusicianMainInfo;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.MusiciansAdapterViewHolder> {
 
     private final ListItemClickListener mOnClickListener;
-    private ArrayList<SearchMusicianInfo> mMusiciansData;
+    private ArrayList<MusicianMainInfo> mMusiciansData;
 
     public MusiciansAdapter(ListItemClickListener listItemClickListener) {
         mOnClickListener = listItemClickListener;
@@ -33,7 +33,7 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
 
     @Override
     public void onBindViewHolder(@NonNull MusiciansAdapterViewHolder musiciansAdapterViewHolder, int i) {
-        SearchMusicianInfo musician = mMusiciansData.get(i);
+        MusicianMainInfo musician = mMusiciansData.get(i);
         musiciansAdapterViewHolder.mName.setText(musician.getName());
         musiciansAdapterViewHolder.mListeners.setText(formatNumber(musician.getListenersNumberNumber()));
         musiciansAdapterViewHolder.mFollowers.setText(formatNumber(musician.getFollowersNumber()));
@@ -87,7 +87,7 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
         void onListItemClick(int index);
     }
 
-    public void setData(ArrayList<SearchMusicianInfo> musiciansData) {
+    public void setData(ArrayList<MusicianMainInfo> musiciansData) {
         mMusiciansData = musiciansData;
         notifyDataSetChanged();
     }

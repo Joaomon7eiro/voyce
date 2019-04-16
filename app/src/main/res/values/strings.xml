@@ -14,4 +14,6 @@
     <string name="twitter">Twitter</string>
     <string name="instagram">Instagram</string>
     <string name="verify_connection">Verifique sua conexão e tente novamente</string>
+    <string name="info_tab">Info</string>
+    <string name="proposal_tab">Planos</string>
 </resources>

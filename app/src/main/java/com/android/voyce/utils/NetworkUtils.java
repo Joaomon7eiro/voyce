@@ -1,7 +1,7 @@
 package com.android.voyce.utils;
 
 import com.android.voyce.models.Musician;
-import com.android.voyce.models.SearchMusicianInfo;
+import com.android.voyce.models.MusicianMainInfo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,11 +17,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class NetworkUtils {
+public final class NetworkUtils {
 
     private NetworkUtils() {}
 
-    public static ArrayList<SearchMusicianInfo> fetchMusicianInfoData(String urlString) {
+    public static ArrayList<MusicianMainInfo> fetchMusicianInfoData(String urlString) {
         URL url = createUrl(urlString);
 
         String jsonResponse = "";
@@ -32,7 +32,7 @@ public class NetworkUtils {
             e.printStackTrace();
         }
 
-        ArrayList<SearchMusicianInfo> musicianArrayList = new ArrayList<>();
+        ArrayList<MusicianMainInfo> musicianArrayList = new ArrayList<>();
 
         try {
             JSONObject jsonObject = new JSONObject(jsonResponse);
@@ -51,7 +51,7 @@ public class NetworkUtils {
                 Random random = new Random();
                 int randInt = random.nextInt(40000);
 
-                SearchMusicianInfo musician = new SearchMusicianInfo(imageUrl, name, playcount,
+                MusicianMainInfo musician = new MusicianMainInfo(imageUrl, name, playcount,
                         listeners, String.valueOf(randInt));
 
                 musicianArrayList.add(musician);
@@ -73,7 +73,9 @@ public class NetworkUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         Musician musician = null;
+
         try {
             JSONObject jsonObject = new JSONObject(jsonResponse);
             JSONObject artist = jsonObject.getJSONObject("artist");
@@ -81,7 +83,7 @@ public class NetworkUtils {
             JSONObject bio = artist.getJSONObject("bio");
             String bioText = bio.getString("summary");
 
-            musician = new Musician(1, "a", bioText, 1, 1, 1);
+            musician = new Musician(0, "", bioText, 0, 0, 0);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -91,6 +93,7 @@ public class NetworkUtils {
 
     private static URL createUrl(String urlString) {
         URL url = null;
+
         try {
             url = new URL(urlString);
         } catch (MalformedURLException e) {

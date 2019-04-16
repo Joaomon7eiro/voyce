@@ -1,14 +1,16 @@
 package com.android.voyce.models;
 
-public class SearchMusicianInfo {
+import java.io.Serializable;
+
+public class MusicianMainInfo implements Serializable {
     private String mImageUrl;
     private String mName;
     private String mFollowersNumber;
     private String mSponsorsNumber;
     private String mListenersNumberNumber;
 
-    public SearchMusicianInfo(String imageUrl, String name, String listenersNumber, String followersNumber,
-                    String sponsorsNumber) {
+    public MusicianMainInfo(String imageUrl, String name, String listenersNumber, String followersNumber,
+                            String sponsorsNumber) {
         mImageUrl = imageUrl;
         mName = name;
         mFollowersNumber = followersNumber;

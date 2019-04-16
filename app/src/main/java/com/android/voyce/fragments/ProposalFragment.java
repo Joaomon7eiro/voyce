@@ -40,7 +40,7 @@ public class ProposalFragment extends Fragment{
 
         mRecyclerView.setAdapter(mProposalAdapter);
 
-        String[] tests = new String[] {"1","1","1","1","1","1","1","1",};
+        String[] tests = new String[] {"1","1","1","1"};
 
         mProposalAdapter.setData(tests);
 

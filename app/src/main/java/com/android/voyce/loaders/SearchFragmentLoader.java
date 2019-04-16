@@ -5,12 +5,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.AsyncTaskLoader;
 
-import com.android.voyce.models.SearchMusicianInfo;
+import com.android.voyce.models.MusicianMainInfo;
 import com.android.voyce.utils.NetworkUtils;
 
 import java.util.ArrayList;
 
-public class SearchFragmentLoader extends AsyncTaskLoader<ArrayList<SearchMusicianInfo>> {
+public class SearchFragmentLoader extends AsyncTaskLoader<ArrayList<MusicianMainInfo>> {
 
     private String mUrl;
 
@@ -27,7 +27,7 @@ public class SearchFragmentLoader extends AsyncTaskLoader<ArrayList<SearchMusici
 
     @Nullable
     @Override
-    public ArrayList<SearchMusicianInfo> loadInBackground() {
+    public ArrayList<MusicianMainInfo> loadInBackground() {
         return NetworkUtils.fetchMusicianInfoData(mUrl);
     }
 }
