@@ -4,10 +4,14 @@
     <string name="title_search">Buscar</string>
     <string name="title_profile">Perfil</string>
     <string name="title_musician">Músico</string>
-
     <string name="following">Seguindo</string>
     <string name="biography">Biografia</string>
     <string name="followers">Seguidores</string>
     <string name="listeners">Ouvintes</string>
     <string name="sponsors">Patrocinadores</string>
+    <string name="follow">Seguir</string>
+    <string name="facebook">Facebook</string>
+    <string name="twitter">Twitter</string>
+    <string name="instagram">Instagram</string>
+    <string name="verify_connection">Verifique sua conexão e tente novamente</string>
 </resources>

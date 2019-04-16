@@ -8,15 +8,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.voyce.models.Musician;
 import com.android.voyce.R;
+import com.android.voyce.models.SearchMusicianInfo;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.MusiciansAdapterViewHolder> {
 
     private final ListItemClickListener mOnClickListener;
-    private ArrayList<Musician> mMusiciansData;
+    private ArrayList<SearchMusicianInfo> mMusiciansData;
 
     public MusiciansAdapter(ListItemClickListener listItemClickListener) {
         mOnClickListener = listItemClickListener;
@@ -32,18 +33,31 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
 
     @Override
     public void onBindViewHolder(@NonNull MusiciansAdapterViewHolder musiciansAdapterViewHolder, int i) {
-        Musician musician = mMusiciansData.get(i);
+        SearchMusicianInfo musician = mMusiciansData.get(i);
         musiciansAdapterViewHolder.mName.setText(musician.getName());
-        musiciansAdapterViewHolder.mImage.setImageResource(musician.getProfileImageResourceId());
-        musiciansAdapterViewHolder.mListeners.setText(String.valueOf(musician.getListenersNumberNumber()));
-        musiciansAdapterViewHolder.mFollowers.setText(String.valueOf(musician.getFollowersNumber()));
-        musiciansAdapterViewHolder.mSponsors.setText(String.valueOf(musician.getSponsorsNumber()));
+        musiciansAdapterViewHolder.mListeners.setText(formatNumber(musician.getListenersNumberNumber()));
+        musiciansAdapterViewHolder.mFollowers.setText(formatNumber(musician.getFollowersNumber()));
+        musiciansAdapterViewHolder.mSponsors.setText(formatNumber(musician.getSponsorsNumber()));
+        Picasso.get().load(musician.getImageUrl()).into(musiciansAdapterViewHolder.mImage);
     }
 
     @Override
     public int getItemCount() {
         if (mMusiciansData == null) return 0;
         return mMusiciansData.size();
+    }
+
+    private String formatNumber(String numberText) {
+        int number = Integer.parseInt(numberText);
+        String numberString;
+        if (Math.abs(number / 1000000) >= 1) {
+            numberString = String.valueOf(number / 1000000) + "M";
+        } else if (Math.abs(number / 1000) >= 1) {
+            numberString = String.valueOf(number / 1000) + "K";
+        } else {
+            numberString = String.valueOf(number);
+        }
+        return numberString;
     }
 
     class MusiciansAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -73,7 +87,7 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
         void onListItemClick(int index);
     }
 
-    public void setData(ArrayList<Musician> musiciansData) {
+    public void setData(ArrayList<SearchMusicianInfo> musiciansData) {
         mMusiciansData = musiciansData;
         notifyDataSetChanged();
     }

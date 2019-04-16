@@ -1,7 +1,10 @@
 package com.android.voyce.utils;
 
 import com.android.voyce.models.Musician;
+import com.android.voyce.models.SearchMusicianInfo;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -12,20 +15,16 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class NetworkUtils {
 
-    private NetworkUtils(){}
+    private NetworkUtils() {}
 
-    public static ArrayList<Musician> fetchData(String urlString) {
-        URL url = null;
+    public static ArrayList<SearchMusicianInfo> fetchMusicianInfoData(String urlString) {
+        URL url = createUrl(urlString);
+
         String jsonResponse = "";
-
-        try {
-            url = new URL(urlString);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
 
         try {
             jsonResponse = makeHttpRequest(url);
@@ -33,22 +32,82 @@ public class NetworkUtils {
             e.printStackTrace();
         }
 
-        ArrayList<Musician> musicianArrayList = new ArrayList<>();
+        ArrayList<SearchMusicianInfo> musicianArrayList = new ArrayList<>();
+
+        try {
+            JSONObject jsonObject = new JSONObject(jsonResponse);
+            JSONObject artistsObject = jsonObject.getJSONObject("artists");
+            JSONArray artists = artistsObject.getJSONArray("artist");
+
+            for (int i=0; i < artists.length(); i++) {
+                JSONObject artist = artists.getJSONObject(i);
+                String name = artist.getString("name");
+                String playcount = artist.getString("playcount");
+                String listeners = artist.getString("listeners");
+
+                JSONArray images = artist.getJSONArray("image");
+                String imageUrl = images.getJSONObject(4).getString("#text");
+
+                Random random = new Random();
+                int randInt = random.nextInt(40000);
+
+                SearchMusicianInfo musician = new SearchMusicianInfo(imageUrl, name, playcount,
+                        listeners, String.valueOf(randInt));
+
+                musicianArrayList.add(musician);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         return musicianArrayList;
     }
 
-
-    private static String makeHttpRequest(URL url) throws IOException {
-        HttpURLConnection urlConnection = null;
-        InputStream inputStream = null;
+    public static Musician fetchMusicianDetailsData(String urlString) {
+        URL url = createUrl(urlString);
 
         String jsonResponse = "";
 
         try {
+            jsonResponse = makeHttpRequest(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Musician musician = null;
+        try {
+            JSONObject jsonObject = new JSONObject(jsonResponse);
+            JSONObject artist = jsonObject.getJSONObject("artist");
+
+            JSONObject bio = artist.getJSONObject("bio");
+            String bioText = bio.getString("summary");
+
+            musician = new Musician(1, "a", bioText, 1, 1, 1);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return musician;
+    }
+
+    private static URL createUrl(String urlString) {
+        URL url = null;
+        try {
+            url = new URL(urlString);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
+    private static String makeHttpRequest(URL url) throws IOException {
+        HttpURLConnection urlConnection = null;
+        InputStream inputStream = null;
+        String jsonResponse = "";
+        try {
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.connect();
-            if (urlConnection.getResponseCode() == 200){
+            if (urlConnection.getResponseCode() == 200) {
                 inputStream = urlConnection.getInputStream();
                 jsonResponse = readInputStream(inputStream);
             }
@@ -80,7 +139,6 @@ public class NetworkUtils {
             output.append(line);
             line = bufferedReader.readLine();
         }
-
         return output.toString();
     }
 }

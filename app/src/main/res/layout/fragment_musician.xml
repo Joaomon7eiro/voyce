@@ -15,6 +15,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/musician_details_appbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -49,15 +50,16 @@
                 android:textStyle="bold" />
 
             <Button
-                android:id="@+id/follow"
+                android:id="@+id/follow_button"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:layout_below="@id/musician_name"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/rounded_background"
-                android:text="@string/following"
+                android:background="@drawable/transparent_bg_bordered"
+                android:text="@string/follow"
                 android:textColor="@android:color/white" />
+
         </RelativeLayout>
 
         <android.support.design.widget.TabLayout
@@ -68,5 +70,12 @@
             app:tabTextAppearance="@style/TabLayoutTextAppearance" />
 
     </android.support.design.widget.AppBarLayout>
+
+    <ProgressBar
+        android:id="@+id/musician_details_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
 
 </android.support.design.widget.CoordinatorLayout>

@@ -7,35 +7,34 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
 import com.android.voyce.R;
 import com.android.voyce.fragments.SearchFragment;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView mTextMessage;
+    private int mCurrentMenuId = R.id.navigation_home;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
+            int menuId = item.getItemId();
+            if (mCurrentMenuId == menuId) {
+                return true;
+            }
+            mCurrentMenuId = menuId;
+            switch (menuId) {
                 case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
                     return true;
                 case R.id.navigation_search:
-                    mTextMessage.setVisibility(View.GONE);
                     Fragment searchFragment = new SearchFragment();
                     openFragment(searchFragment);
                     break;
                 case R.id.navigation_profile:
-                    mTextMessage.setText(R.string.title_profile);
                     return true;
                 case R.id.navigation_musician:
-                    mTextMessage.setText(R.string.title_musician);
                     return true;
             }
             return true;
@@ -54,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mTextMessage = findViewById(R.id.message);
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }

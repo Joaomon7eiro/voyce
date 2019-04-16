@@ -1,6 +1,8 @@
 package com.android.voyce.models;
 
-public class Musician {
+import java.io.Serializable;
+
+public class Musician implements Serializable {
     private int mProfileImageResourceId;
     private String mName;
     private String mDescription;
