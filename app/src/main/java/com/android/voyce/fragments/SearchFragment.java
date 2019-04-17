@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.android.voyce.loaders.SearchFragmentLoader;
 import com.android.voyce.adapters.MusiciansAdapter;
 import com.android.voyce.R;
+import com.android.voyce.models.Musician;
 import com.android.voyce.models.MusicianMainInfo;
 
 import java.util.ArrayList;
@@ -26,11 +27,11 @@ import java.util.ArrayList;
  * A simple {@link Fragment} subclass.
  */
 public class SearchFragment extends Fragment implements MusiciansAdapter.ListItemClickListener,
-        LoaderManager.LoaderCallbacks<ArrayList<MusicianMainInfo>> {
+        LoaderManager.LoaderCallbacks<ArrayList<Musician>> {
 
     RecyclerView mMusiciansGridRecyclerView;
 
-    ArrayList<MusicianMainInfo> mMusicianArrayList = new ArrayList<>();
+    ArrayList<Musician> mMusicianArrayList = new ArrayList<>();
     MusiciansAdapter mMusiciansAdapter;
 
     ProgressBar mProgressBar;
@@ -65,7 +66,7 @@ public class SearchFragment extends Fragment implements MusiciansAdapter.ListIte
 
     @Override
     public void onListItemClick(int index) {
-        MusicianMainInfo musician = mMusicianArrayList.get(index);
+        Musician musician = mMusicianArrayList.get(index);
 
         MusicianFragment musicianFragment = MusicianFragment.newInstance(musician);
 
@@ -76,22 +77,26 @@ public class SearchFragment extends Fragment implements MusiciansAdapter.ListIte
     }
 
     @Override
-    public Loader<ArrayList<MusicianMainInfo>> onCreateLoader(int i, Bundle bundle) {
+    public Loader<ArrayList<Musician>> onCreateLoader(int i, Bundle bundle) {
         mProgressBar.setVisibility(View.VISIBLE);
 
-        String baseUrl = "http://ws.audioscrobbler.com/2.0/";
+//        String baseUrl = "http://ws.audioscrobbler.com/2.0/";
+//        Uri uri = Uri.parse(baseUrl).buildUpon()
+//                .appendQueryParameter("method", "chart.gettopartists")
+//                .appendQueryParameter("api_key", getString(R.string.api_key))
+//                .appendQueryParameter("format", "json")
+//                .appendQueryParameter("limit", "12")
+//                .build();
+
+        String baseUrl = "https://5cb65ce3a3763800149fc8fd.mockapi.io/api/artists";
         Uri uri = Uri.parse(baseUrl).buildUpon()
-                .appendQueryParameter("method", "chart.gettopartists")
-                .appendQueryParameter("api_key", getString(R.string.api_key))
-                .appendQueryParameter("format", "json")
-                .appendQueryParameter("limit", "12")
                 .build();
 
         return new SearchFragmentLoader(getContext(), uri.toString());
     }
 
     @Override
-    public void onLoadFinished(Loader<ArrayList<MusicianMainInfo>> loader, ArrayList<MusicianMainInfo> musicians) {
+    public void onLoadFinished(Loader<ArrayList<Musician>> loader, ArrayList<Musician> musicians) {
         mProgressBar.setVisibility(View.GONE);
 
         mMusicianArrayList = musicians;
@@ -99,7 +104,7 @@ public class SearchFragment extends Fragment implements MusiciansAdapter.ListIte
     }
 
     @Override
-    public void onLoaderReset(Loader<ArrayList<MusicianMainInfo>> loader) {
+    public void onLoaderReset(Loader<ArrayList<Musician>> loader) {
         mMusiciansAdapter.setData(null);
     }
 }

@@ -37,14 +37,16 @@ public class MusicianFragment extends Fragment implements LoaderManager.LoaderCa
     Button mFollowButton;
     boolean isFollowing = false;
 
-    MusicianMainInfo mMusicianMainInfo;
+    Musician mMusician;
 
-    String mName;
-    String mImageUrl;
+    String mId;
     String[] mTabsTitle;
 
     ProgressBar mProgressBar;
     AppBarLayout mAppBarLayout;
+    BlurImageView mBackgroundImage;
+    ImageView mProfileImage;
+    TextView mMusicianName;
 
     MusicianFragmentPagerAdapter mPagerAdapter;
     TabLayout mTabLayout;
@@ -69,7 +71,7 @@ public class MusicianFragment extends Fragment implements LoaderManager.LoaderCa
     public MusicianFragment() {
     }
 
-    public static MusicianFragment newInstance(MusicianMainInfo musician) {
+    public static MusicianFragment newInstance(Musician musician) {
         MusicianFragment fragment = new MusicianFragment();
 
         Bundle args = new Bundle();
@@ -86,9 +88,8 @@ public class MusicianFragment extends Fragment implements LoaderManager.LoaderCa
         Bundle args = getArguments();
 
         if (args != null) {
-            mMusicianMainInfo = (MusicianMainInfo) args.getSerializable(Constants.KEY_MUSICIAN_MAIN_INFO);
-            mImageUrl = mMusicianMainInfo.getImageUrl();
-            mName = mMusicianMainInfo.getName();
+            mMusician = (Musician) args.getSerializable(Constants.KEY_MUSICIAN_MAIN_INFO);
+            mId = mMusician.getId();
         }
 
         mTabsTitle = new String[]{getString(R.string.info_tab), getString(R.string.proposal_tab)};
@@ -109,15 +110,9 @@ public class MusicianFragment extends Fragment implements LoaderManager.LoaderCa
         mViewPager = view.findViewById(R.id.view_pager);
         mTabLayout = view.findViewById(R.id.tab_layout);
 
-        BlurImageView backgroundImage = view.findViewById(R.id.musician_background_image);
-        ImageView profileImage = view.findViewById(R.id.musician_profile_image);
-
-        Picasso.get().load(mImageUrl).into(profileImage);
-        Picasso.get().load(mImageUrl).into(backgroundImage);
-        backgroundImage.setBlur(2);
-
-        TextView musicianName = view.findViewById(R.id.musician_name);
-        musicianName.setText(mName);
+        mBackgroundImage = view.findViewById(R.id.musician_background_image);
+        mProfileImage = view.findViewById(R.id.musician_profile_image);
+        mMusicianName = view.findViewById(R.id.musician_name);
 
         MainActivity activity = (MainActivity) getActivity();
         activity.checkInternetConnectivity();
@@ -135,12 +130,8 @@ public class MusicianFragment extends Fragment implements LoaderManager.LoaderCa
         mProgressBar.setVisibility(View.VISIBLE);
         mAppBarLayout.setVisibility(View.GONE);
 
-        String baseUrl = "http://ws.audioscrobbler.com/2.0/";
+        String baseUrl = "https://5cb65ce3a3763800149fc8fd.mockapi.io/api/artists/" + mId;
         Uri url = Uri.parse(baseUrl).buildUpon()
-                .appendQueryParameter("method", "artist.getinfo")
-                .appendQueryParameter("api_key", getString(R.string.api_key))
-                .appendQueryParameter("format", "json")
-                .appendQueryParameter("artist", mName)
                 .build();
 
         return new MusicianFragmentLoader(getContext(), url.toString());
@@ -154,6 +145,11 @@ public class MusicianFragment extends Fragment implements LoaderManager.LoaderCa
         mPagerAdapter = new MusicianFragmentPagerAdapter(getChildFragmentManager(), mTabsTitle, musician);
         mViewPager.setAdapter(mPagerAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
+
+        Picasso.get().load(musician.getImageUrl()).into(mBackgroundImage);
+        Picasso.get().load(musician.getImageUrl()).into(mProfileImage);
+        mBackgroundImage.setBlur(2);
+        mMusicianName.setText(musician.getName());
     }
 
     @Override

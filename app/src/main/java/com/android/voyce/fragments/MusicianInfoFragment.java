@@ -4,6 +4,7 @@ package com.android.voyce.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,8 @@ import android.widget.TextView;
 import com.android.voyce.R;
 import com.android.voyce.models.Musician;
 import com.android.voyce.utils.Constants;
+
+import java.util.regex.Pattern;
 
 
 /**
@@ -43,7 +46,7 @@ public class MusicianInfoFragment extends Fragment {
             mMusician = (Musician) getArguments().getSerializable(Constants.KEY_MUSICIAN);
         }
 
-        if (mMusician != null) mBioText = mMusician.getDescription();
+        if (mMusician != null) mBioText = mMusician.getBiography();
     }
 
     @Override
@@ -54,6 +57,10 @@ public class MusicianInfoFragment extends Fragment {
 
         TextView biography = view.findViewById(R.id.biography_text);
         biography.setText(mBioText);
+
+        TextView instagram = view.findViewById(R.id.instagram_url);
+        TextView facebook = view.findViewById(R.id.facebook_url);
+        TextView twitter = view.findViewById(R.id.twitter_url);
 
         return view;
     }

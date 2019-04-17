@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.voyce.R;
-import com.android.voyce.models.MusicianMainInfo;
+import com.android.voyce.models.Musician;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.MusiciansAdapterViewHolder> {
 
     private final ListItemClickListener mOnClickListener;
-    private ArrayList<MusicianMainInfo> mMusiciansData;
+    private ArrayList<Musician> mMusiciansData;
 
     public MusiciansAdapter(ListItemClickListener listItemClickListener) {
         mOnClickListener = listItemClickListener;
@@ -33,11 +33,14 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
 
     @Override
     public void onBindViewHolder(@NonNull MusiciansAdapterViewHolder musiciansAdapterViewHolder, int i) {
-        MusicianMainInfo musician = mMusiciansData.get(i);
+        Musician musician = mMusiciansData.get(i);
         musiciansAdapterViewHolder.mName.setText(musician.getName());
-        musiciansAdapterViewHolder.mListeners.setText(formatNumber(musician.getListenersNumberNumber()));
-        musiciansAdapterViewHolder.mFollowers.setText(formatNumber(musician.getFollowersNumber()));
-        musiciansAdapterViewHolder.mSponsors.setText(formatNumber(musician.getSponsorsNumber()));
+        musiciansAdapterViewHolder.mListeners.setText(formatNumber(
+                String.valueOf(musician.getListenersNumberNumber())));
+        musiciansAdapterViewHolder.mFollowers.setText(formatNumber(
+                String.valueOf(musician.getFollowersNumber())));
+        musiciansAdapterViewHolder.mSponsors.setText(formatNumber(
+                String.valueOf(musician.getSponsorsNumber())));
         Picasso.get().load(musician.getImageUrl()).into(musiciansAdapterViewHolder.mImage);
     }
 
@@ -87,7 +90,7 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
         void onListItemClick(int index);
     }
 
-    public void setData(ArrayList<MusicianMainInfo> musiciansData) {
+    public void setData(ArrayList<Musician> musiciansData) {
         mMusiciansData = musiciansData;
         notifyDataSetChanged();
     }

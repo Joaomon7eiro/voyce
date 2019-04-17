@@ -16,4 +16,5 @@
     <string name="verify_connection">Verifique sua conexão e tente novamente</string>
     <string name="info_tab">Info</string>
     <string name="proposal_tab">Planos</string>
+    <string name="per_month">Por mês</string>
 </resources>

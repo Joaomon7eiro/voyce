@@ -3,21 +3,55 @@ package com.android.voyce.models;
 import java.io.Serializable;
 
 public class Musician implements Serializable {
-    private int mProfileImageResourceId;
+    private String mImageUrl;
+    private String mId;
     private String mName;
-    private String mDescription;
+    private String mBiography;
+    private String mFacebookUrl;
+    private String mInstagramUrl;
+    private String mTwitterUrl;
     private int mFollowersNumber;
     private int mSponsorsNumber;
     private int mListenersNumberNumber;
 
-    public Musician(int profileImageResourceId, String name, String description, int listenersNumber, int followersNumber,
-                    int sponsorsNumber) {
-        mProfileImageResourceId = profileImageResourceId;
+    public Musician(String id, String imageUrl, String name, String biography, int listenersNumber, int followersNumber,
+                    int sponsorsNumber, String facebookUrl, String instagramUrl, String twitterUrl) {
+        mId = id;
+        mImageUrl = imageUrl;
         mName = name;
-        mDescription = description;
+        mBiography = biography;
         mFollowersNumber = followersNumber;
         mSponsorsNumber = sponsorsNumber;
         mListenersNumberNumber = listenersNumber;
+        mFacebookUrl = facebookUrl;
+        mInstagramUrl = instagramUrl;
+        mTwitterUrl = twitterUrl;
+    }
+
+    public Musician(String id, String imageUrl, String name, int listenersNumber, int followersNumber,
+                    int sponsorsNumber) {
+        mId = id;
+        mImageUrl = imageUrl;
+        mName = name;
+        mFollowersNumber = followersNumber;
+        mSponsorsNumber = sponsorsNumber;
+        mListenersNumberNumber = listenersNumber;
+    }
+
+    public String getFacebookUrl() {
+        return mFacebookUrl;
+    }
+
+    public String getId() {
+        return mId;
+    }
+
+    public String getInstagramUrl() {
+        return mInstagramUrl;
+    }
+
+    public String getTwitterUrl() {
+        return mTwitterUrl;
     }
 
     public int getListenersNumberNumber() {
@@ -32,15 +66,15 @@ public class Musician implements Serializable {
         return mSponsorsNumber;
     }
 
-    public int getProfileImageResourceId() {
-        return mProfileImageResourceId;
+    public String getImageUrl() {
+        return mImageUrl;
     }
 
     public String getName() {
         return mName;
     }
 
-    public String getDescription() {
-        return mDescription;
+    public String getBiography() {
+        return mBiography;
     }
 }

@@ -21,7 +21,7 @@ public final class NetworkUtils {
 
     private NetworkUtils() {}
 
-    public static ArrayList<MusicianMainInfo> fetchMusicianInfoData(String urlString) {
+    public static ArrayList<Musician> fetchMusicianInfoData(String urlString) {
         URL url = createUrl(urlString);
 
         String jsonResponse = "";
@@ -32,27 +32,22 @@ public final class NetworkUtils {
             e.printStackTrace();
         }
 
-        ArrayList<MusicianMainInfo> musicianArrayList = new ArrayList<>();
+        ArrayList<Musician> musicianArrayList = new ArrayList<>();
 
         try {
-            JSONObject jsonObject = new JSONObject(jsonResponse);
-            JSONObject artistsObject = jsonObject.getJSONObject("artists");
-            JSONArray artists = artistsObject.getJSONArray("artist");
+            JSONArray artists = new JSONArray(jsonResponse);
 
             for (int i=0; i < artists.length(); i++) {
                 JSONObject artist = artists.getJSONObject(i);
+                String id = artist.getString("id");
                 String name = artist.getString("name");
-                String playcount = artist.getString("playcount");
-                String listeners = artist.getString("listeners");
+                int listeners = artist.getInt("total_listeners");
+                int sponsors = artist.getInt("total_sponsors");
+                int followers = artist.getInt("total_followers");
+                String imageUrl = artist.getString("image");
 
-                JSONArray images = artist.getJSONArray("image");
-                String imageUrl = images.getJSONObject(4).getString("#text");
-
-                Random random = new Random();
-                int randInt = random.nextInt(40000);
-
-                MusicianMainInfo musician = new MusicianMainInfo(imageUrl, name, playcount,
-                        listeners, String.valueOf(randInt));
+                Musician musician = new Musician(id, imageUrl, name, listeners,
+                    followers, sponsors);
 
                 musicianArrayList.add(musician);
             }
@@ -77,13 +72,20 @@ public final class NetworkUtils {
         Musician musician = null;
 
         try {
-            JSONObject jsonObject = new JSONObject(jsonResponse);
-            JSONObject artist = jsonObject.getJSONObject("artist");
+            JSONObject artist = new JSONObject(jsonResponse);
 
-            JSONObject bio = artist.getJSONObject("bio");
-            String bioText = bio.getString("summary");
+            String id = artist.getString("id");
+            String name = artist.getString("name");
+            String bioText = artist.getString("biography");
+            String imageUrl = artist.getString("image");
+            int listeners = artist.getInt("total_listeners");
+            int sponsors = artist.getInt("total_sponsors");
+            int followers = artist.getInt("total_followers");
+            String instagram = artist.getString("instagram_url");
+            String facebook = artist.getString("facebook_url");
+            String twitter = artist.getString("twitter_url");
 
-            musician = new Musician(0, "", bioText, 0, 0, 0);
+            musician = new Musician(id, imageUrl, name, bioText, listeners, followers, sponsors, facebook, instagram, twitter);
         } catch (JSONException e) {
             e.printStackTrace();
         }
