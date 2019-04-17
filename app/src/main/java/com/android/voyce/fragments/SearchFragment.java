@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.android.voyce.loaders.SearchFragmentLoader;
 import com.android.voyce.adapters.MusiciansAdapter;
@@ -28,13 +27,10 @@ import java.util.ArrayList;
 public class SearchFragment extends Fragment implements MusiciansAdapter.ListItemClickListener,
         LoaderManager.LoaderCallbacks<ArrayList<Musician>> {
 
-    RecyclerView mMusiciansGridRecyclerView;
+    private ArrayList<Musician> mMusicianArrayList = new ArrayList<>();
+    private MusiciansAdapter mMusiciansAdapter;
 
-    ArrayList<Musician> mMusicianArrayList = new ArrayList<>();
-    MusiciansAdapter mMusiciansAdapter;
-
-    ProgressBar mProgressBar;
-    TextView mNoConnectionText;
+    private ProgressBar mProgressBar;
 
     private static final int LOADER_ID = 1;
 
@@ -47,16 +43,15 @@ public class SearchFragment extends Fragment implements MusiciansAdapter.ListIte
         View view = inflater.inflate(R.layout.fragment_search, container, false);
 
         mProgressBar = view.findViewById(R.id.search_progress_bar);
-        mNoConnectionText = view.findViewById(R.id.no_network_text);
 
-        mMusiciansGridRecyclerView = view.findViewById(R.id.rv_search_artists_grid);
+        RecyclerView musiciansGridRecyclerView = view.findViewById(R.id.rv_search_artists_grid);
         mMusiciansAdapter = new MusiciansAdapter(this);
 
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
-        mMusiciansGridRecyclerView.setLayoutManager(layoutManager);
+        musiciansGridRecyclerView.setLayoutManager(layoutManager);
 
-        mMusiciansGridRecyclerView.setHasFixedSize(true);
-        mMusiciansGridRecyclerView.setAdapter(mMusiciansAdapter);
+        musiciansGridRecyclerView.setHasFixedSize(true);
+        musiciansGridRecyclerView.setAdapter(mMusiciansAdapter);
 
         getLoaderManager().initLoader(LOADER_ID, null, this);
 

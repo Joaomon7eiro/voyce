@@ -1,5 +1,7 @@
 package com.android.voyce.utils;
 
+import android.util.Log;
+
 import com.android.voyce.models.Musician;
 import com.android.voyce.models.Proposal;
 
@@ -18,20 +20,25 @@ import java.util.ArrayList;
 
 public final class NetworkUtils {
 
+    private static final String TAG = NetworkUtils.class.getSimpleName();
+
     private NetworkUtils() {}
 
     public static ArrayList<Musician> fetchMusicianMainInfoData(String urlString) {
         URL url = createUrl(urlString);
+        ArrayList<Musician> musicianArrayList = new ArrayList<>();
+
+        if (url == null) {
+            return musicianArrayList;
+        }
 
         String jsonResponse = "";
 
         try {
             jsonResponse = makeHttpRequest(url);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "fetchMusicianMainInfoData: ", e);
         }
-
-        ArrayList<Musician> musicianArrayList = new ArrayList<>();
 
         try {
             JSONArray artists = new JSONArray(jsonResponse);
@@ -51,7 +58,7 @@ public final class NetworkUtils {
                 musicianArrayList.add(musician);
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "fetchMusicianMainInfoData: ", e);
         }
 
         return musicianArrayList;
@@ -60,12 +67,16 @@ public final class NetworkUtils {
     public static Musician fetchMusicianDetailsData(String urlString) {
         URL url = createUrl(urlString);
 
+        if (url == null) {
+            return null;
+        }
+
         String jsonResponse = "";
 
         try {
             jsonResponse = makeHttpRequest(url);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "fetchMusicianDetailsData: ", e);
         }
 
         Musician musician = null;
@@ -89,7 +100,7 @@ public final class NetworkUtils {
                     facebook, instagram, twitter, monthlyIncome);
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "fetchMusicianDetailsData: ", e);
         }
 
         return musician;
@@ -97,16 +108,21 @@ public final class NetworkUtils {
 
     public static ArrayList<Proposal> fetchMusicianProposalsData(String urlString) {
         URL url = createUrl(urlString);
+        ArrayList<Proposal> proposalArrayList = new ArrayList<>();
+
+        if (url == null) {
+            return proposalArrayList;
+        }
 
         String jsonResponse = "";
 
         try {
             jsonResponse = makeHttpRequest(url);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "fetchMusicianProposalsData: ", e);
         }
 
-        ArrayList<Proposal> proposalArrayList = new ArrayList<>();
+
 
         try {
             JSONObject proposal = new JSONObject(jsonResponse);
@@ -118,7 +134,7 @@ public final class NetworkUtils {
 
             proposalArrayList.add(new Proposal(name, imageUrl, description, price));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "fetchMusicianProposalsData: ", e);
         }
 
         return proposalArrayList;
@@ -130,7 +146,7 @@ public final class NetworkUtils {
         try {
             url = new URL(urlString);
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            Log.e(TAG, "createUrl: ", e);
         }
 
         return url;
@@ -149,9 +165,8 @@ public final class NetworkUtils {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "makeHttpRequest: ", e);
         } finally {
-
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }

@@ -34,27 +34,25 @@ import com.squareup.picasso.Picasso;
  */
 public class MusicianFragment extends Fragment implements LoaderManager.LoaderCallbacks<MusicianAndProposals> {
 
-    Button mFollowButton;
-    boolean isFollowing = false;
+    private Button mFollowButton;
+    private boolean isFollowing = false;
 
-    Musician mMusician;
+    private String mId;
+    private String[] mTabsTitle;
 
-    String mId;
-    String[] mTabsTitle;
+    private ProgressBar mProgressBar;
+    private AppBarLayout mAppBarLayout;
+    private BlurImageView mBackgroundImage;
+    private ImageView mProfileImage;
+    private TextView mMusicianName;
 
-    ProgressBar mProgressBar;
-    AppBarLayout mAppBarLayout;
-    BlurImageView mBackgroundImage;
-    ImageView mProfileImage;
-    TextView mMusicianName;
-
-    MusicianFragmentPagerAdapter mPagerAdapter;
-    TabLayout mTabLayout;
-    ViewPager mViewPager;
+    private MusicianFragmentPagerAdapter mPagerAdapter;
+    private TabLayout mTabLayout;
+    private ViewPager mViewPager;
 
     private static final int LOADER_ID = 1;
 
-    View.OnClickListener mFollowOnClickListener = new View.OnClickListener() {
+    private View.OnClickListener mFollowOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             isFollowing = !isFollowing;
@@ -88,8 +86,8 @@ public class MusicianFragment extends Fragment implements LoaderManager.LoaderCa
         Bundle args = getArguments();
 
         if (args != null) {
-            mMusician = (Musician) args.getSerializable(Constants.KEY_MUSICIAN_MAIN_INFO);
-            mId = mMusician.getId();
+            Musician musician = (Musician) args.getSerializable(Constants.KEY_MUSICIAN_MAIN_INFO);
+            mId = musician.getId();
         }
 
         mTabsTitle = new String[]{getString(R.string.info_tab), getString(R.string.proposal_tab)};

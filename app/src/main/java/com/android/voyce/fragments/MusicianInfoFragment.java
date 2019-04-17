@@ -23,13 +23,13 @@ import java.util.regex.Pattern;
  */
 public class MusicianInfoFragment extends Fragment {
 
-    Musician mMusician;
-    String mBioText = "";
-    String mMonthlyIncome = "";
-    String mTotalSponsors = "";
-    String mInstagramUrl = "";
-    String mFacebookUrl = "";
-    String mTwitterUrl = "";
+    private Musician mMusician;
+    private String mBioText = "";
+    private String mMonthlyIncome = "";
+    private String mTotalSponsors = "";
+    private String mInstagramUrl = "";
+    private String mFacebookUrl = "";
+    private String mTwitterUrl = "";
 
     public MusicianInfoFragment() {
     }
@@ -54,7 +54,7 @@ public class MusicianInfoFragment extends Fragment {
 
         if (mMusician != null) {
             mBioText = mMusician.getBiography();
-            mInstagramUrl = mMusician.getBiography();
+            mInstagramUrl = mMusician.getInstagramUrl();
             mFacebookUrl = mMusician.getFacebookUrl();
             mTwitterUrl = mMusician.getTwitterUrl();
             mMonthlyIncome = String.valueOf(mMusician.getMonthlyIncome());

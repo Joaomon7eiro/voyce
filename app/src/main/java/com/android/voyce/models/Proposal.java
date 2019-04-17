@@ -1,6 +1,8 @@
 package com.android.voyce.models;
 
-public class Proposal {
+import java.io.Serializable;
+
+public class Proposal implements Serializable {
 
     private String mName;
     private String mImageUrl;

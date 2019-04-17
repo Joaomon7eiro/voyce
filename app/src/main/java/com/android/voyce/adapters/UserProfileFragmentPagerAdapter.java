@@ -10,7 +10,7 @@ import com.android.voyce.fragments.UserSponsorsFragment;
 
 public class UserProfileFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    String[] mTabTitles;
+    private String[] mTabTitles;
 
     public UserProfileFragmentPagerAdapter(FragmentManager fragmentManager, String[] tabTitles) {
         super(fragmentManager);

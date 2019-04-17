@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private FrameLayout mFrameLayout;
     private int mCurrentMenuId = R.id.navigation_search;
     private boolean mIsConnected;
-    BottomNavigationView mNavigation;
+    private BottomNavigationView mNavigation;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -60,8 +60,10 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    public void openFragment(Fragment fragment) {
+    private void openFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out,
+                R.anim.fade_in, R.anim.fade_out);
         transaction.replace(R.id.fragments_container, fragment);
         transaction.commit();
     }

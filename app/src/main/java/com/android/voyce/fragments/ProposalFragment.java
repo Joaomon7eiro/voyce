@@ -23,10 +23,7 @@ import java.util.ArrayList;
  */
 public class ProposalFragment extends Fragment{
 
-    RecyclerView mRecyclerView;
-    ProposalsAdapter mProposalAdapter;
-
-    ArrayList<Proposal> mProposals;
+    private ArrayList<Proposal> mProposals;
 
     public ProposalFragment() {
         // Required empty public constructor
@@ -61,15 +58,16 @@ public class ProposalFragment extends Fragment{
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_proposal, container, false);
 
-        mRecyclerView = view.findViewById(R.id.rv_proposals);
-        mProposalAdapter = new ProposalsAdapter();
+
+        RecyclerView recyclerView = view.findViewById(R.id.rv_proposals);
+        ProposalsAdapter adapter = new ProposalsAdapter();
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        mRecyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(layoutManager);
 
-        mRecyclerView.setAdapter(mProposalAdapter);
+        recyclerView.setAdapter(adapter);
 
-        mProposalAdapter.setData(mProposals);
+        adapter.setData(mProposals);
 
         return view;
     }

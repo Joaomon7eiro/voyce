@@ -20,8 +20,6 @@ import java.util.ArrayList;
  */
 public class UserSponsorsFragment extends Fragment {
 
-    RecyclerView mRecyclerView;
-    UserSponsoringAdapter mAdapter;
 
     public UserSponsorsFragment() {
         // Required empty public constructor
@@ -33,13 +31,13 @@ public class UserSponsorsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user_sponsors, container, false);
 
-        mRecyclerView = view.findViewById(R.id.rv_user_sponsoring);
+        RecyclerView recyclerView = view.findViewById(R.id.rv_user_sponsoring);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        mRecyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(layoutManager);
 
-        mAdapter = new UserSponsoringAdapter();
-        mRecyclerView.setAdapter(mAdapter);
+        UserSponsoringAdapter adapter = new UserSponsoringAdapter();
+        recyclerView.setAdapter(adapter);
 
         ArrayList<Musician> musicians = new ArrayList<>();
 
@@ -50,7 +48,7 @@ public class UserSponsorsFragment extends Fragment {
         musicians.add(new Musician("1","1","1",1,1,1));
         musicians.add(new Musician("1","1","1",1,1,1));
 
-        mAdapter.setData(musicians);
+        adapter.setData(musicians);
 
         return view;
     }

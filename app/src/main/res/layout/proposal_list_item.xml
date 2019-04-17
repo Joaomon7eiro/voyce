@@ -31,7 +31,6 @@
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="8dp"
-                android:layout_toStartOf="@id/collapse_icon"
                 android:background="@drawable/rounded_background"
                 android:gravity="center"
                 android:paddingStart="16dp"
