@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardBackgroundColor="@color/colorPrimary"
@@ -18,22 +19,23 @@
             android:layout_height="160dp">
 
             <ImageView
+                android:id="@+id/proposal_image"
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/member" />
+                android:scaleType="centerCrop" />
 
             <TextView
+                android:id="@+id/proposal_name"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="8dp"
+                android:layout_toStartOf="@id/collapse_icon"
                 android:background="@drawable/rounded_background"
                 android:gravity="center"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:text="NOME DO PLANO"
                 android:textColor="@android:color/white"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -53,7 +55,8 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="32dp"
-                android:background="@drawable/proposal_price_rounded_background">
+                android:background="@drawable/proposal_price_rounded_background"
+                tools:ignore="RelativeOverlap">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -61,11 +64,11 @@
                     android:src="@drawable/ic_action_sponsors" />
 
                 <TextView
+                    android:id="@+id/proposal_price"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:paddingEnd="8dp"
-                    android:text="30"
                     android:textColor="@android:color/white"
                     android:textSize="16sp" />
 
@@ -80,10 +83,10 @@
             android:visibility="gone">
 
             <TextView
+                android:id="@+id/proposal_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
                 android:textColor="@android:color/white" />
 
         </LinearLayout>

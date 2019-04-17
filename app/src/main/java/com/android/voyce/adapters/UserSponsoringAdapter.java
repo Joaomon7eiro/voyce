@@ -9,20 +9,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.voyce.R;
-import com.android.voyce.models.MusicianMainInfo;
+import com.android.voyce.models.Musician;
 
 import java.util.ArrayList;
 
 public class UserSponsoringAdapter extends RecyclerView.Adapter<UserSponsoringAdapter.UserSponsoringAdapterViewHolder> {
 
-    private ArrayList<MusicianMainInfo> mMusicians;
+    private ArrayList<Musician> mMusicians;
 
     class UserSponsoringAdapterViewHolder extends RecyclerView.ViewHolder {
         ImageView mMusicianImage;
         TextView mMusicianName;
         TextView mProposalName;
 
-        public UserSponsoringAdapterViewHolder(@NonNull View itemView) {
+        private UserSponsoringAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
             mMusicianImage = itemView.findViewById(R.id.user_sponsoring_musician_image);
             mMusicianName = itemView.findViewById(R.id.user_sponsoring_musician_name);
@@ -48,7 +48,7 @@ public class UserSponsoringAdapter extends RecyclerView.Adapter<UserSponsoringAd
         return mMusicians.size();
     }
 
-    public void setData(ArrayList<MusicianMainInfo> musicians) {
+    public void setData(ArrayList<Musician> musicians) {
         mMusicians = musicians;
         notifyDataSetChanged();
     }

@@ -4,15 +4,21 @@ import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 
 import com.android.voyce.models.Musician;
+import com.android.voyce.models.MusicianAndProposals;
+import com.android.voyce.models.Proposal;
 import com.android.voyce.utils.NetworkUtils;
 
-public class MusicianFragmentLoader extends AsyncTaskLoader<Musician> {
+import java.util.ArrayList;
 
-    private String mUrl;
+public class MusicianFragmentLoader extends AsyncTaskLoader<MusicianAndProposals> {
 
-    public MusicianFragmentLoader(Context context, String url) {
+    private String mUrlMusician;
+    private String mUrlProposals;
+
+    public MusicianFragmentLoader(Context context, String urlMusician, String urlProposals) {
         super(context);
-        mUrl = url;
+        mUrlMusician = urlMusician;
+        mUrlProposals = urlProposals;
     }
 
     @Override
@@ -21,7 +27,10 @@ public class MusicianFragmentLoader extends AsyncTaskLoader<Musician> {
     }
 
     @Override
-    public Musician loadInBackground() {
-        return NetworkUtils.fetchMusicianDetailsData(mUrl);
+    public MusicianAndProposals loadInBackground() {
+        Musician musician = NetworkUtils.fetchMusicianDetailsData(mUrlMusician);
+        ArrayList<Proposal> proposals = NetworkUtils.fetchMusicianProposalsData(mUrlProposals);
+
+        return new MusicianAndProposals(musician, proposals);
     }
 }

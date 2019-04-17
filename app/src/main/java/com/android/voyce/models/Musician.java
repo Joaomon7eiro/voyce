@@ -12,20 +12,22 @@ public class Musician implements Serializable {
     private String mTwitterUrl;
     private int mFollowersNumber;
     private int mSponsorsNumber;
-    private int mListenersNumberNumber;
+    private int mListenersNumber;
+    private double mMonthlyIncome;
 
     public Musician(String id, String imageUrl, String name, String biography, int listenersNumber, int followersNumber,
-                    int sponsorsNumber, String facebookUrl, String instagramUrl, String twitterUrl) {
+                    int sponsorsNumber, String facebookUrl, String instagramUrl, String twitterUrl, double monthlyIncome) {
         mId = id;
         mImageUrl = imageUrl;
         mName = name;
         mBiography = biography;
         mFollowersNumber = followersNumber;
         mSponsorsNumber = sponsorsNumber;
-        mListenersNumberNumber = listenersNumber;
+        mListenersNumber = listenersNumber;
         mFacebookUrl = facebookUrl;
         mInstagramUrl = instagramUrl;
         mTwitterUrl = twitterUrl;
+        mMonthlyIncome = monthlyIncome;
     }
 
     public Musician(String id, String imageUrl, String name, int listenersNumber, int followersNumber,
@@ -35,15 +37,19 @@ public class Musician implements Serializable {
         mName = name;
         mFollowersNumber = followersNumber;
         mSponsorsNumber = sponsorsNumber;
-        mListenersNumberNumber = listenersNumber;
-    }
-
-    public String getFacebookUrl() {
-        return mFacebookUrl;
+        mListenersNumber = listenersNumber;
     }
 
     public String getId() {
         return mId;
+    }
+
+    public double getMonthlyIncome() {
+        return mMonthlyIncome;
+    }
+
+    public String getFacebookUrl() {
+        return mFacebookUrl;
     }
 
     public String getInstagramUrl() {
@@ -54,8 +60,8 @@ public class Musician implements Serializable {
         return mTwitterUrl;
     }
 
-    public int getListenersNumberNumber() {
-        return mListenersNumberNumber;
+    public int getListenersNumber() {
+        return mListenersNumber;
     }
 
     public int getFollowersNumber() {

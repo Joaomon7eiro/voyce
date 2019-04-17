@@ -19,7 +19,6 @@ import com.android.voyce.loaders.SearchFragmentLoader;
 import com.android.voyce.adapters.MusiciansAdapter;
 import com.android.voyce.R;
 import com.android.voyce.models.Musician;
-import com.android.voyce.models.MusicianMainInfo;
 
 import java.util.ArrayList;
 
@@ -79,14 +78,6 @@ public class SearchFragment extends Fragment implements MusiciansAdapter.ListIte
     @Override
     public Loader<ArrayList<Musician>> onCreateLoader(int i, Bundle bundle) {
         mProgressBar.setVisibility(View.VISIBLE);
-
-//        String baseUrl = "http://ws.audioscrobbler.com/2.0/";
-//        Uri uri = Uri.parse(baseUrl).buildUpon()
-//                .appendQueryParameter("method", "chart.gettopartists")
-//                .appendQueryParameter("api_key", getString(R.string.api_key))
-//                .appendQueryParameter("format", "json")
-//                .appendQueryParameter("limit", "12")
-//                .build();
 
         String baseUrl = "https://5cb65ce3a3763800149fc8fd.mockapi.io/api/artists";
         Uri uri = Uri.parse(baseUrl).buildUpon()

@@ -9,19 +9,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.voyce.R;
-import com.android.voyce.models.MusicianMainInfo;
+import com.android.voyce.models.Musician;
 
 import java.util.ArrayList;
 
 public class UserFollowingAdapter extends RecyclerView.Adapter<UserFollowingAdapter.UserFollowingAdapterViewHolder> {
 
-    private ArrayList<MusicianMainInfo> mMusicians;
+    private ArrayList<Musician> mMusicians;
 
     class UserFollowingAdapterViewHolder extends RecyclerView.ViewHolder {
         ImageView mMusicianImage;
         TextView mMusicianName;
 
-        public UserFollowingAdapterViewHolder(@NonNull View itemView) {
+        private UserFollowingAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
             mMusicianImage = itemView.findViewById(R.id.user_following_musician_image);
             mMusicianName = itemView.findViewById(R.id.user_following_musician_name);
@@ -47,7 +47,7 @@ public class UserFollowingAdapter extends RecyclerView.Adapter<UserFollowingAdap
         return mMusicians.size();
     }
 
-    public void setData(ArrayList<MusicianMainInfo> musicians) {
+    public void setData(ArrayList<Musician> musicians) {
         mMusicians = musicians;
         notifyDataSetChanged();
     }

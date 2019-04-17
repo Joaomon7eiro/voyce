@@ -6,27 +6,27 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.android.voyce.fragments.MusicianInfoFragment;
 import com.android.voyce.fragments.ProposalFragment;
-import com.android.voyce.models.Musician;
+import com.android.voyce.models.MusicianAndProposals;
 
 public class MusicianFragmentPagerAdapter extends FragmentPagerAdapter {
 
     private String[] mTabsTitle;
-    private Musician mMusician;
+    private MusicianAndProposals mMusicianAndProposals;
 
     public MusicianFragmentPagerAdapter(FragmentManager fragmentManager,String[] tabsTitle,
-                                        Musician musician) {
+                                        MusicianAndProposals musicianAndProposals) {
         super(fragmentManager);
         mTabsTitle = tabsTitle;
-        mMusician = musician;
+        mMusicianAndProposals = musicianAndProposals;
     }
 
     @Override
     public Fragment getItem(int i) {
         switch (i) {
             case 0:
-                return MusicianInfoFragment.newInstance(mMusician);
+                return MusicianInfoFragment.newInstance(mMusicianAndProposals.getMusician());
             case 1:
-                return new ProposalFragment();
+                return ProposalFragment.newInstance(mMusicianAndProposals);
             default:
                 return null;
         }

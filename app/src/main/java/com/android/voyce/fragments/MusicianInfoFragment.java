@@ -14,6 +14,7 @@ import com.android.voyce.R;
 import com.android.voyce.models.Musician;
 import com.android.voyce.utils.Constants;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
@@ -24,6 +25,11 @@ public class MusicianInfoFragment extends Fragment {
 
     Musician mMusician;
     String mBioText = "";
+    String mMonthlyIncome = "";
+    String mTotalSponsors = "";
+    String mInstagramUrl = "";
+    String mFacebookUrl = "";
+    String mTwitterUrl = "";
 
     public MusicianInfoFragment() {
     }
@@ -46,7 +52,14 @@ public class MusicianInfoFragment extends Fragment {
             mMusician = (Musician) getArguments().getSerializable(Constants.KEY_MUSICIAN);
         }
 
-        if (mMusician != null) mBioText = mMusician.getBiography();
+        if (mMusician != null) {
+            mBioText = mMusician.getBiography();
+            mInstagramUrl = mMusician.getBiography();
+            mFacebookUrl = mMusician.getFacebookUrl();
+            mTwitterUrl = mMusician.getTwitterUrl();
+            mMonthlyIncome = String.valueOf(mMusician.getMonthlyIncome());
+            mTotalSponsors = String.valueOf(mMusician.getSponsorsNumber());
+        }
     }
 
     @Override
@@ -58,9 +71,24 @@ public class MusicianInfoFragment extends Fragment {
         TextView biography = view.findViewById(R.id.biography_text);
         biography.setText(mBioText);
 
+        TextView monthlyIncome = view.findViewById(R.id.monthly_income);
+        monthlyIncome.setText(getString(R.string.monthly_income_value, mMonthlyIncome));
+
+        TextView totalSponsors = view.findViewById(R.id.total_sponsors);
+        totalSponsors.setText(mTotalSponsors);
+
         TextView instagram = view.findViewById(R.id.instagram_url);
         TextView facebook = view.findViewById(R.id.facebook_url);
         TextView twitter = view.findViewById(R.id.twitter_url);
+
+        Linkify.TransformFilter transformFilter = new Linkify.TransformFilter() {
+            public final String transformUrl(final Matcher match, String url) {
+                return "";
+            } };
+
+        Linkify.addLinks(instagram, Pattern.compile(getString(R.string.instagram)), mInstagramUrl, null, transformFilter);
+        Linkify.addLinks(facebook, Pattern.compile(getString(R.string.facebook)), mFacebookUrl, null, transformFilter);
+        Linkify.addLinks(twitter, Pattern.compile(getString(R.string.twitter)), mTwitterUrl, null, transformFilter);
 
         return view;
     }

@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private FrameLayout mFrameLayout;
     private int mCurrentMenuId = R.id.navigation_search;
     private boolean mIsConnected;
+    BottomNavigationView mNavigation;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -62,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
     public void openFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragments_container, fragment);
-        transaction.addToBackStack(null);
         transaction.commit();
     }
 
@@ -71,8 +71,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        BottomNavigationView navigation = findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        mNavigation = findViewById(R.id.navigation);
+        mNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         Fragment searchFragment = new SearchFragment();
         openFragment(searchFragment);
@@ -109,7 +109,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         checkInternetConnectivity();
+        if (mNavigation.getSelectedItemId() == R.id.navigation_search) {
+            super.onBackPressed();
+        } else {
+            mNavigation.setSelectedItemId(R.id.navigation_search);
+        }
     }
 }

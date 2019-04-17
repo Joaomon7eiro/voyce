@@ -1,7 +1,7 @@
 package com.android.voyce.utils;
 
 import com.android.voyce.models.Musician;
-import com.android.voyce.models.MusicianMainInfo;
+import com.android.voyce.models.Proposal;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,13 +15,12 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Random;
 
 public final class NetworkUtils {
 
     private NetworkUtils() {}
 
-    public static ArrayList<Musician> fetchMusicianInfoData(String urlString) {
+    public static ArrayList<Musician> fetchMusicianMainInfoData(String urlString) {
         URL url = createUrl(urlString);
 
         String jsonResponse = "";
@@ -84,13 +83,45 @@ public final class NetworkUtils {
             String instagram = artist.getString("instagram_url");
             String facebook = artist.getString("facebook_url");
             String twitter = artist.getString("twitter_url");
+            double monthlyIncome = artist.getDouble("total_monthly_income");
 
-            musician = new Musician(id, imageUrl, name, bioText, listeners, followers, sponsors, facebook, instagram, twitter);
+            musician = new Musician(id, imageUrl, name, bioText, listeners, followers, sponsors,
+                    facebook, instagram, twitter, monthlyIncome);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         return musician;
+    }
+
+    public static ArrayList<Proposal> fetchMusicianProposalsData(String urlString) {
+        URL url = createUrl(urlString);
+
+        String jsonResponse = "";
+
+        try {
+            jsonResponse = makeHttpRequest(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        ArrayList<Proposal> proposalArrayList = new ArrayList<>();
+
+        try {
+            JSONObject proposal = new JSONObject(jsonResponse);
+
+            String name = proposal.getString("name");
+            String imageUrl = proposal.getString("image");
+            String description = proposal.getString("description");
+            double price = proposal.getDouble("price");
+
+            proposalArrayList.add(new Proposal(name, imageUrl, description, price));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return proposalArrayList;
     }
 
     private static URL createUrl(String urlString) {

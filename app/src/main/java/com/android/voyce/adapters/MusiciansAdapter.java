@@ -36,7 +36,7 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
         Musician musician = mMusiciansData.get(i);
         musiciansAdapterViewHolder.mName.setText(musician.getName());
         musiciansAdapterViewHolder.mListeners.setText(formatNumber(
-                String.valueOf(musician.getListenersNumberNumber())));
+                String.valueOf(musician.getListenersNumber())));
         musiciansAdapterViewHolder.mFollowers.setText(formatNumber(
                 String.valueOf(musician.getFollowersNumber())));
         musiciansAdapterViewHolder.mSponsors.setText(formatNumber(

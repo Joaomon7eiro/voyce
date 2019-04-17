@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Voyce</string>
     <string name="title_home">Início</string>
     <string name="title_search">Buscar</string>
@@ -16,5 +16,6 @@
     <string name="verify_connection">Verifique sua conexão e tente novamente</string>
     <string name="info_tab">Info</string>
     <string name="proposal_tab">Planos</string>
-    <string name="per_month">Por mês</string>
+    <string name="monthly_income">Por mês</string>
+    <string name="monthly_income_value">R$ <xliff:g id="monthly_income_value">%s</xliff:g></string>
 </resources>

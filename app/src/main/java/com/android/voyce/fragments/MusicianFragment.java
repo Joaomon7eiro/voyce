@@ -24,7 +24,7 @@ import com.android.voyce.activities.MainActivity;
 import com.android.voyce.adapters.MusicianFragmentPagerAdapter;
 import com.android.voyce.loaders.MusicianFragmentLoader;
 import com.android.voyce.models.Musician;
-import com.android.voyce.models.MusicianMainInfo;
+import com.android.voyce.models.MusicianAndProposals;
 import com.android.voyce.utils.Constants;
 import com.jgabrielfreitas.core.BlurImageView;
 import com.squareup.picasso.Picasso;
@@ -32,7 +32,7 @@ import com.squareup.picasso.Picasso;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MusicianFragment extends Fragment implements LoaderManager.LoaderCallbacks<Musician> {
+public class MusicianFragment extends Fragment implements LoaderManager.LoaderCallbacks<MusicianAndProposals> {
 
     Button mFollowButton;
     boolean isFollowing = false;
@@ -126,23 +126,30 @@ public class MusicianFragment extends Fragment implements LoaderManager.LoaderCa
 
     @NonNull
     @Override
-    public Loader<Musician> onCreateLoader(int i, @Nullable Bundle bundle) {
+    public Loader<MusicianAndProposals> onCreateLoader(int i, @Nullable Bundle bundle) {
         mProgressBar.setVisibility(View.VISIBLE);
         mAppBarLayout.setVisibility(View.GONE);
 
-        String baseUrl = "https://5cb65ce3a3763800149fc8fd.mockapi.io/api/artists/" + mId;
-        Uri url = Uri.parse(baseUrl).buildUpon()
+        String musicianBaseUrl = "https://5cb65ce3a3763800149fc8fd.mockapi.io/api/artists/" + mId;
+
+        Uri musicianUrl = Uri.parse(musicianBaseUrl).buildUpon()
                 .build();
 
-        return new MusicianFragmentLoader(getContext(), url.toString());
+        String proposalsBaseUrl = "https://5cb65ce3a3763800149fc8fd.mockapi.io/api/proposal/" + mId;
+        Uri proposalsUrl = Uri.parse(proposalsBaseUrl).buildUpon()
+                .build();
+
+        return new MusicianFragmentLoader(getContext(), musicianUrl.toString(), proposalsUrl.toString());
     }
 
     @Override
-    public void onLoadFinished(@NonNull Loader<Musician> loader, Musician musician) {
+    public void onLoadFinished(@NonNull Loader<MusicianAndProposals> loader, MusicianAndProposals musicianAndProposals) {
         mProgressBar.setVisibility(View.GONE);
         mAppBarLayout.setVisibility(View.VISIBLE);
 
-        mPagerAdapter = new MusicianFragmentPagerAdapter(getChildFragmentManager(), mTabsTitle, musician);
+        Musician musician = musicianAndProposals.getMusician();
+
+        mPagerAdapter = new MusicianFragmentPagerAdapter(getChildFragmentManager(), mTabsTitle, musicianAndProposals);
         mViewPager.setAdapter(mPagerAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
 
@@ -153,7 +160,7 @@ public class MusicianFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void onLoaderReset(@NonNull Loader<Musician> loader) {
+    public void onLoaderReset(@NonNull Loader<MusicianAndProposals> loader) {
         mPagerAdapter = null;
     }
 }

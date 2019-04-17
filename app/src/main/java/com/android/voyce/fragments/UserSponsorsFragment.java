@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import com.android.voyce.R;
 import com.android.voyce.adapters.UserSponsoringAdapter;
-import com.android.voyce.models.MusicianMainInfo;
+import com.android.voyce.models.Musician;
 
 import java.util.ArrayList;
 
@@ -41,26 +41,16 @@ public class UserSponsorsFragment extends Fragment {
         mAdapter = new UserSponsoringAdapter();
         mRecyclerView.setAdapter(mAdapter);
 
-        ArrayList<MusicianMainInfo> musicianMainInfos = new ArrayList<>();
+        ArrayList<Musician> musicians = new ArrayList<>();
 
-        musicianMainInfos.add(new MusicianMainInfo("1","1","1","1","1"));
-        musicianMainInfos.add(new MusicianMainInfo("1","1","1","1","1"));
-        musicianMainInfos.add(new MusicianMainInfo("1","1","1","1","1"));
-        musicianMainInfos.add(new MusicianMainInfo("1","1","1","1","1"));
-        musicianMainInfos.add(new MusicianMainInfo("1","1","1","1","1"));
-        musicianMainInfos.add(new MusicianMainInfo("1","1","1","1","1"));
-        musicianMainInfos.add(new MusicianMainInfo("1","1","1","1","1"));
-        musicianMainInfos.add(new MusicianMainInfo("1","1","1","1","1"));
-        musicianMainInfos.add(new MusicianMainInfo("1","1","1","1","1"));
-        musicianMainInfos.add(new MusicianMainInfo("1","1","1","1","1"));
-        musicianMainInfos.add(new MusicianMainInfo("1","1","1","1","1"));
-        musicianMainInfos.add(new MusicianMainInfo("1","1","1","1","1"));
-        musicianMainInfos.add(new MusicianMainInfo("1","1","1","1","1"));
-        musicianMainInfos.add(new MusicianMainInfo("1","1","1","1","1"));
-        musicianMainInfos.add(new MusicianMainInfo("1","1","1","1","1"));
+        musicians.add(new Musician("1","1","1",1,1,1));
+        musicians.add(new Musician("1","1","1",1,1,1));
+        musicians.add(new Musician("1","1","1",1,1,1));
+        musicians.add(new Musician("1","1","1",1,1,1));
+        musicians.add(new Musician("1","1","1",1,1,1));
+        musicians.add(new Musician("1","1","1",1,1,1));
 
-        mAdapter.setData(musicianMainInfos);
-
+        mAdapter.setData(musicians);
 
         return view;
     }
