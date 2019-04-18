@@ -22,6 +22,8 @@ public final class NetworkUtils {
 
     private static final String TAG = NetworkUtils.class.getSimpleName();
 
+    public static final String API_BASE_URL = "https://5cb65ce3a3763800149fc8fd.mockapi.io/api/";
+
     private NetworkUtils() {}
 
     public static ArrayList<Musician> fetchMusicianMainInfoData(String urlString) {

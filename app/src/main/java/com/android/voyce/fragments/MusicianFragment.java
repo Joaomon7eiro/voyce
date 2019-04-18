@@ -26,6 +26,7 @@ import com.android.voyce.loaders.MusicianFragmentLoader;
 import com.android.voyce.models.Musician;
 import com.android.voyce.models.MusicianAndProposals;
 import com.android.voyce.utils.Constants;
+import com.android.voyce.utils.NetworkUtils;
 import com.jgabrielfreitas.core.BlurImageView;
 import com.squareup.picasso.Picasso;
 
@@ -66,6 +67,15 @@ public class MusicianFragment extends Fragment implements LoaderManager.LoaderCa
         }
     };
 
+    private View.OnClickListener mBackOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if (getFragmentManager() != null && getFragmentManager().getBackStackEntryCount() > 0) {
+                getFragmentManager().popBackStack();
+            }
+        }
+    };
+
     public MusicianFragment() {
     }
 
@@ -87,7 +97,9 @@ public class MusicianFragment extends Fragment implements LoaderManager.LoaderCa
 
         if (args != null) {
             Musician musician = (Musician) args.getSerializable(Constants.KEY_MUSICIAN_MAIN_INFO);
-            mId = musician.getId();
+            if (musician != null) {
+                mId = musician.getId();
+            }
         }
 
         mTabsTitle = new String[]{getString(R.string.info_tab), getString(R.string.proposal_tab)};
@@ -98,6 +110,9 @@ public class MusicianFragment extends Fragment implements LoaderManager.LoaderCa
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_musician, container, false);
+
+        ImageView backButton = view.findViewById(R.id.musician_back_button);
+        backButton.setOnClickListener(mBackOnClickListener);
 
         mFollowButton = view.findViewById(R.id.follow_button);
         mFollowButton.setOnClickListener(mFollowOnClickListener);
@@ -113,10 +128,12 @@ public class MusicianFragment extends Fragment implements LoaderManager.LoaderCa
         mMusicianName = view.findViewById(R.id.musician_name);
 
         MainActivity activity = (MainActivity) getActivity();
-        activity.checkInternetConnectivity();
+        if (activity != null) {
+            activity.checkInternetConnectivity();
 
-        if (activity.isConnected()) {
-            getLoaderManager().initLoader(LOADER_ID, null, this);
+            if (activity.isConnected()) {
+                getLoaderManager().initLoader(LOADER_ID, null, this);
+            }
         }
 
         return view;
@@ -128,12 +145,12 @@ public class MusicianFragment extends Fragment implements LoaderManager.LoaderCa
         mProgressBar.setVisibility(View.VISIBLE);
         mAppBarLayout.setVisibility(View.GONE);
 
-        String musicianBaseUrl = "https://5cb65ce3a3763800149fc8fd.mockapi.io/api/artists/" + mId;
+        String musicianBaseUrl = NetworkUtils.API_BASE_URL + "artists/" + mId;
 
         Uri musicianUrl = Uri.parse(musicianBaseUrl).buildUpon()
                 .build();
 
-        String proposalsBaseUrl = "https://5cb65ce3a3763800149fc8fd.mockapi.io/api/proposal/" + mId;
+        String proposalsBaseUrl = NetworkUtils.API_BASE_URL + "proposal/" + mId;
         Uri proposalsUrl = Uri.parse(proposalsBaseUrl).buildUpon()
                 .build();
 
@@ -145,16 +162,17 @@ public class MusicianFragment extends Fragment implements LoaderManager.LoaderCa
         mProgressBar.setVisibility(View.GONE);
         mAppBarLayout.setVisibility(View.VISIBLE);
 
-        Musician musician = musicianAndProposals.getMusician();
-
         mPagerAdapter = new MusicianFragmentPagerAdapter(getChildFragmentManager(), mTabsTitle, musicianAndProposals);
         mViewPager.setAdapter(mPagerAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
 
-        Picasso.get().load(musician.getImageUrl()).into(mBackgroundImage);
-        Picasso.get().load(musician.getImageUrl()).into(mProfileImage);
-        mBackgroundImage.setBlur(2);
-        mMusicianName.setText(musician.getName());
+        Musician musician = musicianAndProposals.getMusician();
+        if (musician != null) {
+            Picasso.get().load(musician.getImageUrl()).into(mBackgroundImage);
+            Picasso.get().load(musician.getImageUrl()).into(mProfileImage);
+            mBackgroundImage.setBlur(2);
+            mMusicianName.setText(musician.getName());
+        }
     }
 
     @Override

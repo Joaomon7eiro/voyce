@@ -44,12 +44,14 @@ public class ProposalFragment extends Fragment{
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
-
-        if (args.getSerializable("musician_and_proposals_key") != null) {
-            MusicianAndProposals musiciansAndProposals = (MusicianAndProposals) args.getSerializable("musician_and_proposals_key");
-            mProposals = musiciansAndProposals.getProposals();
+        if (args != null) {
+            if (args.getSerializable("musician_and_proposals_key") != null) {
+                MusicianAndProposals musiciansAndProposals = (MusicianAndProposals) args.getSerializable("musician_and_proposals_key");
+                if (musiciansAndProposals != null) {
+                    mProposals = musiciansAndProposals.getProposals();
+                }
+            }
         }
-
     }
 
     @Override

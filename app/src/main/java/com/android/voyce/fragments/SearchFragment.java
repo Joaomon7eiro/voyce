@@ -18,6 +18,7 @@ import com.android.voyce.loaders.SearchFragmentLoader;
 import com.android.voyce.adapters.MusiciansAdapter;
 import com.android.voyce.R;
 import com.android.voyce.models.Musician;
+import com.android.voyce.utils.NetworkUtils;
 
 import java.util.ArrayList;
 
@@ -64,17 +65,19 @@ public class SearchFragment extends Fragment implements MusiciansAdapter.ListIte
 
         MusicianFragment musicianFragment = MusicianFragment.newInstance(musician);
 
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragments_container, musicianFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        if (getFragmentManager() != null) {
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragments_container, musicianFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
     }
 
     @Override
     public Loader<ArrayList<Musician>> onCreateLoader(int i, Bundle bundle) {
         mProgressBar.setVisibility(View.VISIBLE);
 
-        String baseUrl = "https://5cb65ce3a3763800149fc8fd.mockapi.io/api/artists";
+        String baseUrl = NetworkUtils.API_BASE_URL + "artists";
         Uri uri = Uri.parse(baseUrl).buildUpon()
                 .build();
 

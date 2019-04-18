@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
             if (mCurrentMenuId == menuId && mFrameLayout.getVisibility() != View.GONE) {
                 return true;
             }
-
             checkInternetConnectivity();
 
             mCurrentMenuId = menuId;
@@ -61,6 +60,9 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void openFragment(Fragment fragment) {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+        }
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out,
                 R.anim.fade_in, R.anim.fade_out);
