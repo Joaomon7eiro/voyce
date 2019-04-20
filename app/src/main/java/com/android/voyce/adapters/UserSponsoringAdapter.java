@@ -29,9 +29,9 @@ public class UserSponsoringAdapter extends RecyclerView.Adapter<UserSponsoringAd
             mProposalName = itemView.findViewById(R.id.user_sponsoring_proposal_name);
         }
     }
-
+    @NonNull
     @Override
-    public UserSponsoringAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public UserSponsoringAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(
                 R.layout.user_sponsoring_list_item, viewGroup, false);
 
@@ -39,7 +39,7 @@ public class UserSponsoringAdapter extends RecyclerView.Adapter<UserSponsoringAd
     }
 
     @Override
-    public void onBindViewHolder(UserSponsoringAdapterViewHolder viewHolder, int i) {
+    public void onBindViewHolder(@NonNull UserSponsoringAdapterViewHolder viewHolder, int i) {
     }
 
     @Override

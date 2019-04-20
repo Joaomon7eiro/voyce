@@ -8,13 +8,11 @@
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/user_following_musician_image"
         android:layout_width="80dp"
-        android:src="@drawable/musician"
         android:layout_height="80dp" />
 
     <TextView
         android:id="@+id/user_following_musician_name"
         android:layout_width="wrap_content"
-        android:text="Clairo"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:textColor="@android:color/white"

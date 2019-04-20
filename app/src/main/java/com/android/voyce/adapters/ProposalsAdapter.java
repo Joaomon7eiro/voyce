@@ -20,8 +20,7 @@ public class ProposalsAdapter extends RecyclerView.Adapter<ProposalsAdapter.Prop
     private ArrayList<Proposal> mProposals;
     private int mExpandedPosition = -1;
 
-    public ProposalsAdapter() {
-    }
+    public ProposalsAdapter() {}
 
     @NonNull
     @Override

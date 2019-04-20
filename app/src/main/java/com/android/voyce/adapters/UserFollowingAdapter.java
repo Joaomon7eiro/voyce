@@ -9,15 +9,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.voyce.R;
-import com.android.voyce.models.Musician;
+import com.android.voyce.database.MusicianModel;
 
 import java.util.ArrayList;
 
 public class UserFollowingAdapter extends RecyclerView.Adapter<UserFollowingAdapter.UserFollowingAdapterViewHolder> {
 
-    private ArrayList<Musician> mMusicians;
+    private ArrayList<MusicianModel> mMusicians;
+    private ListItemClickListener mOnClickListener;
 
-    class UserFollowingAdapterViewHolder extends RecyclerView.ViewHolder {
+    public UserFollowingAdapter(ListItemClickListener onClickListener) {
+        mOnClickListener = onClickListener;
+    }
+
+    class UserFollowingAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView mMusicianImage;
         TextView mMusicianName;
 
@@ -25,11 +30,17 @@ public class UserFollowingAdapter extends RecyclerView.Adapter<UserFollowingAdap
             super(itemView);
             mMusicianImage = itemView.findViewById(R.id.user_following_musician_image);
             mMusicianName = itemView.findViewById(R.id.user_following_musician_name);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            mOnClickListener.onListItemClick(getAdapterPosition());
         }
     }
-
+    @NonNull
     @Override
-    public UserFollowingAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public UserFollowingAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(
                 R.layout.user_following_list_item, viewGroup, false);
 
@@ -37,8 +48,14 @@ public class UserFollowingAdapter extends RecyclerView.Adapter<UserFollowingAdap
     }
 
     @Override
-    public void onBindViewHolder(UserFollowingAdapterViewHolder viewHolder, int i) {
+    public void onBindViewHolder(@NonNull UserFollowingAdapterViewHolder viewHolder, int i) {
+        MusicianModel musicianModel = mMusicians.get(i);
+        viewHolder.mMusicianImage.setImageBitmap(musicianModel.getImage());
+        viewHolder.mMusicianName.setText(musicianModel.getName());
+    }
 
+    public interface ListItemClickListener {
+        void onListItemClick(int index);
     }
 
     @Override
@@ -47,7 +64,7 @@ public class UserFollowingAdapter extends RecyclerView.Adapter<UserFollowingAdap
         return mMusicians.size();
     }
 
-    public void setData(ArrayList<Musician> musicians) {
+    public void setData(ArrayList<MusicianModel> musicians) {
         mMusicians = musicians;
         notifyDataSetChanged();
     }

@@ -1,6 +1,10 @@
 package com.android.voyce.fragments;
 
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -22,6 +26,9 @@ import android.widget.TextView;
 import com.android.voyce.R;
 import com.android.voyce.activities.MainActivity;
 import com.android.voyce.adapters.MusicianFragmentPagerAdapter;
+import com.android.voyce.database.AppDatabase;
+import com.android.voyce.database.AppExecutors;
+import com.android.voyce.database.MusicianModel;
 import com.android.voyce.loaders.MusicianFragmentLoader;
 import com.android.voyce.models.Musician;
 import com.android.voyce.models.MusicianAndProposals;
@@ -29,6 +36,9 @@ import com.android.voyce.utils.Constants;
 import com.android.voyce.utils.NetworkUtils;
 import com.jgabrielfreitas.core.BlurImageView;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+
+import java.util.concurrent.Executor;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,9 +57,15 @@ public class MusicianFragment extends Fragment implements LoaderManager.LoaderCa
     private ImageView mProfileImage;
     private TextView mMusicianName;
 
+    private MusicianModel mMusicianModel;
+    private Bitmap mBitMapImage;
+    private String mName;
+
     private MusicianFragmentPagerAdapter mPagerAdapter;
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
+
+    private AppDatabase mDb;
 
     private static final int LOADER_ID = 1;
 
@@ -57,12 +73,28 @@ public class MusicianFragment extends Fragment implements LoaderManager.LoaderCa
         @Override
         public void onClick(View view) {
             isFollowing = !isFollowing;
+            Executor executor = AppExecutors.getInstance().getDiskIO();
             if (isFollowing) {
                 mFollowButton.setBackground(getResources().getDrawable(R.drawable.rounded_background));
                 mFollowButton.setText(getString(R.string.following));
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mMusicianModel == null) {
+                            mMusicianModel = new MusicianModel(mId, mName, mBitMapImage);
+                        }
+                        mDb.musicianDao().insertMusician(mMusicianModel);
+                    }
+                });
             } else {
                 mFollowButton.setBackground(getResources().getDrawable(R.drawable.transparent_bg_bordered));
                 mFollowButton.setText(getString(R.string.follow));
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDb.musicianDao().deleteMusician(mMusicianModel);
+                    }
+                });
             }
         }
     };
@@ -79,11 +111,11 @@ public class MusicianFragment extends Fragment implements LoaderManager.LoaderCa
     public MusicianFragment() {
     }
 
-    public static MusicianFragment newInstance(Musician musician) {
+    public static MusicianFragment newInstance(String id) {
         MusicianFragment fragment = new MusicianFragment();
 
         Bundle args = new Bundle();
-        args.putSerializable(Constants.KEY_MUSICIAN_MAIN_INFO, musician);
+        args.putString(Constants.KEY_MUSICIAN_ID, id);
 
         fragment.setArguments(args);
         return fragment;
@@ -96,17 +128,14 @@ public class MusicianFragment extends Fragment implements LoaderManager.LoaderCa
         Bundle args = getArguments();
 
         if (args != null) {
-            Musician musician = (Musician) args.getSerializable(Constants.KEY_MUSICIAN_MAIN_INFO);
-            if (musician != null) {
-                mId = musician.getId();
-            }
+            mId = args.getString(Constants.KEY_MUSICIAN_ID);
         }
 
         mTabsTitle = new String[]{getString(R.string.info_tab), getString(R.string.proposal_tab)};
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_musician, container, false);
@@ -135,6 +164,21 @@ public class MusicianFragment extends Fragment implements LoaderManager.LoaderCa
                 getLoaderManager().initLoader(LOADER_ID, null, this);
             }
         }
+
+        mDb = AppDatabase.getInstance(getContext());
+
+        LiveData<MusicianModel> musician = mDb.musicianDao().queryMusiciansById(mId);
+        musician.observe(this, new Observer<MusicianModel>() {
+            @Override
+            public void onChanged(@Nullable MusicianModel musicianModel) {
+                mMusicianModel = musicianModel;
+                if (mMusicianModel != null) {
+                    isFollowing = true;
+                    mFollowButton.setBackground(getResources().getDrawable(R.drawable.rounded_background));
+                    mFollowButton.setText(getString(R.string.following));
+                }
+            }
+        });
 
         return view;
     }
@@ -168,10 +212,27 @@ public class MusicianFragment extends Fragment implements LoaderManager.LoaderCa
 
         Musician musician = musicianAndProposals.getMusician();
         if (musician != null) {
-            Picasso.get().load(musician.getImageUrl()).into(mBackgroundImage);
-            Picasso.get().load(musician.getImageUrl()).into(mProfileImage);
-            mBackgroundImage.setBlur(2);
-            mMusicianName.setText(musician.getName());
+            Picasso.get().load(musician.getImageUrl()).into(new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    mBitMapImage = bitmap;
+                    mBackgroundImage.setImageBitmap(mBitMapImage);
+                    mProfileImage.setImageBitmap(mBitMapImage);
+                    mBackgroundImage.setBlur(2);
+                }
+
+                @Override
+                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                }
+            });
+
+            mName = musician.getName();
+            mMusicianName.setText(mName);
         }
     }
 

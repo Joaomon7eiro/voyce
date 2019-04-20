@@ -2,6 +2,7 @@ package com.android.voyce.fragments;
 
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.util.Linkify;
@@ -63,7 +64,7 @@ public class MusicianInfoFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_musician_info, container, false);
@@ -84,7 +85,8 @@ public class MusicianInfoFragment extends Fragment {
         Linkify.TransformFilter transformFilter = new Linkify.TransformFilter() {
             public final String transformUrl(final Matcher match, String url) {
                 return "";
-            } };
+            }
+        };
 
         Linkify.addLinks(instagram, Pattern.compile(getString(R.string.instagram)), mInstagramUrl, null, transformFilter);
         Linkify.addLinks(facebook, Pattern.compile(getString(R.string.facebook)), mFacebookUrl, null, transformFilter);

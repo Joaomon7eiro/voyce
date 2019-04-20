@@ -31,38 +31,49 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
             int menuId = item.getItemId();
+
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                getSupportFragmentManager().popBackStack();
+            }
+
             if (mCurrentMenuId == menuId && mFrameLayout.getVisibility() != View.GONE) {
                 return true;
             }
-            checkInternetConnectivity();
 
             mCurrentMenuId = menuId;
             switch (menuId) {
 //                case R.id.navigation_home:
 //                    return true;
                 case R.id.navigation_search:
+                    checkInternetConnectivity();
                     Fragment searchFragment = new SearchFragment();
                     openFragment(searchFragment);
-                    break;
+                    return true;
                 case R.id.navigation_profile:
+                    setLayoutVisibility(true);
                     Fragment profileFragment = new UserProfileFragment();
                     openFragment(profileFragment);
                     return true;
 //                case R.id.navigation_musician:
 //                    return true;
                 default:
-                    return true;
+                    return false;
             }
-            return true;
         }
     };
 
-    private void openFragment(Fragment fragment) {
-        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            getSupportFragmentManager().popBackStack();
+    private void setLayoutVisibility(boolean layoutVisibility) {
+        if (layoutVisibility) {
+            mNoInternetConnection.setVisibility(View.GONE);
+            mFrameLayout.setVisibility(View.VISIBLE);
+        } else {
+            mNoInternetConnection.setVisibility(View.VISIBLE);
+            mFrameLayout.setVisibility(View.GONE);
         }
+    }
+
+    private void openFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out,
                 R.anim.fade_in, R.anim.fade_out);
@@ -98,12 +109,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (networkInfo != null && networkInfo.isConnected()) {
             mIsConnected = true;
-            mNoInternetConnection.setVisibility(View.GONE);
-            mFrameLayout.setVisibility(View.VISIBLE);
+            setLayoutVisibility(true);
         } else {
             mIsConnected = false;
-            mNoInternetConnection.setVisibility(View.VISIBLE);
-            mFrameLayout.setVisibility(View.GONE);
+            setLayoutVisibility(false);
         }
     }
 

@@ -3,6 +3,7 @@ package com.android.voyce.fragments;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
@@ -38,7 +39,7 @@ public class SearchFragment extends Fragment implements MusiciansAdapter.ListIte
     public SearchFragment() {}
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_search, container, false);
@@ -63,7 +64,7 @@ public class SearchFragment extends Fragment implements MusiciansAdapter.ListIte
     public void onListItemClick(int index) {
         Musician musician = mMusicianArrayList.get(index);
 
-        MusicianFragment musicianFragment = MusicianFragment.newInstance(musician);
+        MusicianFragment musicianFragment = MusicianFragment.newInstance(musician.getId());
 
         if (getFragmentManager() != null) {
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -72,7 +73,7 @@ public class SearchFragment extends Fragment implements MusiciansAdapter.ListIte
             transaction.commit();
         }
     }
-
+    @NonNull
     @Override
     public Loader<ArrayList<Musician>> onCreateLoader(int i, Bundle bundle) {
         mProgressBar.setVisibility(View.VISIBLE);
@@ -85,7 +86,7 @@ public class SearchFragment extends Fragment implements MusiciansAdapter.ListIte
     }
 
     @Override
-    public void onLoadFinished(Loader<ArrayList<Musician>> loader, ArrayList<Musician> musicians) {
+    public void onLoadFinished(@NonNull Loader<ArrayList<Musician>> loader, ArrayList<Musician> musicians) {
         mProgressBar.setVisibility(View.GONE);
 
         mMusicianArrayList = musicians;
@@ -93,7 +94,7 @@ public class SearchFragment extends Fragment implements MusiciansAdapter.ListIte
     }
 
     @Override
-    public void onLoaderReset(Loader<ArrayList<Musician>> loader) {
+    public void onLoaderReset(@NonNull Loader<ArrayList<Musician>> loader) {
         mMusiciansAdapter.setData(null);
     }
 }

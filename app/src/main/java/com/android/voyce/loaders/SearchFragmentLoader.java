@@ -24,7 +24,6 @@ public class SearchFragmentLoader extends AsyncTaskLoader<ArrayList<Musician>> {
         forceLoad();
     }
 
-
     @Nullable
     @Override
     public ArrayList<Musician> loadInBackground() {
