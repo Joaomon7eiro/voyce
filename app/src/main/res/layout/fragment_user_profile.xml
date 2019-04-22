@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryVeryDark"
     android:orientation="vertical"
-    tools:context=".fragments.UserProfileFragment">
+    tools:context=".ui.userprofile.UserProfileFragment">
 
     <android.support.v4.view.ViewPager
         android:id="@+id/user_view_pager"

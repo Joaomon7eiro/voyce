@@ -2,8 +2,8 @@ package com.android.voyce.utils;
 
 import android.util.Log;
 
-import com.android.voyce.models.Musician;
-import com.android.voyce.models.Proposal;
+import com.android.voyce.data.models.Musician;
+import com.android.voyce.data.models.Proposal;
 
 import org.json.JSONArray;
 import org.json.JSONException;

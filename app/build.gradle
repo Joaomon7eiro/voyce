@@ -33,6 +33,9 @@ dependencies {
     implementation 'android.arch.lifecycle:extensions:1.1.1'
     annotationProcessor 'android.arch.lifecycle:compiler:1.1.1'
 
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
+
     implementation 'de.hdodenhof:circleimageview:3.0.0'
     implementation 'com.github.jgabrielfreitas:BlurImageView:1.0.1'
     implementation 'com.squareup.picasso:picasso:2.71828'
