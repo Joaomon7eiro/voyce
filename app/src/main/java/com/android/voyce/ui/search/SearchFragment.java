@@ -1,14 +1,13 @@
 package com.android.voyce.ui.search;
 
 
-import android.net.Uri;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,33 +15,51 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-import com.android.voyce.data.loaders.SearchFragmentLoader;
+import com.android.voyce.ui.MainActivity;
 import com.android.voyce.ui.musiciandetails.MusicianFragment;
 import com.android.voyce.R;
-import com.android.voyce.data.models.Musician;
-import com.android.voyce.utils.NetworkUtils;
+import com.android.voyce.data.model.Musician;
+import com.android.voyce.utils.ConnectivityHelper;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SearchFragment extends Fragment implements MusiciansAdapter.ListItemClickListener,
-        LoaderManager.LoaderCallbacks<ArrayList<Musician>> {
-
-    private ArrayList<Musician> mMusicianArrayList = new ArrayList<>();
+public class SearchFragment extends Fragment implements MusiciansAdapter.ListItemClickListener {
     private MusiciansAdapter mMusiciansAdapter;
 
     private ProgressBar mProgressBar;
-
-    private static final int LOADER_ID = 1;
 
     public SearchFragment() {}
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(LOADER_ID, null, this);
+
+        SearchViewModel viewModel = ViewModelProviders.of(this).get(SearchViewModel.class);
+        viewModel.init();
+
+        viewModel.getMusicians().observe(this, new Observer<List<Musician>>() {
+            @Override
+            public void onChanged(@Nullable List<Musician> musicians) {
+                mMusiciansAdapter.setData((ArrayList<Musician>) musicians);
+            }
+        });
+
+        viewModel.getIsLoading().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(@Nullable Boolean isLoading) {
+                if (isLoading != null) {
+                    if (isLoading) {
+                        mProgressBar.setVisibility(View.VISIBLE);
+                    } else {
+                        mProgressBar.setVisibility(View.GONE);
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -67,39 +84,20 @@ public class SearchFragment extends Fragment implements MusiciansAdapter.ListIte
 
     @Override
     public void onListItemClick(int index) {
-        Musician musician = mMusicianArrayList.get(index);
+        if (ConnectivityHelper.isConnected(getContext())) {
+            Musician musician = mMusiciansAdapter.getData().get(index);
 
-        MusicianFragment musicianFragment = MusicianFragment.newInstance(musician.getId());
+            MusicianFragment musicianFragment = MusicianFragment.newInstance(musician.getId());
 
-        if (getFragmentManager() != null) {
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragments_container, musicianFragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
+            if (getFragmentManager() != null) {
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragments_container, musicianFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        } else {
+            MainActivity activity = (MainActivity) getActivity();
+            if (activity != null) activity.setLayoutVisibility(false);
         }
-    }
-    @NonNull
-    @Override
-    public Loader<ArrayList<Musician>> onCreateLoader(int i, Bundle bundle) {
-        mProgressBar.setVisibility(View.VISIBLE);
-
-        String baseUrl = NetworkUtils.API_BASE_URL + "artists";
-        Uri uri = Uri.parse(baseUrl).buildUpon()
-                .build();
-
-        return new SearchFragmentLoader(getContext(), uri.toString());
-    }
-
-    @Override
-    public void onLoadFinished(@NonNull Loader<ArrayList<Musician>> loader, ArrayList<Musician> musicians) {
-        mProgressBar.setVisibility(View.GONE);
-
-        mMusicianArrayList = musicians;
-        mMusiciansAdapter.setData(mMusicianArrayList);
-    }
-
-    @Override
-    public void onLoaderReset(@NonNull Loader<ArrayList<Musician>> loader) {
-        mMusiciansAdapter.setData(null);
     }
 }

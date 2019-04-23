@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.voyce.R;
+import com.android.voyce.ui.MainActivity;
+import com.android.voyce.utils.ConnectivityHelper;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -43,11 +45,16 @@ public class UserProfileFragment extends Fragment {
     }
 
     public void openFragment(Fragment fragment) {
-        if (getFragmentManager() != null) {
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.replace(R.id.fragments_container, fragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
+        if (ConnectivityHelper.isConnected(getContext())) {
+            if (getFragmentManager() != null) {
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragments_container, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        } else {
+            MainActivity activity = (MainActivity) getActivity();
+            if (activity != null) activity.setLayoutVisibility(false);
         }
     }
 }

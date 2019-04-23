@@ -1,6 +1,8 @@
 package com.android.voyce.ui.musiciandetails;
 
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,8 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.voyce.R;
-import com.android.voyce.data.models.MusicianAndProposals;
-import com.android.voyce.data.models.Proposal;
+import com.android.voyce.data.model.Proposal;
 
 import java.util.ArrayList;
 
@@ -23,35 +24,38 @@ import java.util.ArrayList;
  */
 public class ProposalFragment extends Fragment{
 
-    private ArrayList<Proposal> mProposals;
+    private ProposalsAdapter mAdapter;
 
     public ProposalFragment() {
         // Required empty public constructor
     }
 
-    public static ProposalFragment newInstance(MusicianAndProposals musicianAndProposals) {
-        ProposalFragment fragment = new ProposalFragment();
-
-        Bundle args = new Bundle();
-
-        args.putSerializable("musician_and_proposals_key", musicianAndProposals);
-        fragment.setArguments(args);
-
-        return fragment;
+    public static ProposalFragment newInstance() {
+        return new ProposalFragment();
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Bundle args = getArguments();
-        if (args != null) {
-            if (args.getSerializable("musician_and_proposals_key") != null) {
-                MusicianAndProposals musiciansAndProposals = (MusicianAndProposals) args.getSerializable("musician_and_proposals_key");
-                if (musiciansAndProposals != null) {
-                    mProposals = musiciansAndProposals.getProposals();
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        MusicianViewModel viewModel = ViewModelProviders.of(getParentFragment()).get(MusicianViewModel.class);
+//        viewModel.getProposals().observe(getParentFragment(), new Observer<List<Proposal>>() {
+//            @Override
+//            public void onChanged(@Nullable List<Proposal> proposals) {
+//                if (proposals != null) {
+//                    mAdapter.setData((ArrayList<Proposal>) proposals);
+//                }
+//            }
+//        });
+        viewModel.getProposals().observe(getParentFragment(), new Observer<Proposal>() {
+            @Override
+            public void onChanged(@Nullable Proposal proposals) {
+                if (proposals != null) {
+                    ArrayList<Proposal> proposalArrayList = new ArrayList<>();
+                    proposalArrayList.add(proposals);
+                    mAdapter.setData(proposalArrayList);
                 }
             }
-        }
+        });
     }
 
     @Override
@@ -60,16 +64,13 @@ public class ProposalFragment extends Fragment{
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_proposal, container, false);
 
-
         RecyclerView recyclerView = view.findViewById(R.id.rv_proposals);
-        ProposalsAdapter adapter = new ProposalsAdapter();
+        mAdapter = new ProposalsAdapter();
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
 
-        recyclerView.setAdapter(adapter);
-
-        adapter.setData(mProposals);
+        recyclerView.setAdapter(mAdapter);
 
         return view;
     }

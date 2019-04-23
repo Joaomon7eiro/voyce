@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.voyce.R;
-import com.android.voyce.data.models.MusicianModel;
+import com.android.voyce.data.model.MusicianModel;
 
 import java.util.ArrayList;
 

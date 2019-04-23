@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.voyce.R;
-import com.android.voyce.data.models.Musician;
+import com.android.voyce.data.model.Musician;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -88,6 +88,10 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
 
     public interface ListItemClickListener {
         void onListItemClick(int index);
+    }
+
+    public ArrayList<Musician> getData() {
+        return mMusiciansData;
     }
 
     public void setData(ArrayList<Musician> musiciansData) {

@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.voyce.R;
-import com.android.voyce.data.models.Proposal;
+import com.android.voyce.data.model.Proposal;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private void setLayoutVisibility(boolean layoutVisibility) {
+    public void setLayoutVisibility(boolean layoutVisibility) {
         if (layoutVisibility) {
             mNoInternetConnection.setVisibility(View.GONE);
             mFrameLayout.setVisibility(View.VISIBLE);
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         outState.putInt(Constants.KEY_CURRENT_MENU_ID, mCurrentMenuId);
     }
 
-    public void checkInternetConnectivity() {
+    private void checkInternetConnectivity() {
         if (ConnectivityHelper.isConnected(this)) {
             setLayoutVisibility(true);
         } else {

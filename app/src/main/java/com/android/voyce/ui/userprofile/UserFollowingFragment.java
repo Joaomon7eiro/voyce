@@ -15,8 +15,8 @@ import android.view.ViewGroup;
 
 import com.android.voyce.R;
 import com.android.voyce.ui.musiciandetails.MusicianFragment;
-import com.android.voyce.data.database.AppDatabase;
-import com.android.voyce.data.models.MusicianModel;
+import com.android.voyce.data.local.AppDatabase;
+import com.android.voyce.data.model.MusicianModel;
 
 import java.util.ArrayList;
 import java.util.List;

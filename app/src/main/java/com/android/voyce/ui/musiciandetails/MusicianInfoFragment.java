@@ -1,6 +1,8 @@
 package com.android.voyce.ui.musiciandetails;
 
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,8 +14,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.voyce.R;
-import com.android.voyce.data.models.Musician;
-import com.android.voyce.utils.Constants;
+import com.android.voyce.data.model.Musician;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,43 +25,45 @@ import java.util.regex.Pattern;
  */
 public class MusicianInfoFragment extends Fragment {
 
-    private Musician mMusician;
-    private String mBioText = "";
-    private String mMonthlyIncome = "";
-    private String mTotalSponsors = "";
-    private String mInstagramUrl = "";
-    private String mFacebookUrl = "";
-    private String mTwitterUrl = "";
+    private TextView mBiography;
+    private TextView mMonthlyIncome;
+    private TextView mTotalSponsors;
+    private TextView mInstagram ;
+    private TextView mFacebook;
+    private TextView mTwitter;
 
     public MusicianInfoFragment() {
     }
 
-    public static MusicianInfoFragment newInstance(Musician musician) {
-        MusicianInfoFragment fragment = new MusicianInfoFragment();
-
-        Bundle args = new Bundle();
-        args.putSerializable(Constants.KEY_MUSICIAN, musician);
-        fragment.setArguments(args);
-
-        return fragment;
+    public static MusicianInfoFragment newInstance() {
+        return new MusicianInfoFragment();
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        MusicianViewModel viewModel = ViewModelProviders.of(getParentFragment()).get(MusicianViewModel.class);
+        viewModel.getMusician().observe(getParentFragment(), new Observer<Musician>() {
+            @Override
+            public void onChanged(@Nullable Musician musician) {
+                if (musician != null) {
+                    mBiography.setText(musician.getBiography());
+                    String monthlyIncome = String.valueOf(musician.getMonthlyIncome());
 
-        if (getArguments() != null) {
-            mMusician = (Musician) getArguments().getSerializable(Constants.KEY_MUSICIAN);
-        }
+                    mMonthlyIncome.setText(getString(R.string.monthly_income_value, monthlyIncome));
+                    mTotalSponsors.setText(String.valueOf(musician.getSponsorsNumber()));
 
-        if (mMusician != null) {
-            mBioText = mMusician.getBiography();
-            mInstagramUrl = mMusician.getInstagramUrl();
-            mFacebookUrl = mMusician.getFacebookUrl();
-            mTwitterUrl = mMusician.getTwitterUrl();
-            mMonthlyIncome = String.valueOf(mMusician.getMonthlyIncome());
-            mTotalSponsors = String.valueOf(mMusician.getSponsorsNumber());
-        }
+                    Linkify.TransformFilter transformFilter = new Linkify.TransformFilter() {
+                        public final String transformUrl(final Matcher match, String url) {
+                            return "";
+                        }
+                    };
+                    Linkify.addLinks(mInstagram, Pattern.compile(getString(R.string.instagram)), musician.getInstagramUrl(), null, transformFilter);
+                    Linkify.addLinks(mFacebook, Pattern.compile(getString(R.string.facebook)), musician.getFacebookUrl(), null, transformFilter);
+                    Linkify.addLinks(mTwitter, Pattern.compile(getString(R.string.twitter)), musician.getTwitterUrl(), null, transformFilter);
+                }
+            }
+        });
     }
 
     @Override
@@ -69,28 +72,12 @@ public class MusicianInfoFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_musician_info, container, false);
 
-        TextView biography = view.findViewById(R.id.biography_text);
-        biography.setText(mBioText);
-
-        TextView monthlyIncome = view.findViewById(R.id.monthly_income);
-        monthlyIncome.setText(getString(R.string.monthly_income_value, mMonthlyIncome));
-
-        TextView totalSponsors = view.findViewById(R.id.total_sponsors);
-        totalSponsors.setText(mTotalSponsors);
-
-        TextView instagram = view.findViewById(R.id.instagram_url);
-        TextView facebook = view.findViewById(R.id.facebook_url);
-        TextView twitter = view.findViewById(R.id.twitter_url);
-
-        Linkify.TransformFilter transformFilter = new Linkify.TransformFilter() {
-            public final String transformUrl(final Matcher match, String url) {
-                return "";
-            }
-        };
-
-        Linkify.addLinks(instagram, Pattern.compile(getString(R.string.instagram)), mInstagramUrl, null, transformFilter);
-        Linkify.addLinks(facebook, Pattern.compile(getString(R.string.facebook)), mFacebookUrl, null, transformFilter);
-        Linkify.addLinks(twitter, Pattern.compile(getString(R.string.twitter)), mTwitterUrl, null, transformFilter);
+        mBiography = view.findViewById(R.id.biography_text);
+        mMonthlyIncome = view.findViewById(R.id.monthly_income);
+        mTotalSponsors = view.findViewById(R.id.total_sponsors);
+        mInstagram = view.findViewById(R.id.instagram_url);
+        mFacebook = view.findViewById(R.id.facebook_url);
+        mTwitter = view.findViewById(R.id.twitter_url);
 
         return view;
     }

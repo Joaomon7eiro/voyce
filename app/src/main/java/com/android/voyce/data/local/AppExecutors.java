@@ -1,11 +1,10 @@
-package com.android.voyce.data.database;
+package com.android.voyce.data.local;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class AppExecutors {
     private final Executor mDiskIO;
-    private static final Object LOCK = new Object();
     private static AppExecutors sInstance;
 
     private AppExecutors(Executor diskIO) {
@@ -14,7 +13,7 @@ public class AppExecutors {
 
     public static AppExecutors getInstance() {
         if (sInstance == null) {
-            synchronized (LOCK) {
+            synchronized (AppExecutors.class) {
                 sInstance = new AppExecutors(Executors.newSingleThreadExecutor());
             }
         }

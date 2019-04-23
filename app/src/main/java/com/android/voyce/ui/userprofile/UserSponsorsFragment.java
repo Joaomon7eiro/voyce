@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.voyce.R;
-import com.android.voyce.data.models.Musician;
+import com.android.voyce.data.model.Musician;
 
 import java.util.ArrayList;
 

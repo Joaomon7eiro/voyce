@@ -1,18 +1,29 @@
-package com.android.voyce.data.models;
+package com.android.voyce.data.model;
 
-import java.io.Serializable;
+import com.google.gson.annotations.SerializedName;
 
-public class Musician implements Serializable {
+public class Musician {
+    @SerializedName("image")
     private String mImageUrl;
+    @SerializedName("id")
     private String mId;
+    @SerializedName("name")
     private String mName;
+    @SerializedName("biography")
     private String mBiography;
+    @SerializedName("facebook_url")
     private String mFacebookUrl;
+    @SerializedName("instagram_url")
     private String mInstagramUrl;
+    @SerializedName("twitter_url")
     private String mTwitterUrl;
+    @SerializedName("total_followers")
     private int mFollowersNumber;
+    @SerializedName("total_sponsors")
     private int mSponsorsNumber;
+    @SerializedName("total_listeners")
     private int mListenersNumber;
+    @SerializedName("total_monthly_income")
     private double mMonthlyIncome;
 
     public Musician(String id, String imageUrl, String name, String biography, int listenersNumber, int followersNumber,

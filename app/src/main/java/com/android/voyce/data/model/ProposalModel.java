@@ -1,4 +1,4 @@
-package com.android.voyce.data.models;
+package com.android.voyce.data.model;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;

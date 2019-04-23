@@ -1,12 +1,15 @@
-package com.android.voyce.data.models;
+package com.android.voyce.data.model;
 
-import java.io.Serializable;
+import com.google.gson.annotations.SerializedName;
 
-public class Proposal implements Serializable {
-
+public class Proposal {
+    @SerializedName("name")
     private String mName;
+    @SerializedName("image")
     private String mImageUrl;
+    @SerializedName("description")
     private String mDescription;
+    @SerializedName("price")
     private double mPrice;
 
     public Proposal(String name, String imageUrl, String description, double price) {

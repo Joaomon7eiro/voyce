@@ -1,4 +1,4 @@
-package com.android.voyce.data.database;
+package com.android.voyce.data.local;
 
 import android.arch.persistence.room.TypeConverter;
 import android.graphics.Bitmap;
