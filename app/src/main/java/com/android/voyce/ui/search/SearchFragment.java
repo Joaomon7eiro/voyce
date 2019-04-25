@@ -31,6 +31,7 @@ public class SearchFragment extends Fragment implements MusiciansAdapter.ListIte
     private MusiciansAdapter mMusiciansAdapter;
 
     private ProgressBar mProgressBar;
+    RecyclerView mMusiciansGridRecyclerView;
 
     public SearchFragment() {}
 
@@ -53,9 +54,11 @@ public class SearchFragment extends Fragment implements MusiciansAdapter.ListIte
             public void onChanged(@Nullable Boolean isLoading) {
                 if (isLoading != null) {
                     if (isLoading) {
+                        mMusiciansGridRecyclerView.setVisibility(View.GONE);
                         mProgressBar.setVisibility(View.VISIBLE);
                     } else {
                         mProgressBar.setVisibility(View.GONE);
+                        mMusiciansGridRecyclerView.setVisibility(View.VISIBLE);
                     }
                 }
             }
@@ -70,14 +73,14 @@ public class SearchFragment extends Fragment implements MusiciansAdapter.ListIte
 
         mProgressBar = view.findViewById(R.id.search_progress_bar);
 
-        RecyclerView musiciansGridRecyclerView = view.findViewById(R.id.rv_search_artists_grid);
+        mMusiciansGridRecyclerView = view.findViewById(R.id.rv_search_artists_grid);
         mMusiciansAdapter = new MusiciansAdapter(this);
 
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
-        musiciansGridRecyclerView.setLayoutManager(layoutManager);
+        mMusiciansGridRecyclerView.setLayoutManager(layoutManager);
 
-        musiciansGridRecyclerView.setHasFixedSize(true);
-        musiciansGridRecyclerView.setAdapter(mMusiciansAdapter);
+        mMusiciansGridRecyclerView.setHasFixedSize(true);
+        mMusiciansGridRecyclerView.setAdapter(mMusiciansAdapter);
 
         return view;
     }

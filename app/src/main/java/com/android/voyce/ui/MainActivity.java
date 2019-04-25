@@ -3,6 +3,7 @@ package com.android.voyce.ui;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.android.voyce.R;
 import com.android.voyce.ui.search.SearchFragment;
+import com.android.voyce.ui.usermusicianprofile.UserMusicianProfileFragment;
 import com.android.voyce.ui.userprofile.UserProfileFragment;
 import com.android.voyce.utils.ConnectivityHelper;
 import com.android.voyce.utils.Constants;
@@ -22,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mNoInternetConnection;
     private FrameLayout mFrameLayout;
     private BottomNavigationView mNavigation;
+    private FloatingActionButton mFloatingButton;
 
     private int mCurrentMenuId = R.id.navigation_search;
 
@@ -41,24 +44,27 @@ public class MainActivity extends AppCompatActivity {
             }
 
             mCurrentMenuId = menuId;
+            visibilityEditButton(false);
+            Fragment fragment;
             switch (menuId) {
 //                case R.id.navigation_home:
 //                    return true;
                 case R.id.navigation_search:
                     checkInternetConnectivity();
-                    Fragment searchFragment = new SearchFragment();
-                    openFragment(searchFragment);
-                    return true;
+                    fragment = new SearchFragment();
+                    break;
                 case R.id.navigation_profile:
                     setLayoutVisibility(true);
-                    Fragment profileFragment = new UserProfileFragment();
-                    openFragment(profileFragment);
-                    return true;
-//                case R.id.navigation_musician:
-//                    return true;
+                    fragment = new UserProfileFragment();
+                    break;
+                case R.id.navigation_musician:
+                    fragment = new UserMusicianProfileFragment();
+                    break;
                 default:
                     return false;
             }
+            openFragment(fragment);
+            return true;
         }
     };
 
@@ -69,6 +75,14 @@ public class MainActivity extends AppCompatActivity {
         } else {
             mNoInternetConnection.setVisibility(View.VISIBLE);
             mFrameLayout.setVisibility(View.GONE);
+        }
+    }
+
+    public void visibilityEditButton(boolean visible) {
+        if (visible) {
+            ((View) mFloatingButton).setVisibility(View.VISIBLE);
+        } else {
+            ((View) mFloatingButton).setVisibility(View.GONE);
         }
     }
 
@@ -90,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
         mNoInternetConnection = findViewById(R.id.no_connection_text);
         mFrameLayout = findViewById(R.id.fragments_container);
+        mFloatingButton = findViewById(R.id.edit_button);
 
         if (savedInstanceState == null) {
             Fragment searchFragment = new SearchFragment();
@@ -116,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        visibilityEditButton(false);
         checkInternetConnectivity();
         if (mNavigation.getSelectedItemId() == R.id.navigation_search) {
             super.onBackPressed();

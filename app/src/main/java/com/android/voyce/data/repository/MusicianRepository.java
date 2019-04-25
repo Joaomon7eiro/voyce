@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 
 import com.android.voyce.data.model.Musician;
 import com.android.voyce.data.model.Proposal;
-import com.android.voyce.data.remote.HttpClient;
+import com.android.voyce.data.remote.ApiWebService;
 import com.android.voyce.data.remote.WebService;
 
 
@@ -26,7 +26,7 @@ public class MusicianRepository {
     }
 
     public MutableLiveData<Musician> getMusician(String id) {
-        Retrofit client = HttpClient.getInstance();
+        Retrofit client = ApiWebService.getInstance();
         WebService webService = client.create(WebService.class);
 
         Call<Musician> call = webService.getMusician(id);
@@ -50,7 +50,7 @@ public class MusicianRepository {
     }
 
     public MutableLiveData<Proposal> getProposals(String id) {
-        Retrofit client = HttpClient.getInstance();
+        Retrofit client = ApiWebService.getInstance();
         WebService webService = client.create(WebService.class);
 
         Call<Proposal> call = webService.getMusicianProposals(id);
@@ -74,7 +74,7 @@ public class MusicianRepository {
     }
 
 //    public MutableLiveData<List<Proposal>> getProposals(String id) {
-//        Retrofit client = HttpClient.getInstance();
+//        Retrofit client = ApiWebService.getInstance();
 //        WebService webService = client.create(WebService.class);
 //
 //        Call<List<Proposal>> call = webService.getMusicianProposals(id);

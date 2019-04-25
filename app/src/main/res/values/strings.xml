@@ -18,4 +18,8 @@
     <string name="proposal_tab">Planos</string>
     <string name="monthly_income">Por mês</string>
     <string name="monthly_income_value">R$ <xliff:g id="monthly_income_value">%s</xliff:g></string>
+    <string name="user_goal_value">R$ <xliff:g id="user_goal_value">%s</xliff:g></string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

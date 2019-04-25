@@ -6,8 +6,8 @@ import android.arch.persistence.room.PrimaryKey;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 
-@Entity(tableName = "musicians")
-public class MusicianModel {
+@Entity(tableName = "UserFollowingMusician")
+public class UserFollowingMusician {
 
     @PrimaryKey
     @NonNull
@@ -18,7 +18,7 @@ public class MusicianModel {
     @ColumnInfo(name = "image")
     private Bitmap mImage;
 
-    public MusicianModel(@NonNull String id, String name, Bitmap image) {
+    public UserFollowingMusician(@NonNull String id, String name, Bitmap image) {
         mId = id;
         mName = name;
         mImage = image;

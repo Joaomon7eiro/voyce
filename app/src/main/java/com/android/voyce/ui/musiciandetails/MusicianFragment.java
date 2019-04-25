@@ -24,7 +24,7 @@ import android.widget.TextView;
 import com.android.voyce.R;
 import com.android.voyce.data.local.AppDatabase;
 import com.android.voyce.data.local.AppExecutors;
-import com.android.voyce.data.model.MusicianModel;
+import com.android.voyce.data.model.UserFollowingMusician;
 import com.android.voyce.data.model.Musician;
 import com.android.voyce.ui.MainActivity;
 import com.android.voyce.utils.ConnectivityHelper;
@@ -52,7 +52,7 @@ public class MusicianFragment extends Fragment {
     private ImageView mProfileImage;
     private TextView mMusicianName;
 
-    private MusicianModel mMusicianModel;
+    private UserFollowingMusician mUserFollowingMusician;
     private Bitmap mBitMapImage;
     private String mName;
 
@@ -70,10 +70,10 @@ public class MusicianFragment extends Fragment {
                 executor.execute(new Runnable() {
                     @Override
                     public void run() {
-                        if (mMusicianModel == null) {
-                            mMusicianModel = new MusicianModel(mId, mName, mBitMapImage);
+                        if (mUserFollowingMusician == null) {
+                            mUserFollowingMusician = new UserFollowingMusician(mId, mName, mBitMapImage);
                         }
-                        mDb.musicianDao().insertMusician(mMusicianModel);
+                        mDb.userFollowingMusicianDao().insertMusician(mUserFollowingMusician);
                     }
                 });
             } else {
@@ -82,7 +82,7 @@ public class MusicianFragment extends Fragment {
                 executor.execute(new Runnable() {
                     @Override
                     public void run() {
-                        mDb.musicianDao().deleteMusician(mMusicianModel);
+                        mDb.userFollowingMusicianDao().deleteMusician(mUserFollowingMusician);
                     }
                 });
             }
@@ -205,12 +205,12 @@ public class MusicianFragment extends Fragment {
 
         mDb = AppDatabase.getInstance(getContext());
 
-        LiveData<MusicianModel> musician = mDb.musicianDao().queryMusiciansById(mId);
-        musician.observe(this, new Observer<MusicianModel>() {
+        LiveData<UserFollowingMusician> musician = mDb.userFollowingMusicianDao().queryMusiciansById(mId);
+        musician.observe(this, new Observer<UserFollowingMusician>() {
             @Override
-            public void onChanged(@Nullable MusicianModel musicianModel) {
-                mMusicianModel = musicianModel;
-                if (mMusicianModel != null) {
+            public void onChanged(@Nullable UserFollowingMusician userFollowingMusician) {
+                mUserFollowingMusician = userFollowingMusician;
+                if (mUserFollowingMusician != null) {
                     isFollowing = true;
                     mFollowButton.setBackground(getResources().getDrawable(R.drawable.rounded_background));
                     mFollowButton.setText(getString(R.string.following));

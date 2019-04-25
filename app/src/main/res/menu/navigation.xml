@@ -17,8 +17,8 @@
         android:icon="@drawable/ic_action_profile"
         android:title="@string/title_profile" />
 
-    <!--<item-->
-    <!--android:id="@+id/navigation_musician"-->
-    <!--android:icon="@drawable/ic_action_musician"-->
-    <!--android:title="@string/title_musician" />-->
+    <item
+        android:id="@+id/navigation_musician"
+        android:icon="@drawable/ic_action_musician"
+        android:title="@string/title_musician" />
 </menu>

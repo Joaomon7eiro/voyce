@@ -6,10 +6,11 @@ import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
-import com.android.voyce.data.model.MusicianModel;
-import com.android.voyce.data.model.ProposalModel;
+import com.android.voyce.data.model.Musician;
+import com.android.voyce.data.model.UserFollowingMusician;
+import com.android.voyce.data.model.UserSponsoringProposal;
 
-@Database(entities = {MusicianModel.class, ProposalModel.class}, version = 1, exportSchema = false)
+@Database(entities = {Musician.class, UserFollowingMusician.class, UserSponsoringProposal.class}, version = 1, exportSchema = false)
 @TypeConverters(BitMapConverter.class)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase sInstance;
@@ -19,7 +20,6 @@ public abstract class AppDatabase extends RoomDatabase {
         if (sInstance == null) {
             synchronized (AppDatabase.class) {
                 sInstance = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, DATABASE_NAME)
-                        .allowMainThreadQueries()
                         .build();
             }
         }
@@ -27,7 +27,9 @@ public abstract class AppDatabase extends RoomDatabase {
         return sInstance;
     }
 
+    public abstract UserFollowingMusicianDao userFollowingMusicianDao();
+
     public abstract MusicianDao musicianDao();
 
-    public abstract ProposalDao proposalDao();
+    public abstract UserSponsoringProposalDao userSponsoringProposalDao();
 }

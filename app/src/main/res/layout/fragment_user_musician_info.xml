@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.usermusicianprofile.UserMusicianInfoFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="16dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/user_musician_monthly_income"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="R$ 2.400,00"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Por mês"
+            android:textColor="@color/colorLightGray" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:text="Biografia"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/user_biography"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="saduhuasdhiasudhas; aosduhasu asodu shdu  iashdsauhdusah u asudhs saduhuasdhiasudhas; aosduhasu asodu shdu  iashdsauhdusah u asudhs"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+
+
+</android.support.v4.widget.NestedScrollView>
+

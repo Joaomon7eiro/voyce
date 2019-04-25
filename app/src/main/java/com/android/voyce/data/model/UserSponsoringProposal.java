@@ -6,8 +6,8 @@ import android.arch.persistence.room.PrimaryKey;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 
-@Entity(tableName = "proposals")
-public class ProposalModel {
+@Entity(tableName = "UserSponsoringProposal")
+public class UserSponsoringProposal {
 
     @PrimaryKey
     @NonNull
@@ -23,7 +23,7 @@ public class ProposalModel {
     @ColumnInfo(name = "musician_image")
     private Bitmap mMusicianImage;
 
-    public ProposalModel(@NonNull String id, String name, String musicianName, Bitmap musicianImage) {
+    public UserSponsoringProposal(@NonNull String id, String name, String musicianName, Bitmap musicianImage) {
         mId = id;
         mName = name;
         mMusicianName = musicianName;

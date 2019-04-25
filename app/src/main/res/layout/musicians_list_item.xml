@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -9,99 +9,111 @@
         android:layout_width="match_parent"
         android:layout_height="295dp"
         android:layout_gravity="center"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:padding="0dp"
         app:cardBackgroundColor="@android:color/black"
         app:cardCornerRadius="10dp"
         app:cardElevation="8dp"
-        app:cardUseCompatPadding="true">
+        app:cardUseCompatPadding="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
             android:background="@drawable/musician_card_gradient"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/musician_image"
-                android:layout_width="match_parent"
-                android:layout_height="160dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/musician" />
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/musician_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
+                android:padding="4dp"
                 android:gravity="center"
-                android:padding="8dp"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
                 android:textColor="@android:color/white"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/musician_image" />
 
-            <LinearLayout
+            <ImageView
+                android:id="@+id/musician_image"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:baselineAligned="false"
-                android:orientation="horizontal"
-                android:paddingBottom="8dp">
+                android:layout_height="160dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/musician"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="2"
-                    android:orientation="vertical"
-                    android:paddingStart="8dp">
+            <TextView
+                android:id="@+id/listeners_label"
+                style="@style/CardMusicianLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"
+                android:text="@string/listeners"
+                app:layout_constraintBottom_toTopOf="@+id/followers_label"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/musician_name" />
 
-                    <TextView
-                        android:id="@+id/listeners_label"
-                        style="@style/CardMusicianLabel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/listeners" />
+            <TextView
+                android:id="@+id/followers_label"
+                style="@style/CardMusicianLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="4dp"
+                android:text="@string/followers"
+                app:layout_constraintBottom_toTopOf="@+id/sponsors_label"
+                app:layout_constraintStart_toStartOf="parent" />
 
-                    <TextView
-                        android:id="@+id/followers_label"
-                        style="@style/CardMusicianLabel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/followers" />
+            <TextView
+                android:id="@+id/sponsors_label"
+                style="@style/CardMusicianLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="8dp"
+                android:maxLines="1"
+                android:text="@string/sponsors"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
-                    <TextView
-                        android:id="@+id/sponsors_label"
-                        style="@style/CardMusicianLabel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:maxLines="1"
-                        android:text="@string/sponsors" />
-                </LinearLayout>
+            <TextView
+                android:id="@+id/listeners"
+                style="@style/CardMusicianValues"
+                app:layout_constraintBaseline_toBaselineOf="@+id/listeners_label"
+                app:layout_constraintEnd_toEndOf="@+id/sponsors"
+                app:layout_constraintStart_toStartOf="@+id/sponsors" />
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp">
+            <TextView
+                android:id="@+id/sponsors"
+                style="@style/CardMusicianValues"
+                app:layout_constraintBottom_toTopOf="@+id/followers"
+                app:layout_constraintEnd_toEndOf="@+id/followers"
+                app:layout_constraintStart_toStartOf="@+id/followers"
+                app:layout_constraintTop_toBottomOf="@+id/listeners" />
 
-                    <TextView
-                        android:id="@+id/listeners"
-                        style="@style/CardMusicianValues" />
+            <TextView
+                android:id="@+id/followers"
+                style="@style/CardMusicianValues"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintBaseline_toBaselineOf="@+id/sponsors_label"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/sponsors_label" />
 
-                    <TextView
-                        android:id="@+id/followers"
-                        style="@style/CardMusicianValues" />
-
-                    <TextView
-                        android:id="@+id/sponsors"
-                        style="@style/CardMusicianValues" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </LinearLayout>
+        </android.support.constraint.ConstraintLayout>
 
     </android.support.v7.widget.CardView>
 
-</LinearLayout>
+</FrameLayout>

@@ -1,53 +1,70 @@
 package com.android.voyce.data.repository;
 
+import android.app.Application;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.support.annotation.NonNull;
 
+import com.android.voyce.data.local.AppDatabase;
+import com.android.voyce.data.local.AppExecutors;
+import com.android.voyce.data.local.MusicianDao;
 import com.android.voyce.data.model.Musician;
-import com.android.voyce.data.remote.HttpClient;
+import com.android.voyce.data.remote.ApiWebService;
 import com.android.voyce.data.remote.WebService;
 
+import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 public class MusiciansRepository {
     private static MusiciansRepository sInstance;
+    private static Executor sExecutor;
+    private static WebService sWebService;
+    private static MusicianDao sMusicianDao;
+
     private MutableLiveData<Boolean> mIsLoading = new MutableLiveData<>();
 
-    public static MusiciansRepository getInstance() {
+    public static MusiciansRepository getInstance(Application application) {
         if (sInstance == null) {
             sInstance = new MusiciansRepository();
+            sWebService = ApiWebService.getWebService();
+            sExecutor = AppExecutors.getInstance().getDiskIO();
+            sMusicianDao = AppDatabase.getInstance(application).musicianDao();
         }
         return sInstance;
     }
 
-    public MutableLiveData<List<Musician>> getMusicians() {
-        Retrofit client = HttpClient.getInstance();
-        WebService webService = client.create(WebService.class);
+    public LiveData<List<Musician>> getMusicians() {
+        refreshUser();
 
-        Call<List<Musician>> call = webService.getMusicians();
+        return sMusicianDao.getMusicians();
+    }
 
-        final MutableLiveData<List<Musician>> data = new MutableLiveData<>();
-
-        mIsLoading.setValue(true);
-        call.enqueue(new Callback<List<Musician>>() {
+    private void refreshUser() {
+        sExecutor.execute(new Runnable() {
             @Override
-            public void onResponse(@NonNull Call<List<Musician>> call, @NonNull Response<List<Musician>> response) {
-                mIsLoading.setValue(false);
-                data.setValue(response.body());
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<List<Musician>> call, @NonNull Throwable t) {
-                mIsLoading.postValue(false);
+            public void run() {
+                final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                boolean needsRefresh = (sMusicianDao.getRefreshMusicians(timestamp.getTime()) > 0);
+                if (needsRefresh) {
+                    mIsLoading.postValue(true);
+                    try {
+                        Response<List<Musician>> response = sWebService.getMusicians().execute();
+                        for (Musician musician: response.body()) {
+                            musician.setLastUpdateTimestamp(timestamp.getTime());
+                        }
+                        sMusicianDao.insertMusicians(response.body());
+                        mIsLoading.postValue(false);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         });
-
-        return data;
     }
 
     public MutableLiveData<Boolean> getIsLoading() {

@@ -14,9 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.voyce.R;
+import com.android.voyce.data.model.UserFollowingMusician;
 import com.android.voyce.ui.musiciandetails.MusicianFragment;
 import com.android.voyce.data.local.AppDatabase;
-import com.android.voyce.data.model.MusicianModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class UserFollowingFragment extends Fragment implements UserFollowingAdapter.ListItemClickListener {
 
-    private ArrayList<MusicianModel> mMusicianModels;
+    private ArrayList<UserFollowingMusician> mUserFollowingMusicians;
     private UserFollowingAdapter mAdapter;
 
     public UserFollowingFragment() {
@@ -50,12 +50,12 @@ public class UserFollowingFragment extends Fragment implements UserFollowingAdap
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mAdapter);
 
-        final LiveData<List<MusicianModel>> musicians = db.musicianDao().queryMusicians();
-        musicians.observe(this, new Observer<List<MusicianModel>>() {
+        final LiveData<List<UserFollowingMusician>> musicians = db.userFollowingMusicianDao().queryMusicians();
+        musicians.observe(this, new Observer<List<UserFollowingMusician>>() {
             @Override
-            public void onChanged(@Nullable List<MusicianModel> musicianModels) {
-                mMusicianModels = (ArrayList<MusicianModel>) musicianModels;
-                mAdapter.setData(mMusicianModels);
+            public void onChanged(@Nullable List<UserFollowingMusician> userFollowingMusicians) {
+                mUserFollowingMusicians = (ArrayList<UserFollowingMusician>) userFollowingMusicians;
+                mAdapter.setData(mUserFollowingMusicians);
             }
         });
 
@@ -66,7 +66,7 @@ public class UserFollowingFragment extends Fragment implements UserFollowingAdap
     public void onListItemClick(int index) {
         UserProfileFragment parentFragment = ((UserProfileFragment) getParentFragment());
         if (parentFragment != null) {
-            parentFragment.openFragment(MusicianFragment.newInstance(mMusicianModels.get(index).getId()));
+            parentFragment.openFragment(MusicianFragment.newInstance(mUserFollowingMusicians.get(index).getId()));
         }
     }
 }

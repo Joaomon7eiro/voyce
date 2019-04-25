@@ -36,4 +36,8 @@
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 
+    <style name="DialogTheme" parent="ThemeOverlay.AppCompat.Dialog">
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
 </resources>
