@@ -59,9 +59,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="4dp"
                 android:text="@string/listeners"
-                app:layout_constraintBottom_toTopOf="@+id/followers_label"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/musician_name" />
 
@@ -71,10 +69,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginBottom="4dp"
                 android:text="@string/followers"
                 app:layout_constraintBottom_toTopOf="@+id/sponsors_label"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/listeners_label" />
 
             <TextView
                 android:id="@+id/sponsors_label"

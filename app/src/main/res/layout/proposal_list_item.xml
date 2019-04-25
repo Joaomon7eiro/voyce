@@ -22,6 +22,7 @@
                 android:id="@+id/proposal_image"
                 android:layout_width="match_parent"
                 android:layout_height="160dp"
+                android:src="@drawable/musician"
                 android:scaleType="centerCrop" />
 
             <TextView
@@ -33,6 +34,7 @@
                 android:layout_marginBottom="8dp"
                 android:background="@drawable/rounded_background"
                 android:gravity="center"
+                android:text="NOME DO PLANO"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:textColor="@android:color/white"
@@ -68,6 +70,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:paddingEnd="8dp"
+                    android:text="R$ 65,00"
                     android:textColor="@android:color/white"
                     android:textSize="16sp" />
 

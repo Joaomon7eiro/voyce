@@ -25,7 +25,7 @@ public class UserMusicianProfileFragmentPagerAdapter extends FragmentPagerAdapte
             case 0:
                 return new UserMusicianInfoFragment();
             case 1:
-                return new UserMusicianProposalsFragment();
+                return new UserMusicianContactFragment();
             default:
         }
         return null;
