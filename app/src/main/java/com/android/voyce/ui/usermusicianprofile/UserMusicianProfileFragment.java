@@ -2,7 +2,10 @@ package com.android.voyce.ui.usermusicianprofile;
 
 
 import android.annotation.SuppressLint;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -12,8 +15,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.voyce.R;
+import com.android.voyce.data.model.User;
 import com.android.voyce.ui.MainActivity;
 
 /**
@@ -47,7 +52,6 @@ public class UserMusicianProfileFragment extends Fragment {
         }
     };
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -80,6 +84,17 @@ public class UserMusicianProfileFragment extends Fragment {
         adapter.setData(fakeData);
 
         recyclerView.addOnScrollListener(mOnScrollListener);
+
+        UserMusicianProfileViewModel viewModel = ViewModelProviders.of(this).get(UserMusicianProfileViewModel.class);
+
+        viewModel.init("TCHpYZ5lrN01XjXFQNik");
+        viewModel.getUserLiveData().observe(this, new Observer<User>() {
+            @Override
+            public void onChanged(@Nullable User user) {
+                TextView name = view.findViewById(R.id.user_musician_name);
+                name.setText(user.getName());
+            }
+        });
 
         return view;
     }
