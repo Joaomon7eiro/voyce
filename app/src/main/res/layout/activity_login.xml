@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryVeryDark"
     tools:context=".ui.LoginActivity">
 
     <!--TODO: remove this-->
@@ -17,19 +18,34 @@
             android:id="@+id/user1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="logar como usuario 1" />
+            android:layout_margin="8dp"
+            android:background="@drawable/rounded_background"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="Logar como João"
+            android:textColor="@android:color/white" />
 
         <Button
             android:id="@+id/user2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="logar como usuario 2" />
+            android:layout_margin="8dp"
+            android:background="@drawable/rounded_background"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="Logar como Victor"
+            android:textColor="@android:color/white" />
 
         <Button
             android:id="@+id/user3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="logar como usuario 3" />
+            android:layout_margin="8dp"
+            android:background="@drawable/rounded_background"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="Logar como Leonardo"
+            android:textColor="@android:color/white" />
 
     </LinearLayout>
 

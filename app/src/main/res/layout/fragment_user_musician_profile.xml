@@ -131,11 +131,11 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
+                        android:id="@+id/user_musician_followers_number"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="8dp"
-                        android:text="0"
                         android:textColor="@color/colorLightGray"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="@+id/textView6"
@@ -143,11 +143,11 @@
                         app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
                     <TextView
+                        android:id="@+id/user_musician_sponsors_number"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="8dp"
-                        android:text="0"
                         android:textColor="@color/colorLightGray"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="@+id/textView3"
@@ -155,11 +155,11 @@
                         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
                     <TextView
+                        android:id="@+id/user_musician_listeners_number"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="8dp"
-                        android:text="0"
                         android:textColor="@color/colorLightGray"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="@+id/textView5"
@@ -325,15 +325,5 @@
         </android.support.constraint.ConstraintLayout>
 
     </android.support.v4.widget.NestedScrollView>
-
-    <ProgressBar
-        android:id="@+id/user_musician_loading"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_gravity="center"
-        android:layout_marginBottom="8dp" />
 
 </android.support.design.widget.CoordinatorLayout>

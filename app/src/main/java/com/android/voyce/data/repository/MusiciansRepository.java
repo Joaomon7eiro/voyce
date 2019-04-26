@@ -43,9 +43,9 @@ public class MusiciansRepository {
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         if (queryDocumentSnapshots != null) {
                             List<User> musicians = queryDocumentSnapshots.toObjects(User.class);
-                            liveData.postValue(musicians);
+                            liveData.setValue(musicians);
                         }
-                        mIsLoading.postValue(false);
+                        mIsLoading.setValue(false);
                     }
                 });
             }

@@ -1,7 +1,6 @@
 package com.android.voyce.ui.usermusicianprofile;
 
 
-import android.annotation.SuppressLint;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -9,7 +8,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -17,7 +15,6 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -29,7 +26,8 @@ import com.android.voyce.data.model.Goal;
 import com.android.voyce.data.model.Proposal;
 import com.android.voyce.data.model.User;
 import com.android.voyce.ui.LoginActivity;
-import com.android.voyce.ui.MainActivity;
+import com.android.voyce.ui.main.MainActivity;
+import com.android.voyce.utils.Constants;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -40,12 +38,14 @@ import java.util.List;
 public class UserMusicianProfileFragment extends Fragment {
 
     private NestedScrollView mContainer;
-    private ProgressBar mLoading;
     private ImageView mIconStart;
     private ImageView mIconEnd;
 
     private String mUserId;
     private TextView mName;
+    private TextView mFollowers;
+    private TextView mSponsors;
+    private TextView mListeners;
     private TextView mLocation;
     private TextView mGoalValue;
     private TextView mGoalDescription;
@@ -80,22 +80,17 @@ public class UserMusicianProfileFragment extends Fragment {
     };
 
 
-    public static UserMusicianProfileFragment newInstance(String id) {
+    public static UserMusicianProfileFragment newInstance() {
         UserMusicianProfileFragment fragment = new UserMusicianProfileFragment();
-        Bundle args = new Bundle();
-        args.putString("user_id", id);
-
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle args = getArguments();
-        if (args != null) {
-            mUserId = args.getString("user_id");
-        }
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        mUserId = sharedPreferences.getString(Constants.KEY_CURRENT_USER_ID, null);
     }
 
     @Override
@@ -110,7 +105,7 @@ public class UserMusicianProfileFragment extends Fragment {
             public void onClick(View v) {
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
                 SharedPreferences.Editor edit = sharedPreferences.edit();
-                edit.putString("user_id", null);
+                edit.putString(Constants.KEY_CURRENT_USER_ID, null);
                 edit.apply();
                 Intent intent = new Intent(getContext(), LoginActivity.class);
                 startActivity(intent);
@@ -120,9 +115,11 @@ public class UserMusicianProfileFragment extends Fragment {
 
 
         mContainer = view.findViewById(R.id.container_user_musician);
-        mLoading = view.findViewById(R.id.user_musician_loading);
 
         mName = view.findViewById(R.id.user_musician_name);
+        mSponsors = view.findViewById(R.id.user_musician_sponsors_number);
+        mFollowers = view.findViewById(R.id.user_musician_followers_number);
+        mListeners = view.findViewById(R.id.user_musician_listeners_number);
         mLocation = view.findViewById(R.id.user_musician_location);
         mGoalValue = view.findViewById(R.id.user_musician_goal_value);
         mGoalDescription = view.findViewById(R.id.goal_description);
@@ -158,7 +155,6 @@ public class UserMusicianProfileFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         UserMusicianProfileViewModel viewModel = ViewModelProviders.of(this).get(UserMusicianProfileViewModel.class);
-
         viewModel.init(mUserId);
 
         viewModel.getUserLiveData().observe(this, new Observer<User>() {
@@ -166,6 +162,9 @@ public class UserMusicianProfileFragment extends Fragment {
             public void onChanged(@Nullable User user) {
                 if (user != null) {
                     mName.setText(user.getName());
+                    mFollowers.setText(String.valueOf(user.getFollowers()));
+                    mSponsors.setText((String.valueOf(user.getSponsors())));
+                    mListeners.setText((String.valueOf(user.getListeners())));
                     mLocation.setText(getString(R.string.user_location, user.getCity(), user.getState()));
                     mLocation.setText(getString(R.string.user_location, user.getCity(), user.getState()));
                     Picasso.get().load(user.getImage()).into(mImage);
@@ -193,21 +192,6 @@ public class UserMusicianProfileFragment extends Fragment {
                     mRecyclerView.addOnScrollListener(mOnScrollListener);
                 }
                 mAdapter.setData(proposals);
-            }
-        });
-
-        viewModel.getIsLoading().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(@Nullable Boolean isLoading) {
-                if (isLoading != null) {
-                    if (isLoading) {
-                        mContainer.setVisibility(View.GONE);
-                        mLoading.setVisibility(View.VISIBLE);
-                    } else {
-                        mContainer.setVisibility(View.VISIBLE);
-                        mLoading.setVisibility(View.GONE);
-                    }
-                }
             }
         });
     }

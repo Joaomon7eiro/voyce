@@ -1,9 +1,14 @@
 package com.android.voyce.data.repository;
 
+import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
+import com.android.voyce.data.local.AppDatabase;
 import com.android.voyce.data.local.AppExecutors;
+import com.android.voyce.data.local.UserDao;
+import com.android.voyce.data.local.UserGoalDao;
+import com.android.voyce.data.local.UserProposalsDao;
 import com.android.voyce.data.model.Goal;
 import com.android.voyce.data.model.Proposal;
 import com.android.voyce.data.model.User;
@@ -22,96 +27,39 @@ import javax.annotation.Nullable;
 
 public class UserRepository {
     private static UserRepository sInstance;
-    private static String mUserId;
-    private final Executor mExecutor;
-    private final FirebaseFirestore mDb = FirebaseFirestore.getInstance();
-    private MutableLiveData<Boolean> mIsLoading = new MutableLiveData<>();
+    private String mUserId;
+    private final UserDao mUserDao;
+    private final UserGoalDao mUserGoalDao;
+    private final UserProposalsDao mUserProposalsDao;
 
-    private UserRepository(Executor executor) {
-        mExecutor = executor;
+    private UserRepository(UserDao userDao, UserGoalDao userGoalDao, UserProposalsDao userProposalsDao) {
+        mUserDao = userDao;
+        mUserGoalDao = userGoalDao;
+        mUserProposalsDao = userProposalsDao;
     }
 
-    public static UserRepository getInstance(String id) {
+    public static UserRepository getInstance(Application application) {
         if (sInstance == null) {
-            sInstance = new UserRepository(AppExecutors.getInstance().getNetworkIO());
+            sInstance = new UserRepository(AppDatabase.getInstance(application).userDao(),
+                    AppDatabase.getInstance(application).userGoalDao(),
+                    AppDatabase.getInstance(application).userProposalsDao());
         }
-        mUserId = id;
         return sInstance;
     }
 
+    public void setUserId(String id) {
+        mUserId = id;
+    }
+
     public LiveData<User> getUser() {
-        final DocumentReference reference = mDb.collection("users").document(mUserId);
-        final MutableLiveData<User> liveData = new MutableLiveData<>();
-
-        mIsLoading.setValue(true);
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                reference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                    @Override
-                    public void onEvent(@javax.annotation.Nullable DocumentSnapshot documentSnapshot, @javax.annotation.Nullable FirebaseFirestoreException e) {
-                        if (documentSnapshot != null) {
-                            User user = documentSnapshot.toObject(User.class);
-                            liveData.postValue(user);
-                        }
-                        mIsLoading.postValue(false);
-                    }
-                });
-            }
-        });
-
-        return liveData;
+        return mUserDao.getUser(mUserId);
     }
 
     public LiveData<Goal> getGoalValue() {
-        final DocumentReference reference = mDb.collection("goals").document(mUserId);
-        final MutableLiveData<Goal> liveData = new MutableLiveData<>();
-
-        mIsLoading.postValue(true);
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                reference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                        if (documentSnapshot != null) {
-                            Goal goal = documentSnapshot.toObject(Goal.class);
-                            liveData.postValue(goal);
-                        }
-                        mIsLoading.postValue(false);
-                    }
-                });
-            }
-        });
-        return liveData;
+        return mUserGoalDao.getGoal(mUserId);
     }
 
     public LiveData<List<Proposal>> getProposals() {
-        final Query query = mDb.collection("proposals").whereEqualTo("user_id", mUserId);
-        final MutableLiveData<List<Proposal>> liveData = new MutableLiveData<>();
-
-        mIsLoading.postValue(true);
-        mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                query.addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                        if (queryDocumentSnapshots != null) {
-                            List<Proposal> proposals = queryDocumentSnapshots.toObjects(Proposal.class);
-                            if (proposals.size() != 0) {
-                                liveData.postValue(proposals);
-                            }
-                        }
-                        mIsLoading.postValue(false);
-                    }
-                });
-            }
-        });
-        return liveData;
-    }
-
-    public LiveData<Boolean> getLoadingState() {
-        return mIsLoading;
+        return mUserProposalsDao.getProposals(mUserId);
     }
 }

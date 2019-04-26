@@ -1,12 +1,13 @@
 package com.android.voyce.ui.musiciandetails;
 
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -22,10 +23,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.voyce.R;
-import com.android.voyce.data.local.AppDatabase;
 import com.android.voyce.data.model.User;
 import com.android.voyce.data.model.UserFollowingMusician;
-import com.android.voyce.ui.MainActivity;
+import com.android.voyce.ui.main.MainActivity;
 import com.android.voyce.utils.ConnectivityHelper;
 import com.android.voyce.utils.Constants;
 import com.jgabrielfreitas.core.BlurImageView;
@@ -41,6 +41,8 @@ public class MusicianFragment extends Fragment {
     private Button mFollowButton;
 
     private String mId;
+    private String mUserId;
+
     private String[] mTabsTitle;
 
     private ProgressBar mProgressBar;
@@ -49,11 +51,12 @@ public class MusicianFragment extends Fragment {
     private ImageView mProfileImage;
     private TextView mMusicianName;
 
-    private UserFollowingMusician mUserFollowingMusician;
     private Bitmap mBitMapImage;
     private String mName;
 
     private ViewPager mViewPager;
+
+    private MusicianViewModel mViewModel;
 
     private View.OnClickListener mBackOnClickListener = new View.OnClickListener() {
         @Override
@@ -92,6 +95,9 @@ public class MusicianFragment extends Fragment {
             mId = args.getString(Constants.KEY_MUSICIAN_ID);
         }
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        mUserId = sharedPreferences.getString(Constants.KEY_CURRENT_USER_ID, null);
+
         mTabsTitle = new String[]{getString(R.string.info_tab), getString(R.string.proposal_tab)};
     }
 
@@ -99,9 +105,9 @@ public class MusicianFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        MusicianViewModel viewModel = ViewModelProviders.of(this).get(MusicianViewModel.class);
-        viewModel.init(mId);
-        viewModel.getMusician().observe(this, new Observer<User>() {
+        mViewModel = ViewModelProviders.of(this).get(MusicianViewModel.class);
+        mViewModel.init(mId, mUserId);
+        mViewModel.getMusician().observe(this, new Observer<User>() {
             @Override
             public void onChanged(@Nullable User user) {
                 if (user != null) {
@@ -109,7 +115,7 @@ public class MusicianFragment extends Fragment {
                 }
             }
         });
-        viewModel.getIsLoading().observe(this, new Observer<Boolean>() {
+        mViewModel.getIsLoading().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(@Nullable Boolean isLoading) {
                 if (isLoading != null) {
@@ -160,6 +166,12 @@ public class MusicianFragment extends Fragment {
         backButton.setOnClickListener(mBackOnClickListener);
 
         mFollowButton = view.findViewById(R.id.follow_button);
+        mFollowButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mViewModel.handleFollower();
+            }
+        });
 
         mProgressBar = view.findViewById(R.id.musician_details_progress_bar);
         mAppBarLayout = view.findViewById(R.id.musician_details_appbar);

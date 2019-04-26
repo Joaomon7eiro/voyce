@@ -1,5 +1,7 @@
 package com.android.voyce.ui.usermusicianprofile;
 
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
@@ -11,19 +13,23 @@ import com.android.voyce.data.repository.UserRepository;
 
 import java.util.List;
 
-public class UserMusicianProfileViewModel extends ViewModel {
+public class UserMusicianProfileViewModel extends AndroidViewModel {
 
     private LiveData<User> mUserLiveData;
     private LiveData<Goal> mGoalLiveData;
-    private LiveData<Boolean> mIsLoading;
     private LiveData<List<Proposal>> mProposals;
+    private UserRepository mRepository;
+
+    public UserMusicianProfileViewModel(@NonNull Application application) {
+        super(application);
+        mRepository = UserRepository.getInstance(application);
+    }
 
     public void init(String userId) {
-        UserRepository repository = UserRepository.getInstance(userId);
-        mUserLiveData = repository.getUser();
-        mGoalLiveData = repository.getGoalValue();
-        mIsLoading = repository.getLoadingState();
-        mProposals = repository.getProposals();
+        mRepository.setUserId(userId);
+        mUserLiveData = mRepository.getUser();
+        mGoalLiveData = mRepository.getGoalValue();
+        mProposals = mRepository.getProposals();
     }
 
     @NonNull
@@ -33,10 +39,6 @@ public class UserMusicianProfileViewModel extends ViewModel {
 
     public LiveData<Goal> getGoalLiveData() {
         return mGoalLiveData;
-    }
-
-    public LiveData<Boolean> getIsLoading() {
-        return mIsLoading;
     }
 
     public LiveData<List<Proposal>> getProposals() {

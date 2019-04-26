@@ -16,15 +16,19 @@ public class MusicianViewModel extends ViewModel {
     private LiveData<User> mMusician;
     private LiveData<List<Proposal>> mProposals;
     private LiveData<Boolean> mIsLoading;
+    private LiveData<Boolean> mIsFollowing;
+    private MusicianRepository mRepository;
 
-    public void init(String id) {
+    public void init(String id, String userId) {
         if (mMusician != null) {
             return;
         }
-        MusicianRepository repository = MusicianRepository.getInstance(id);
-        mMusician = repository.getMusician();
-        mProposals = repository.getProposals();
-        mIsLoading = repository.getIsLoading();
+        mRepository = MusicianRepository.getInstance(id, userId);
+        mMusician = mRepository.getMusician();
+        mProposals = mRepository.getProposals();
+        mIsLoading = mRepository.getIsLoading();
+        mRepository.handleFollower();
+        mIsFollowing = mRepository.getIsFollowing();
     }
 
     public LiveData<User> getMusician() {
@@ -38,4 +42,13 @@ public class MusicianViewModel extends ViewModel {
     public LiveData<List<Proposal>> getProposals() {
         return mProposals;
     }
+
+    public void handleFollower() {
+        mRepository.handleFollower();
+    }
+
+    public LiveData<Boolean> getIsFollowing() {
+        return mIsFollowing;
+    }
+
 }

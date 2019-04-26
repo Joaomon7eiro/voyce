@@ -28,17 +28,14 @@
                 android:id="@+id/user_background_image"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                android:scaleType="centerCrop"
-                app:radius="2"
-                android:src="@drawable/musician" />
+                android:scaleType="centerCrop" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/user_profile_image"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="16dp"
-                android:src="@drawable/musician" />
+                android:layout_marginTop="16dp" />
 
             <TextView
                 android:id="@+id/user_name"
@@ -47,7 +44,6 @@
                 android:layout_below="@id/user_profile_image"
                 android:layout_centerHorizontal="true"
                 android:textColor="@android:color/white"
-                android:text="Clairo"
                 android:textSize="24sp"
                 android:textStyle="bold" />
 

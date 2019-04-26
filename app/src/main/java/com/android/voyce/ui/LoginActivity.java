@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import com.android.voyce.R;
+import com.android.voyce.ui.main.MainActivity;
+import com.android.voyce.utils.Constants;
 
 //TODO: remove this
 public class LoginActivity extends AppCompatActivity {
@@ -26,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 SharedPreferences.Editor edit = sharedPreferences.edit();
-                edit.putString("user_id", "TCHpYZ5lrN01XjXFQNik");
+                edit.putString(Constants.KEY_CURRENT_USER_ID, "TCHpYZ5lrN01XjXFQNik");
                 edit.apply();
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
@@ -39,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 SharedPreferences.Editor edit = sharedPreferences.edit();
-                edit.putString("user_id", "M27GyPNKIWpzCIhqlTxm");
+                edit.putString(Constants.KEY_CURRENT_USER_ID, "M27GyPNKIWpzCIhqlTxm");
                 edit.apply();
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
@@ -52,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 SharedPreferences.Editor edit = sharedPreferences.edit();
-                edit.putString("user_id", "OwMoePF4KTZxGoe07tno");
+                edit.putString(Constants.KEY_CURRENT_USER_ID, "OwMoePF4KTZxGoe07tno");
                 edit.apply();
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);

@@ -1,23 +1,25 @@
 package com.android.voyce.data.model;
 
+import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
+@Entity
 public class Proposal {
+
+    @NonNull
+    @PrimaryKey
+    private String id;
+    @NonNull
+    private String user_id;
     private String name;
     private String image;
     private String description;
     private double price;
 
-    public Proposal(String name, String imageUrl, String description, double price) {
-        this.name = name;
-        this.image = imageUrl;
-        this.description = description;
-        this.price = price;
-    }
-
-    @Ignore
     public Proposal() {}
 
     public String getName() {
@@ -50,5 +52,23 @@ public class Proposal {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    @NonNull
+    public String getId() {
+        return id;
+    }
+
+    public void setId(@NonNull String id) {
+        this.id = id;
+    }
+
+    @NonNull
+    public String getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(@NonNull String user_id) {
+        this.user_id = user_id;
     }
 }

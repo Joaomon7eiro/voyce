@@ -2,15 +2,13 @@ package com.android.voyce.data.repository;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.android.voyce.data.local.AppExecutors;
-import com.android.voyce.data.model.Musician;
 import com.android.voyce.data.model.Proposal;
 import com.android.voyce.data.model.User;
-import com.android.voyce.data.remote.ApiWebService;
-import com.android.voyce.data.remote.WebService;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -18,35 +16,37 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
 
 public class MusicianRepository {
     private static MusicianRepository sInstance;
+    private static String mMusicianId;
     private static String mUserId;
     private final FirebaseFirestore mDb = FirebaseFirestore.getInstance();
     private final Executor mExecutor;
     private MutableLiveData<Boolean> mIsLoading = new MutableLiveData<>();
+    private boolean mIsFollowing;
+    private String mMusicianFollowerId;
 
     private MusicianRepository(Executor executor) {
         mExecutor = executor;
     }
 
-    public static MusicianRepository getInstance(String id) {
+    public static MusicianRepository getInstance(String musicianId, String userId) {
         if (sInstance == null) {
             sInstance = new MusicianRepository(AppExecutors.getInstance().getNetworkIO());
         }
-        mUserId = id;
+        mMusicianId = musicianId;
+        mUserId = userId;
         return sInstance;
     }
 
     public LiveData<User> getMusician() {
-        final DocumentReference reference = mDb.collection("users").document(mUserId);
+        final DocumentReference reference = mDb.collection("users").document(mMusicianId);
         final MutableLiveData<User> liveData = new MutableLiveData<>();
 
         mIsLoading.setValue(true);
@@ -69,7 +69,7 @@ public class MusicianRepository {
     }
 
     public LiveData<List<Proposal>> getProposals() {
-        final Query query = mDb.collection("proposals").whereEqualTo("user_id", mUserId);
+        final Query query = mDb.collection("proposals").whereEqualTo("user_id", mMusicianId);
         final MutableLiveData<List<Proposal>> liveData = new MutableLiveData<>();
 
         mIsLoading.setValue(true);
@@ -91,7 +91,53 @@ public class MusicianRepository {
         return liveData;
     }
 
+    public void handleFollower() {
+
+        if (!mIsFollowing) {
+            Map<String, Object> followers = new HashMap<>();
+            followers.put("follower_id", mUserId);
+            followers.put("musician_id", mMusicianId);
+
+            Task<DocumentReference> data = mDb.collection("musician_followers").add(followers);
+            data.addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                @Override
+                public void onSuccess(DocumentReference documentReference) {
+                    mMusicianFollowerId = documentReference.getId();
+                }
+            });
+        } else {
+            mDb.collection("musician_followers").document(mMusicianFollowerId).delete();
+        }
+
+    }
+
     public LiveData<Boolean> getIsLoading() {
         return mIsLoading;
     }
+
+    public LiveData<Boolean> getIsFollowing() {
+        final MutableLiveData<Boolean> isFollowing = new MutableLiveData<>();
+
+        final Query query = mDb.collection("musician_followers")
+                .whereEqualTo("musician_id", mMusicianId).whereEqualTo("follower_id", mUserId);
+
+        query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                if (queryDocumentSnapshots != null) {
+                    if (queryDocumentSnapshots.size() > 0) {
+                        List<DocumentSnapshot> data = queryDocumentSnapshots.getDocuments();
+                        mMusicianFollowerId = data.get(0).getId();
+                        isFollowing.setValue(true);
+                        mIsFollowing = true;
+                    } else {
+                        isFollowing.setValue(false);
+                        mIsFollowing = false;
+                    }
+                }
+            }
+        });
+        return isFollowing;
+    }
+
 }

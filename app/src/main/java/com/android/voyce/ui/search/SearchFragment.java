@@ -16,13 +16,11 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.android.voyce.data.model.User;
-import com.android.voyce.ui.MainActivity;
+import com.android.voyce.ui.main.MainActivity;
 import com.android.voyce.ui.musiciandetails.MusicianFragment;
 import com.android.voyce.R;
-import com.android.voyce.data.model.Musician;
 import com.android.voyce.utils.ConnectivityHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,6 +33,11 @@ public class SearchFragment extends Fragment implements MusiciansAdapter.ListIte
     RecyclerView mMusiciansGridRecyclerView;
 
     public SearchFragment() {}
+
+    public static SearchFragment newInstance() {
+        SearchFragment fragment = new SearchFragment();
+        return fragment;
+    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
