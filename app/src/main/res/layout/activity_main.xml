@@ -8,16 +8,6 @@
     android:orientation="vertical"
     tools:context=".ui.MainActivity">
 
-    <!--TODO: remove this -->
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/logout"
-        android:layout_width="wrap_content"
-        app:fabSize="mini"
-        android:src="@drawable/ic_action_home"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_height="wrap_content" />
-
     <FrameLayout
         android:id="@+id/fragments_container"
         android:layout_width="match_parent"

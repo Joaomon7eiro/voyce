@@ -17,6 +17,7 @@ import com.android.voyce.R;
 import com.android.voyce.data.model.Proposal;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -38,21 +39,12 @@ public class ProposalFragment extends Fragment{
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         MusicianViewModel viewModel = ViewModelProviders.of(getParentFragment()).get(MusicianViewModel.class);
-//        viewModel.getProposals().observe(getParentFragment(), new Observer<List<Proposal>>() {
-//            @Override
-//            public void onChanged(@Nullable List<Proposal> proposals) {
-//                if (proposals != null) {
-//                    mAdapter.setData((ArrayList<Proposal>) proposals);
-//                }
-//            }
-//        });
-        viewModel.getProposals().observe(getParentFragment(), new Observer<Proposal>() {
+
+        viewModel.getProposals().observe(getParentFragment(), new Observer<List<Proposal>>() {
             @Override
-            public void onChanged(@Nullable Proposal proposals) {
+            public void onChanged(@Nullable List<Proposal> proposals) {
                 if (proposals != null) {
-                    ArrayList<Proposal> proposalArrayList = new ArrayList<>();
-                    proposalArrayList.add(proposals);
-                    mAdapter.setData(proposalArrayList);
+                    mAdapter.setData(proposals);
                 }
             }
         });

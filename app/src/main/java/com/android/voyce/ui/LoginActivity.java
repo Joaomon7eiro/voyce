@@ -33,5 +33,31 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        user2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                SharedPreferences.Editor edit = sharedPreferences.edit();
+                edit.putString("user_id", "M27GyPNKIWpzCIhqlTxm");
+                edit.apply();
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        user3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                SharedPreferences.Editor edit = sharedPreferences.edit();
+                edit.putString("user_id", "OwMoePF4KTZxGoe07tno");
+                edit.apply();
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 }

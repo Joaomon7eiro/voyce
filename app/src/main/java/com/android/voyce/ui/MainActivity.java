@@ -22,6 +22,7 @@ import com.android.voyce.ui.usermusicianprofile.UserMusicianProfileFragment;
 import com.android.voyce.ui.userprofile.UserProfileFragment;
 import com.android.voyce.utils.ConnectivityHelper;
 import com.android.voyce.utils.Constants;
+import com.google.firebase.FirebaseApp;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private FrameLayout mFrameLayout;
     private BottomNavigationView mNavigation;
     private FloatingActionButton mFloatingButton;
+    private String mUserId;
 
     private int mCurrentMenuId = R.id.navigation_search;
 
@@ -62,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
                     fragment = new UserProfileFragment();
                     break;
                 case R.id.navigation_musician:
-                    fragment = new UserMusicianProfileFragment();
+                    fragment = UserMusicianProfileFragment.newInstance(mUserId);
                     break;
                 default:
                     return false;
@@ -92,8 +94,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void openFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out,
-                R.anim.fade_in, R.anim.fade_out);
+//        transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out,
+//                R.anim.fade_in, R.anim.fade_out);
         transaction.replace(R.id.fragments_container, fragment);
         transaction.commit();
     }
@@ -106,21 +108,6 @@ public class MainActivity extends AppCompatActivity {
         verifyUser();
 
         setContentView(R.layout.activity_main);
-
-        // TODO: remove this
-        FloatingActionButton logout = findViewById(R.id.logout);
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                SharedPreferences.Editor edit = sharedPreferences.edit();
-                edit.putString("user_id", null);
-                edit.apply();
-                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
 
         mNavigation = findViewById(R.id.navigation);
         mNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -141,13 +128,12 @@ public class MainActivity extends AppCompatActivity {
     // TODO: remove this
     private void verifyUser() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String userId = sharedPreferences.getString("user_id", null);
-        if (userId == null) {
+        mUserId = sharedPreferences.getString("user_id", null);
+        if (mUserId == null) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
         }
-
     }
 
     @Override

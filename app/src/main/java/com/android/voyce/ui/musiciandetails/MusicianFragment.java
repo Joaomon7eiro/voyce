@@ -23,9 +23,8 @@ import android.widget.TextView;
 
 import com.android.voyce.R;
 import com.android.voyce.data.local.AppDatabase;
-import com.android.voyce.data.local.AppExecutors;
+import com.android.voyce.data.model.User;
 import com.android.voyce.data.model.UserFollowingMusician;
-import com.android.voyce.data.model.Musician;
 import com.android.voyce.ui.MainActivity;
 import com.android.voyce.utils.ConnectivityHelper;
 import com.android.voyce.utils.Constants;
@@ -33,7 +32,6 @@ import com.jgabrielfreitas.core.BlurImageView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import java.util.concurrent.Executor;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,7 +39,6 @@ import java.util.concurrent.Executor;
 public class MusicianFragment extends Fragment {
 
     private Button mFollowButton;
-    private boolean isFollowing = false;
 
     private String mId;
     private String[] mTabsTitle;
@@ -57,37 +54,6 @@ public class MusicianFragment extends Fragment {
     private String mName;
 
     private ViewPager mViewPager;
-    private AppDatabase mDb;
-
-    private View.OnClickListener mFollowOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            isFollowing = !isFollowing;
-            Executor executor = AppExecutors.getInstance().getDiskIO();
-            if (isFollowing) {
-                mFollowButton.setBackground(getResources().getDrawable(R.drawable.rounded_background));
-                mFollowButton.setText(getString(R.string.following));
-                executor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mUserFollowingMusician == null) {
-                            mUserFollowingMusician = new UserFollowingMusician(mId, mName, mBitMapImage);
-                        }
-                        mDb.userFollowingMusicianDao().insertMusician(mUserFollowingMusician);
-                    }
-                });
-            } else {
-                mFollowButton.setBackground(getResources().getDrawable(R.drawable.transparent_bg_bordered));
-                mFollowButton.setText(getString(R.string.follow));
-                executor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        mDb.userFollowingMusicianDao().deleteMusician(mUserFollowingMusician);
-                    }
-                });
-            }
-        }
-    };
 
     private View.OnClickListener mBackOnClickListener = new View.OnClickListener() {
         @Override
@@ -125,13 +91,21 @@ public class MusicianFragment extends Fragment {
         if (args != null) {
             mId = args.getString(Constants.KEY_MUSICIAN_ID);
         }
+
+        mTabsTitle = new String[]{getString(R.string.info_tab), getString(R.string.proposal_tab)};
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
         MusicianViewModel viewModel = ViewModelProviders.of(this).get(MusicianViewModel.class);
         viewModel.init(mId);
-        viewModel.getMusician().observe(this, new Observer<Musician>() {
+        viewModel.getMusician().observe(this, new Observer<User>() {
             @Override
-            public void onChanged(@Nullable Musician musician) {
-                if (musician != null) {
-                    updateUi(musician);
+            public void onChanged(@Nullable User user) {
+                if (user != null) {
+                    updateUi(user);
                 }
             }
         });
@@ -151,11 +125,10 @@ public class MusicianFragment extends Fragment {
                 }
             }
         });
-        mTabsTitle = new String[]{getString(R.string.info_tab), getString(R.string.proposal_tab)};
     }
 
-    private void updateUi(Musician musician) {
-        Picasso.get().load(musician.getImageUrl()).into(new Target() {
+    private void updateUi(User user) {
+        Picasso.get().load(user.getImage()).into(new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                 mBitMapImage = bitmap;
@@ -173,7 +146,7 @@ public class MusicianFragment extends Fragment {
             }
         });
 
-        mName = musician.getName();
+        mName = user.getName();
         mMusicianName.setText(mName);
     }
 
@@ -187,7 +160,6 @@ public class MusicianFragment extends Fragment {
         backButton.setOnClickListener(mBackOnClickListener);
 
         mFollowButton = view.findViewById(R.id.follow_button);
-        mFollowButton.setOnClickListener(mFollowOnClickListener);
 
         mProgressBar = view.findViewById(R.id.musician_details_progress_bar);
         mAppBarLayout = view.findViewById(R.id.musician_details_appbar);
@@ -202,21 +174,6 @@ public class MusicianFragment extends Fragment {
         MusicianFragmentPagerAdapter mPagerAdapter = new MusicianFragmentPagerAdapter(getChildFragmentManager(), mTabsTitle);
         mViewPager.setAdapter(mPagerAdapter);
         tabLayout.setupWithViewPager(mViewPager);
-
-        mDb = AppDatabase.getInstance(getContext());
-
-        LiveData<UserFollowingMusician> musician = mDb.userFollowingMusicianDao().queryMusiciansById(mId);
-        musician.observe(this, new Observer<UserFollowingMusician>() {
-            @Override
-            public void onChanged(@Nullable UserFollowingMusician userFollowingMusician) {
-                mUserFollowingMusician = userFollowingMusician;
-                if (mUserFollowingMusician != null) {
-                    isFollowing = true;
-                    mFollowButton.setBackground(getResources().getDrawable(R.drawable.rounded_background));
-                    mFollowButton.setText(getString(R.string.following));
-                }
-            }
-        });
 
         return view;
     }

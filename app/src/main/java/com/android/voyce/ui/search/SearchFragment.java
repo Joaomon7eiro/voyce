@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.android.voyce.data.model.User;
 import com.android.voyce.ui.MainActivity;
 import com.android.voyce.ui.musiciandetails.MusicianFragment;
 import com.android.voyce.R;
@@ -42,10 +43,10 @@ public class SearchFragment extends Fragment implements MusiciansAdapter.ListIte
         SearchViewModel viewModel = ViewModelProviders.of(this).get(SearchViewModel.class);
         viewModel.init();
 
-        viewModel.getMusicians().observe(this, new Observer<List<Musician>>() {
+        viewModel.getMusicians().observe(this, new Observer<List<User>>() {
             @Override
-            public void onChanged(@Nullable List<Musician> musicians) {
-                mMusiciansAdapter.setData((ArrayList<Musician>) musicians);
+            public void onChanged(@Nullable List<User> users) {
+                mMusiciansAdapter.setData(users);
             }
         });
 
@@ -88,7 +89,7 @@ public class SearchFragment extends Fragment implements MusiciansAdapter.ListIte
     @Override
     public void onListItemClick(int index) {
         if (ConnectivityHelper.isConnected(getContext())) {
-            Musician musician = mMusiciansAdapter.getData().get(index);
+            User musician = mMusiciansAdapter.getData().get(index);
 
             MusicianFragment musicianFragment = MusicianFragment.newInstance(musician.getId());
 

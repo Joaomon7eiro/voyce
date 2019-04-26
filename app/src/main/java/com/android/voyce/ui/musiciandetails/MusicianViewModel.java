@@ -6,26 +6,28 @@ import android.arch.lifecycle.ViewModel;
 
 import com.android.voyce.data.model.Musician;
 import com.android.voyce.data.model.Proposal;
+import com.android.voyce.data.model.User;
 import com.android.voyce.data.repository.MusicianRepository;
+
+import java.util.List;
 
 public class MusicianViewModel extends ViewModel {
 
-    private MutableLiveData<Musician> mMusician;
-    //private MutableLiveData<List<Proposal>> mProposals;
-    private MutableLiveData<Proposal> mProposals;
-    private MutableLiveData<Boolean> mIsLoading = new MutableLiveData<>();
+    private LiveData<User> mMusician;
+    private LiveData<List<Proposal>> mProposals;
+    private LiveData<Boolean> mIsLoading;
 
     public void init(String id) {
         if (mMusician != null) {
             return;
         }
-        MusicianRepository repository = MusicianRepository.getInstance();
-        mMusician = repository.getMusician(id);
-        mProposals = repository.getProposals(id);
+        MusicianRepository repository = MusicianRepository.getInstance(id);
+        mMusician = repository.getMusician();
+        mProposals = repository.getProposals();
         mIsLoading = repository.getIsLoading();
     }
 
-    public LiveData<Musician> getMusician() {
+    public LiveData<User> getMusician() {
         return mMusician;
     }
 
@@ -33,11 +35,7 @@ public class MusicianViewModel extends ViewModel {
         return mIsLoading;
     }
 
-    public LiveData<Proposal> getProposals() {
+    public LiveData<List<Proposal>> getProposals() {
         return mProposals;
     }
-
-//    public LiveData<List<Proposal>> getProposals() {
-//        return mProposals;
-//    }
 }

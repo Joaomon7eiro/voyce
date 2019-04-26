@@ -1,13 +1,25 @@
 package com.android.voyce.data.repository;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
 
+import com.android.voyce.data.local.AppExecutors;
 import com.android.voyce.data.model.Musician;
 import com.android.voyce.data.model.Proposal;
+import com.android.voyce.data.model.User;
 import com.android.voyce.data.remote.ApiWebService;
 import com.android.voyce.data.remote.WebService;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
+
+import java.util.List;
+import java.util.concurrent.Executor;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -16,88 +28,70 @@ import retrofit2.Retrofit;
 
 public class MusicianRepository {
     private static MusicianRepository sInstance;
+    private static String mUserId;
+    private final FirebaseFirestore mDb = FirebaseFirestore.getInstance();
+    private final Executor mExecutor;
     private MutableLiveData<Boolean> mIsLoading = new MutableLiveData<>();
 
-    public static MusicianRepository getInstance() {
+    private MusicianRepository(Executor executor) {
+        mExecutor = executor;
+    }
+
+    public static MusicianRepository getInstance(String id) {
         if (sInstance == null) {
-            sInstance = new MusicianRepository();
+            sInstance = new MusicianRepository(AppExecutors.getInstance().getNetworkIO());
         }
+        mUserId = id;
         return sInstance;
     }
 
-    public MutableLiveData<Musician> getMusician(String id) {
-        Retrofit client = ApiWebService.getInstance();
-        WebService webService = client.create(WebService.class);
-
-        Call<Musician> call = webService.getMusician(id);
-
-        final MutableLiveData<Musician> data = new MutableLiveData<>();
+    public LiveData<User> getMusician() {
+        final DocumentReference reference = mDb.collection("users").document(mUserId);
+        final MutableLiveData<User> liveData = new MutableLiveData<>();
 
         mIsLoading.setValue(true);
-        call.enqueue(new Callback<Musician>() {
+        mExecutor.execute(new Runnable() {
             @Override
-            public void onResponse(@NonNull Call<Musician> call, @NonNull Response<Musician> response) {
-                mIsLoading.setValue(false);
-                data.setValue(response.body());
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<Musician> call, @NonNull Throwable t) {
-                mIsLoading.setValue(false);
+            public void run() {
+                reference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                        if (documentSnapshot != null) {
+                            User musician = documentSnapshot.toObject(User.class);
+                            liveData.postValue(musician);
+                        }
+                        mIsLoading.postValue(false);
+                    }
+                });
             }
         });
-        return data;
+        return liveData;
     }
 
-    public MutableLiveData<Proposal> getProposals(String id) {
-        Retrofit client = ApiWebService.getInstance();
-        WebService webService = client.create(WebService.class);
-
-        Call<Proposal> call = webService.getMusicianProposals(id);
-
-        final MutableLiveData<Proposal> data = new MutableLiveData<>();
+    public LiveData<List<Proposal>> getProposals() {
+        final Query query = mDb.collection("proposals").whereEqualTo("user_id", mUserId);
+        final MutableLiveData<List<Proposal>> liveData = new MutableLiveData<>();
 
         mIsLoading.setValue(true);
-        call.enqueue(new Callback<Proposal>() {
+        mExecutor.execute(new Runnable() {
             @Override
-            public void onResponse(@NonNull Call<Proposal> call, @NonNull Response<Proposal> response) {
-                mIsLoading.setValue(false);
-                data.setValue(response.body());
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<Proposal> call, @NonNull Throwable t) {
-                mIsLoading.setValue(false);
+            public void run() {
+                query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (queryDocumentSnapshots != null) {
+                            List<Proposal> proposals = queryDocumentSnapshots.toObjects(Proposal.class);
+                            liveData.postValue(proposals);
+                        }
+                        mIsLoading.postValue(false);
+                    }
+                });
             }
         });
-        return data;
+        return liveData;
     }
 
-//    public MutableLiveData<List<Proposal>> getProposals(String id) {
-//        Retrofit client = ApiWebService.getInstance();
-//        WebService webService = client.create(WebService.class);
-//
-//        Call<List<Proposal>> call = webService.getMusicianProposals(id);
-//
-//        final MutableLiveData<List<Proposal>> data = new MutableLiveData<>();
-//
-//        mIsLoading.setValue(true);
-//        call.enqueue(new Callback<List<Proposal>>() {
-//            @Override
-//            public void onResponse(Call<List<Proposal>> call, Response<List<Proposal>> response) {
-//                mIsLoading.setValue(false);
-//                data.setValue(response.body());
-//            }
-//
-//            @Override
-//            public void onFailure(Call<List<Proposal>> call, Throwable t) {
-//                mIsLoading.setValue(false);
-//            }
-//        });
-//        return data;
-//    }
-
-    public MutableLiveData<Boolean> getIsLoading() {
+    public LiveData<Boolean> getIsLoading() {
         return mIsLoading;
     }
 }

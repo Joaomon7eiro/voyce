@@ -1,73 +1,60 @@
 package com.android.voyce.data.repository;
 
-import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
-import com.android.voyce.data.local.AppDatabase;
 import com.android.voyce.data.local.AppExecutors;
-import com.android.voyce.data.local.MusicianDao;
-import com.android.voyce.data.model.Musician;
-import com.android.voyce.data.remote.ApiWebService;
-import com.android.voyce.data.remote.WebService;
+import com.android.voyce.data.model.User;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
-import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MusiciansRepository {
     private static MusiciansRepository sInstance;
-    private static Executor sExecutor;
-    private static WebService sWebService;
-    private static MusicianDao sMusicianDao;
-
+    private final Executor mExecutor;
+    private final FirebaseFirestore mDb = FirebaseFirestore.getInstance();
     private MutableLiveData<Boolean> mIsLoading = new MutableLiveData<>();
 
-    public static MusiciansRepository getInstance(Application application) {
+    private MusiciansRepository(Executor executor) {
+        mExecutor = executor;
+    }
+    public static MusiciansRepository getInstance() {
         if (sInstance == null) {
-            sInstance = new MusiciansRepository();
-            sWebService = ApiWebService.getWebService();
-            sExecutor = AppExecutors.getInstance().getDiskIO();
-            sMusicianDao = AppDatabase.getInstance(application).musicianDao();
+            sInstance = new MusiciansRepository(AppExecutors.getInstance().getNetworkIO());
         }
         return sInstance;
     }
 
-    public LiveData<List<Musician>> getMusicians() {
-        refreshUser();
+    public LiveData<List<User>> getMusicians() {
+        final Query query = mDb.collection("users").whereEqualTo("type",  1);
+        final MutableLiveData<List<User>> liveData = new MutableLiveData<>();
 
-        return sMusicianDao.getMusicians();
-    }
-
-    private void refreshUser() {
-        sExecutor.execute(new Runnable() {
+        mIsLoading.setValue(true);
+        mExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-                boolean needsRefresh = (sMusicianDao.getRefreshMusicians(timestamp.getTime()) > 0);
-                if (needsRefresh) {
-                    mIsLoading.postValue(true);
-                    try {
-                        Response<List<Musician>> response = sWebService.getMusicians().execute();
-                        for (Musician musician: response.body()) {
-                            musician.setLastUpdateTimestamp(timestamp.getTime());
+                query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (queryDocumentSnapshots != null) {
+                            List<User> musicians = queryDocumentSnapshots.toObjects(User.class);
+                            liveData.postValue(musicians);
                         }
-                        sMusicianDao.insertMusicians(response.body());
                         mIsLoading.postValue(false);
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
-                }
+                });
             }
         });
+
+        return liveData;
     }
 
-    public MutableLiveData<Boolean> getIsLoading() {
+    public LiveData<Boolean> getIsLoading() {
         return mIsLoading;
     }
 }

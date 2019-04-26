@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.Musician;
+import com.android.voyce.data.model.User;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,25 +43,26 @@ public class MusicianInfoFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         MusicianViewModel viewModel = ViewModelProviders.of(getParentFragment()).get(MusicianViewModel.class);
-        viewModel.getMusician().observe(getParentFragment(), new Observer<Musician>() {
+        viewModel.getMusician().observe(getParentFragment(), new Observer<User>() {
             @Override
-            public void onChanged(@Nullable Musician musician) {
-                if (musician != null) {
-                    mBiography.setText(musician.getBiography());
-                    String monthlyIncome = String.valueOf(musician.getMonthlyIncome());
+            public void onChanged(@Nullable User user) {
+                if (user != null) {
+                    mBiography.setText(user.getBiography());
+                    String monthlyIncome = String.valueOf("0");
 
                     mMonthlyIncome.setText(getString(R.string.monthly_income_value, monthlyIncome));
-                    mTotalSponsors.setText(String.valueOf(musician.getSponsorsNumber()));
+                    mTotalSponsors.setText(String.valueOf(user.getSponsors()));
 
                     Linkify.TransformFilter transformFilter = new Linkify.TransformFilter() {
                         public final String transformUrl(final Matcher match, String url) {
                             return "";
                         }
                     };
-                    Linkify.addLinks(mInstagram, Pattern.compile(getString(R.string.instagram)), musician.getInstagramUrl(), null, transformFilter);
-                    Linkify.addLinks(mFacebook, Pattern.compile(getString(R.string.facebook)), musician.getFacebookUrl(), null, transformFilter);
-                    Linkify.addLinks(mTwitter, Pattern.compile(getString(R.string.twitter)), musician.getTwitterUrl(), null, transformFilter);
+                    Linkify.addLinks(mInstagram, Pattern.compile(getString(R.string.instagram)), user.getInstagram_url(), null, transformFilter);
+                    Linkify.addLinks(mFacebook, Pattern.compile(getString(R.string.facebook)), user.getFacebook_url(), null, transformFilter);
+                    Linkify.addLinks(mTwitter, Pattern.compile(getString(R.string.twitter)), user.getTwitter_url(), null, transformFilter);
                 }
             }
         });

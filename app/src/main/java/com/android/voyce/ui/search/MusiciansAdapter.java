@@ -10,14 +10,16 @@ import android.widget.TextView;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.Musician;
+import com.android.voyce.data.model.User;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.MusiciansAdapterViewHolder> {
 
     private final ListItemClickListener mOnClickListener;
-    private ArrayList<Musician> mMusiciansData;
+    private List<User> mMusiciansData = new ArrayList<>();
 
     public MusiciansAdapter(ListItemClickListener listItemClickListener) {
         mOnClickListener = listItemClickListener;
@@ -33,15 +35,15 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
 
     @Override
     public void onBindViewHolder(@NonNull MusiciansAdapterViewHolder musiciansAdapterViewHolder, int i) {
-        Musician musician = mMusiciansData.get(i);
+        User musician = mMusiciansData.get(i);
         musiciansAdapterViewHolder.mName.setText(musician.getName());
         musiciansAdapterViewHolder.mListeners.setText(formatNumber(
-                String.valueOf(musician.getListenersNumber())));
+                String.valueOf(musician.getListeners())));
         musiciansAdapterViewHolder.mFollowers.setText(formatNumber(
-                String.valueOf(musician.getFollowersNumber())));
+                String.valueOf(musician.getFollowers())));
         musiciansAdapterViewHolder.mSponsors.setText(formatNumber(
-                String.valueOf(musician.getSponsorsNumber())));
-        Picasso.get().load(musician.getImageUrl()).into(musiciansAdapterViewHolder.mImage);
+                String.valueOf(musician.getSponsors())));
+        Picasso.get().load(musician.getImage()).into(musiciansAdapterViewHolder.mImage);
     }
 
     @Override
@@ -90,11 +92,11 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
         void onListItemClick(int index);
     }
 
-    public ArrayList<Musician> getData() {
+    public List<User> getData() {
         return mMusiciansData;
     }
 
-    public void setData(ArrayList<Musician> musiciansData) {
+    public void setData(List<User> musiciansData) {
         mMusiciansData = musiciansData;
         notifyDataSetChanged();
     }

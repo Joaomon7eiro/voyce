@@ -1,10 +1,14 @@
 package com.android.voyce.data.model;
 
 public class User {
+    private String id;
     private String name;
     private String image;
     private String city;
     private String state;
+    private long sponsors;
+    private long listeners;
+    private long followers;
     private String facebook_url;
     private String instagram_url;
     private String twitter_url;
@@ -94,5 +98,37 @@ public class User {
 
     public void setGoal_value(double goal_value) {
         this.goal_value = goal_value;
+    }
+
+    public long getSponsors() {
+        return sponsors;
+    }
+
+    public void setSponsors(long sponsors) {
+        this.sponsors = sponsors;
+    }
+
+    public long getListeners() {
+        return listeners;
+    }
+
+    public void setListeners(long listeners) {
+        this.listeners = listeners;
+    }
+
+    public long getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(long followers) {
+        this.followers = followers;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

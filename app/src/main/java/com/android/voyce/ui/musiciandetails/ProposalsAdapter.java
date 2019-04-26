@@ -14,10 +14,11 @@ import com.android.voyce.data.model.Proposal;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ProposalsAdapter extends RecyclerView.Adapter<ProposalsAdapter.ProposalAdapterViewHolder> {
 
-    private ArrayList<Proposal> mProposals;
+    private List<Proposal> mProposals = new ArrayList<>();
     private int mExpandedPosition = -1;
 
     public ProposalsAdapter() {}
@@ -46,7 +47,7 @@ public class ProposalsAdapter extends RecyclerView.Adapter<ProposalsAdapter.Prop
             }
         });
 
-        Picasso.get().load(proposal.getImageUrl()).into(proposalHolder.mImage);
+        //Picasso.get().load(proposal.getImage()).into(proposalHolder.mImage);
         proposalHolder.mDescription.setText(proposal.getDescription());
         proposalHolder.mName.setText(proposal.getName());
         proposalHolder.mPrice.setText(String.valueOf(proposal.getPrice()));
@@ -79,7 +80,7 @@ public class ProposalsAdapter extends RecyclerView.Adapter<ProposalsAdapter.Prop
         }
     }
 
-    public void setData(ArrayList<Proposal> proposals) {
+    public void setData(List<Proposal> proposals) {
         mProposals = proposals;
         notifyDataSetChanged();
     }
