@@ -142,6 +142,16 @@ public class MainActivity extends AppCompatActivity {
         } else {
             MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
             viewModel.init(mUserId);
+            viewModel.getUserLiveData().observe(this, new Observer<User>() {
+                @Override
+                public void onChanged(@Nullable User user) {
+                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    SharedPreferences.Editor edit = sharedPreferences.edit();
+                    edit.putString(Constants.KEY_CURRENT_USER_IMAGE, user.getImage());
+                    edit.putString(Constants.KEY_CURRENT_USER_NAME, user.getName());
+                    edit.apply();
+                }
+            });
         }
     }
 

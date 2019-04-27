@@ -1,17 +1,21 @@
 package com.android.voyce.ui.musiciandetails;
 
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.support.annotation.NonNull;
 
 import com.android.voyce.data.model.Musician;
 import com.android.voyce.data.model.Proposal;
 import com.android.voyce.data.model.User;
+import com.android.voyce.data.model.UserFollowingMusician;
 import com.android.voyce.data.repository.MusicianRepository;
 
 import java.util.List;
 
-public class MusicianViewModel extends ViewModel {
+public class MusicianViewModel extends AndroidViewModel {
 
     private LiveData<User> mMusician;
     private LiveData<List<Proposal>> mProposals;
@@ -19,15 +23,19 @@ public class MusicianViewModel extends ViewModel {
     private LiveData<Boolean> mIsFollowing;
     private MusicianRepository mRepository;
 
-    public void init(String id, String userId) {
+    public MusicianViewModel(@NonNull Application application) {
+        super(application);
+        mRepository = MusicianRepository.getInstance(application);
+    }
+
+    public void init(UserFollowingMusician userFollowingMusician) {
         if (mMusician != null) {
             return;
         }
-        mRepository = MusicianRepository.getInstance(id, userId);
+        mRepository.setUserFollowingMusician(userFollowingMusician);
         mMusician = mRepository.getMusician();
         mProposals = mRepository.getProposals();
         mIsLoading = mRepository.getIsLoading();
-        mRepository.handleFollower();
         mIsFollowing = mRepository.getIsFollowing();
     }
 

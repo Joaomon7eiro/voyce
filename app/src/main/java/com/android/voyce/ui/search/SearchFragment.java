@@ -94,7 +94,8 @@ public class SearchFragment extends Fragment implements MusiciansAdapter.ListIte
         if (ConnectivityHelper.isConnected(getContext())) {
             User musician = mMusiciansAdapter.getData().get(index);
 
-            MusicianFragment musicianFragment = MusicianFragment.newInstance(musician.getId());
+            MusicianFragment musicianFragment = MusicianFragment.newInstance(musician.getId(),
+                    musician.getName(), musician.getImage());
 
             if (getFragmentManager() != null) {
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();

@@ -1,8 +1,8 @@
 package com.android.voyce.ui.userprofile;
 
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,8 +15,6 @@ import android.view.ViewGroup;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.UserFollowingMusician;
-import com.android.voyce.ui.musiciandetails.MusicianFragment;
-import com.android.voyce.data.local.AppDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,14 +31,11 @@ public class UserFollowingFragment extends Fragment implements UserFollowingAdap
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user_following, container, false);
-
-        AppDatabase db = AppDatabase.getInstance(getContext());
 
         RecyclerView recyclerView = view.findViewById(R.id.rv_user_following);
 
@@ -49,16 +44,6 @@ public class UserFollowingFragment extends Fragment implements UserFollowingAdap
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mAdapter);
-
-        final LiveData<List<UserFollowingMusician>> musicians = db.userFollowingMusicianDao().queryMusicians();
-        musicians.observe(this, new Observer<List<UserFollowingMusician>>() {
-            @Override
-            public void onChanged(@Nullable List<UserFollowingMusician> userFollowingMusicians) {
-                mUserFollowingMusicians = (ArrayList<UserFollowingMusician>) userFollowingMusicians;
-                mAdapter.setData(mUserFollowingMusicians);
-            }
-        });
-
         return view;
     }
 
@@ -66,7 +51,19 @@ public class UserFollowingFragment extends Fragment implements UserFollowingAdap
     public void onListItemClick(int index) {
         UserProfileFragment parentFragment = ((UserProfileFragment) getParentFragment());
         if (parentFragment != null) {
-            parentFragment.openFragment(MusicianFragment.newInstance(mUserFollowingMusicians.get(index).getId()));
+            // parentFragment.openFragment(MusicianFragment.newInstance(mUserFollowingMusicians.get(index).getId()));
         }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        UserProfileViewModel viewModel = ViewModelProviders.of(getParentFragment()).get(UserProfileViewModel.class);
+        viewModel.getUserFollowingMusicians().observe(this, new Observer<List<UserFollowingMusician>>() {
+            @Override
+            public void onChanged(@Nullable List<UserFollowingMusician> userFollowingMusicians) {
+                mAdapter.setData(userFollowingMusicians);
+            }
+        });
     }
 }

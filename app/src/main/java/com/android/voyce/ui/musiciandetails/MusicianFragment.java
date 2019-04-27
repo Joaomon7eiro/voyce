@@ -41,7 +41,13 @@ public class MusicianFragment extends Fragment {
     private Button mFollowButton;
 
     private String mId;
+    private String mName;
+    private String mImage;
+    private Bitmap mBitMapImage;
+
     private String mUserId;
+    private String mUserName;
+    private String mUserImage;
 
     private String[] mTabsTitle;
 
@@ -51,8 +57,6 @@ public class MusicianFragment extends Fragment {
     private ImageView mProfileImage;
     private TextView mMusicianName;
 
-    private Bitmap mBitMapImage;
-    private String mName;
 
     private ViewPager mViewPager;
 
@@ -75,11 +79,13 @@ public class MusicianFragment extends Fragment {
     public MusicianFragment() {
     }
 
-    public static MusicianFragment newInstance(String id) {
+    public static MusicianFragment newInstance(String id, String name, String image) {
         MusicianFragment fragment = new MusicianFragment();
 
         Bundle args = new Bundle();
         args.putString(Constants.KEY_MUSICIAN_ID, id);
+        args.putString(Constants.KEY_MUSICIAN_NAME, name);
+        args.putString(Constants.KEY_MUSICIAN_IMAGE, image);
 
         fragment.setArguments(args);
         return fragment;
@@ -93,10 +99,14 @@ public class MusicianFragment extends Fragment {
 
         if (args != null) {
             mId = args.getString(Constants.KEY_MUSICIAN_ID);
+            mName = args.getString(Constants.KEY_MUSICIAN_NAME);
+            mImage = args.getString(Constants.KEY_MUSICIAN_IMAGE);
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         mUserId = sharedPreferences.getString(Constants.KEY_CURRENT_USER_ID, null);
+        mUserName = sharedPreferences.getString(Constants.KEY_CURRENT_USER_NAME, null);
+        mUserImage = sharedPreferences.getString(Constants.KEY_CURRENT_USER_IMAGE, null);
 
         mTabsTitle = new String[]{getString(R.string.info_tab), getString(R.string.proposal_tab)};
     }
@@ -105,8 +115,16 @@ public class MusicianFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        UserFollowingMusician userFollowingMusician = new UserFollowingMusician();
+        userFollowingMusician.setFollower_id(mUserId);
+        userFollowingMusician.setFollower_name(mUserName);
+        userFollowingMusician.setFollower_image(mUserImage);
+        userFollowingMusician.setMusician_id(mId);
+        userFollowingMusician.setMusician_name(mName);
+        userFollowingMusician.setMusician_image(mImage);
+
         mViewModel = ViewModelProviders.of(this).get(MusicianViewModel.class);
-        mViewModel.init(mId, mUserId);
+        mViewModel.init(userFollowingMusician);
         mViewModel.getMusician().observe(this, new Observer<User>() {
             @Override
             public void onChanged(@Nullable User user) {
@@ -115,6 +133,7 @@ public class MusicianFragment extends Fragment {
                 }
             }
         });
+
         mViewModel.getIsLoading().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(@Nullable Boolean isLoading) {
@@ -127,6 +146,20 @@ public class MusicianFragment extends Fragment {
                         mProgressBar.setVisibility(View.GONE);
                         mAppBarLayout.setVisibility(View.VISIBLE);
                         mViewPager.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        });
+        mViewModel.getIsFollowing().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(@Nullable Boolean isFollowing) {
+                if (isFollowing != null) {
+                    if (isFollowing) {
+                        mFollowButton.setBackground(getResources().getDrawable(R.drawable.rounded_background));
+                        mFollowButton.setText(getString(R.string.following));
+                    } else {
+                        mFollowButton.setBackground(getResources().getDrawable(R.drawable.transparent_bg_bordered));
+                        mFollowButton.setText(getString(R.string.follow));
                     }
                 }
             }
@@ -151,8 +184,6 @@ public class MusicianFragment extends Fragment {
             public void onPrepareLoad(Drawable placeHolderDrawable) {
             }
         });
-
-        mName = user.getName();
         mMusicianName.setText(mName);
     }
 

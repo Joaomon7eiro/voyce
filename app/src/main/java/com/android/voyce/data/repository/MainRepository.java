@@ -1,16 +1,20 @@
 package com.android.voyce.data.repository;
 
 import android.app.Application;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
 import com.android.voyce.data.local.AppDatabase;
 import com.android.voyce.data.local.AppExecutors;
 import com.android.voyce.data.local.UserDao;
+import com.android.voyce.data.local.UserFollowingMusicianDao;
 import com.android.voyce.data.local.UserGoalDao;
 import com.android.voyce.data.local.UserProposalsDao;
 import com.android.voyce.data.model.Goal;
 import com.android.voyce.data.model.Proposal;
 import com.android.voyce.data.model.User;
+import com.android.voyce.data.model.UserFollowingMusician;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -33,14 +37,19 @@ public class MainRepository {
     private final UserDao mUserDao;
     private final UserGoalDao mUserGoalDao;
     private final UserProposalsDao mUserProposalsDao;
+    private final UserFollowingMusicianDao mUserFollowingMusiciansDao;
     private final FirebaseFirestore mDb = FirebaseFirestore.getInstance();
     private MutableLiveData<Boolean> mIsLoading = new MutableLiveData<>();
+    private MutableLiveData<User> mUserLiveData = new MutableLiveData<>();
 
-    private MainRepository(Executor executor, Executor diskExecutor, UserDao userDao, UserGoalDao userGoalDao, UserProposalsDao userProposalsDao) {
+    private MainRepository(Executor executor, Executor diskExecutor, UserDao userDao,
+                           UserGoalDao userGoalDao, UserProposalsDao userProposalsDao,
+                           UserFollowingMusicianDao userFollowingMusicianDao) {
         mExecutor = executor;
         mUserDao = userDao;
         mUserGoalDao = userGoalDao;
         mUserProposalsDao = userProposalsDao;
+        mUserFollowingMusiciansDao = userFollowingMusicianDao;
         mDiskExecutor = diskExecutor;
     }
 
@@ -51,7 +60,8 @@ public class MainRepository {
                     AppExecutors.getInstance().getDiskIO(),
                     AppDatabase.getInstance(application).userDao(),
                     AppDatabase.getInstance(application).userGoalDao(),
-                    AppDatabase.getInstance(application).userProposalsDao()
+                    AppDatabase.getInstance(application).userProposalsDao(),
+                    AppDatabase.getInstance(application).userFollowingMusicianDao()
             );
         }
         return sInstance;
@@ -64,9 +74,9 @@ public class MainRepository {
     public void startUser() {
         mIsLoading.setValue(true);
         mExecutor.execute(new Runnable() {
-
             final DocumentReference userReference = mDb.collection("users").document(mUserId);
             final DocumentReference goalReference = mDb.collection("goals").document(mUserId);
+            final Query followersQuery = mDb.collection("musician_followers").whereEqualTo("follower_id", mUserId);
             final Query proposalsQuery = mDb.collection("proposals").whereEqualTo("user_id", mUserId);
 
             @Override
@@ -80,6 +90,7 @@ public class MainRepository {
                             mDiskExecutor.execute(new Runnable() {
                                 @Override
                                 public void run() {
+                                    mUserLiveData.postValue(user);
                                     mUserDao.insertUser(user);
                                     mIsLoading.postValue(false);
                                 }
@@ -121,7 +132,7 @@ public class MainRepository {
                             mDiskExecutor.execute(new Runnable() {
                                 @Override
                                 public void run() {
-                                    mUserProposalsDao.insertUser(proposalList);
+                                    mUserProposalsDao.insertProposals(proposalList);
                                     mIsLoading.postValue(false);
                                 }
                             });
@@ -129,8 +140,34 @@ public class MainRepository {
                     }
                 });
 
+                followersQuery.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                        if (queryDocumentSnapshots != null) {
+                            final List<UserFollowingMusician> followingMusicians = new ArrayList<>();
+                            List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+
+                            for (DocumentSnapshot doc: documents) {
+                                UserFollowingMusician userFollowingMusician = doc.toObject(UserFollowingMusician.class);
+                                userFollowingMusician.setId(doc.getId());
+                                followingMusicians.add(userFollowingMusician);
+                            }
+
+                            mDiskExecutor.execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mUserFollowingMusiciansDao.insertUserFollowingMusicians(followingMusicians);
+                                    mIsLoading.postValue(false);
+                                }
+                            });
+                        }
+                    }
+                });
             }
         });
     }
 
+    public LiveData<User> getUser() {
+        return mUserLiveData;
+    }
 }

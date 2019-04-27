@@ -10,12 +10,14 @@ import android.widget.TextView;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.UserFollowingMusician;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class UserFollowingAdapter extends RecyclerView.Adapter<UserFollowingAdapter.UserFollowingAdapterViewHolder> {
 
-    private ArrayList<UserFollowingMusician> mMusicians;
+    private List<UserFollowingMusician> mMusicians = new ArrayList<>();
     private ListItemClickListener mOnClickListener;
 
     public UserFollowingAdapter(ListItemClickListener onClickListener) {
@@ -50,8 +52,8 @@ public class UserFollowingAdapter extends RecyclerView.Adapter<UserFollowingAdap
     @Override
     public void onBindViewHolder(@NonNull UserFollowingAdapterViewHolder viewHolder, int i) {
         UserFollowingMusician userFollowingMusician = mMusicians.get(i);
-        viewHolder.mMusicianImage.setImageBitmap(userFollowingMusician.getImage());
-        viewHolder.mMusicianName.setText(userFollowingMusician.getName());
+        Picasso.get().load(userFollowingMusician.getMusician_image()).into(viewHolder.mMusicianImage);
+        viewHolder.mMusicianName.setText(userFollowingMusician.getMusician_name());
     }
 
     public interface ListItemClickListener {
@@ -64,7 +66,7 @@ public class UserFollowingAdapter extends RecyclerView.Adapter<UserFollowingAdap
         return mMusicians.size();
     }
 
-    public void setData(ArrayList<UserFollowingMusician> musicians) {
+    public void setData(List<UserFollowingMusician> musicians) {
         mMusicians = musicians;
         notifyDataSetChanged();
     }

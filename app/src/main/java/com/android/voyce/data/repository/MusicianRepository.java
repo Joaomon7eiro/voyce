@@ -1,12 +1,15 @@
 package com.android.voyce.data.repository;
 
+import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.util.Log;
 
+import com.android.voyce.data.local.AppDatabase;
 import com.android.voyce.data.local.AppExecutors;
+import com.android.voyce.data.local.UserFollowingMusicianDao;
 import com.android.voyce.data.model.Proposal;
 import com.android.voyce.data.model.User;
+import com.android.voyce.data.model.UserFollowingMusician;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
@@ -16,37 +19,47 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executor;
 
 
 public class MusicianRepository {
     private static MusicianRepository sInstance;
-    private static String mMusicianId;
-    private static String mUserId;
+    private UserFollowingMusician mUserFollowingMusician;
+
     private final FirebaseFirestore mDb = FirebaseFirestore.getInstance();
     private final Executor mExecutor;
+    private final Executor mDiskExecutor;
+    private final UserFollowingMusicianDao mUserFollowingMusicianDao;
     private MutableLiveData<Boolean> mIsLoading = new MutableLiveData<>();
-    private boolean mIsFollowing;
+    final MutableLiveData<Boolean> mIsFollowing = new MutableLiveData<>();
+
+    private boolean mBolIsFollowing;
     private String mMusicianFollowerId;
 
-    private MusicianRepository(Executor executor) {
+    private MusicianRepository(Executor executor, Executor diskExecutor, UserFollowingMusicianDao userFollowingMusicianDao) {
         mExecutor = executor;
+        mDiskExecutor = diskExecutor;
+        mUserFollowingMusicianDao = userFollowingMusicianDao;
     }
 
-    public static MusicianRepository getInstance(String musicianId, String userId) {
+    public static MusicianRepository getInstance(Application application) {
         if (sInstance == null) {
-            sInstance = new MusicianRepository(AppExecutors.getInstance().getNetworkIO());
+            sInstance = new MusicianRepository(
+                    AppExecutors.getInstance().getNetworkIO(),
+                    AppExecutors.getInstance().getDiskIO(),
+                    AppDatabase.getInstance(application).userFollowingMusicianDao());
         }
-        mMusicianId = musicianId;
-        mUserId = userId;
         return sInstance;
     }
 
+    public void setUserFollowingMusician(UserFollowingMusician userFollowingMusician) {
+        mUserFollowingMusician = userFollowingMusician;
+    }
+
+
     public LiveData<User> getMusician() {
-        final DocumentReference reference = mDb.collection("users").document(mMusicianId);
+        final DocumentReference reference = mDb.collection("users").document(mUserFollowingMusician.getMusician_id());
         final MutableLiveData<User> liveData = new MutableLiveData<>();
 
         mIsLoading.setValue(true);
@@ -69,7 +82,7 @@ public class MusicianRepository {
     }
 
     public LiveData<List<Proposal>> getProposals() {
-        final Query query = mDb.collection("proposals").whereEqualTo("user_id", mMusicianId);
+        final Query query = mDb.collection("proposals").whereEqualTo("user_id", mUserFollowingMusician.getMusician_id());
         final MutableLiveData<List<Proposal>> liveData = new MutableLiveData<>();
 
         mIsLoading.setValue(true);
@@ -93,22 +106,27 @@ public class MusicianRepository {
 
     public void handleFollower() {
 
-        if (!mIsFollowing) {
-            Map<String, Object> followers = new HashMap<>();
-            followers.put("follower_id", mUserId);
-            followers.put("musician_id", mMusicianId);
-
-            Task<DocumentReference> data = mDb.collection("musician_followers").add(followers);
+        if (!mBolIsFollowing) {
+            Task<DocumentReference> data = mDb.collection("musician_followers").add(mUserFollowingMusician);
             data.addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                 @Override
                 public void onSuccess(DocumentReference documentReference) {
                     mMusicianFollowerId = documentReference.getId();
                 }
             });
+            mIsFollowing.setValue(true);
+            mBolIsFollowing = true;
         } else {
             mDb.collection("musician_followers").document(mMusicianFollowerId).delete();
+            mDiskExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    mUserFollowingMusicianDao.deleteById(mMusicianFollowerId);
+                }
+            });
+            mIsFollowing.setValue(false);
+            mBolIsFollowing = false;
         }
-
     }
 
     public LiveData<Boolean> getIsLoading() {
@@ -116,10 +134,10 @@ public class MusicianRepository {
     }
 
     public LiveData<Boolean> getIsFollowing() {
-        final MutableLiveData<Boolean> isFollowing = new MutableLiveData<>();
 
         final Query query = mDb.collection("musician_followers")
-                .whereEqualTo("musician_id", mMusicianId).whereEqualTo("follower_id", mUserId);
+                .whereEqualTo("musician_id", mUserFollowingMusician.getMusician_id())
+                .whereEqualTo("follower_id", mUserFollowingMusician.getFollower_id());
 
         query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
@@ -128,16 +146,16 @@ public class MusicianRepository {
                     if (queryDocumentSnapshots.size() > 0) {
                         List<DocumentSnapshot> data = queryDocumentSnapshots.getDocuments();
                         mMusicianFollowerId = data.get(0).getId();
-                        isFollowing.setValue(true);
-                        mIsFollowing = true;
+                        mIsFollowing.setValue(true);
+                        mBolIsFollowing = true;
                     } else {
-                        isFollowing.setValue(false);
-                        mIsFollowing = false;
+                        mIsFollowing.setValue(false);
+                        mBolIsFollowing = false;
                     }
                 }
             }
         });
-        return isFollowing;
+        return mIsFollowing;
     }
 
 }

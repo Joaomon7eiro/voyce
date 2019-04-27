@@ -18,5 +18,5 @@ public interface UserProposalsDao {
     LiveData<List<Proposal>> getProposals(String id);
 
     @Insert(onConflict = REPLACE)
-    void insertUser(List<Proposal> proposals);
+    void insertProposals(List<Proposal> proposals);
 }

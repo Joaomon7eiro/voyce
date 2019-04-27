@@ -10,18 +10,20 @@ import com.android.voyce.data.model.UserFollowingMusician;
 
 import java.util.List;
 
+import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
+
 @Dao
 public interface UserFollowingMusicianDao {
 
-    @Query("SELECT * FROM UserFollowingMusician ORDER BY name")
-    LiveData<List<UserFollowingMusician>> queryMusicians();
+    @Query("SELECT * FROM UserFollowingMusician WHERE follower_id = :id")
+    LiveData<List<UserFollowingMusician>> queryMusiciansByUser(String  id);
 
-    @Query("SELECT * FROM UserFollowingMusician WHERE id = :id")
+    @Query("SELECT * FROM UserFollowingMusician WHERE musician_id = :id")
     LiveData<UserFollowingMusician> queryMusiciansById(String id);
 
-    @Insert
-    void insertMusician(UserFollowingMusician userFollowingMusician);
+    @Insert(onConflict = REPLACE)
+    void insertUserFollowingMusicians(List<UserFollowingMusician> userFollowingMusician);
 
-    @Delete
-    void deleteMusician(UserFollowingMusician userFollowingMusician);
+    @Query("DELETE FROM UserFollowingMusician WHERE id = :id")
+    void deleteById(String id);
 }
