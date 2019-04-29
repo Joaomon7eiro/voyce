@@ -52,8 +52,8 @@ public class UserFollowingAdapter extends RecyclerView.Adapter<UserFollowingAdap
     @Override
     public void onBindViewHolder(@NonNull UserFollowingAdapterViewHolder viewHolder, int i) {
         UserFollowingMusician userFollowingMusician = mMusicians.get(i);
-        Picasso.get().load(userFollowingMusician.getMusician_image()).into(viewHolder.mMusicianImage);
-        viewHolder.mMusicianName.setText(userFollowingMusician.getMusician_name());
+        Picasso.get().load(userFollowingMusician.getImage()).into(viewHolder.mMusicianImage);
+        viewHolder.mMusicianName.setText(userFollowingMusician.getName());
     }
 
     public interface ListItemClickListener {

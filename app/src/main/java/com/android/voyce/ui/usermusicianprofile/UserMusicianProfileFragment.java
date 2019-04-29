@@ -17,8 +17,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.voyce.R;
@@ -29,6 +32,7 @@ import com.android.voyce.ui.LoginActivity;
 import com.android.voyce.ui.main.MainActivity;
 import com.android.voyce.utils.Constants;
 import com.squareup.picasso.Picasso;
+
 
 import java.util.List;
 
@@ -55,6 +59,12 @@ public class UserMusicianProfileFragment extends Fragment {
 
     private UserMusicianProposalsAdapter mAdapter;
     private RecyclerView mRecyclerView;
+
+    private LinearLayout mGoalContainer;
+    private TextView mNoGoal;
+
+    private RelativeLayout mProposalsContainer;
+    private TextView mNoProposals;
 
     public UserMusicianProfileFragment() {
         // Required empty public constructor
@@ -99,6 +109,7 @@ public class UserMusicianProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_user_musician_profile, container, false);
 
+
         ImageView logout = view.findViewById(R.id.logout);
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,6 +126,12 @@ public class UserMusicianProfileFragment extends Fragment {
 
 
         mContainer = view.findViewById(R.id.container_user_musician);
+
+        mGoalContainer = view.findViewById(R.id.goal_container);
+        mNoGoal = view.findViewById(R.id.no_goal);
+
+        mProposalsContainer = view.findViewById(R.id.proposals_container);
+        mNoProposals = view.findViewById(R.id.no_proposals);
 
         mName = view.findViewById(R.id.user_musician_name);
         mSponsors = view.findViewById(R.id.user_musician_sponsors_number);
@@ -177,9 +194,16 @@ public class UserMusicianProfileFragment extends Fragment {
             public void onChanged(@Nullable Goal goal) {
                 if (goal != null) {
                     String goalValue = String.valueOf(goal.getValue());
-                    mGoalValue.setText(getString(R.string.user_goal, "0", goalValue));
-                    mGoalProgress.setProgress(0);
+                    String currentGoalValue = String.valueOf(goal.getCurrent_value());
+                    mGoalValue.setText(getString(R.string.user_goal, currentGoalValue, goalValue));
                     mGoalDescription.setText(goal.getDescription());
+                    int progress = (int) (goal.getCurrent_value() * 100 / goal.getValue());
+                    mGoalProgress.setProgress(progress);
+                    mNoGoal.setVisibility(View.GONE);
+                    mGoalContainer.setVisibility(View.VISIBLE);
+                } else {
+                    mGoalContainer.setVisibility(View.GONE);
+                    mNoGoal.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -190,7 +214,21 @@ public class UserMusicianProfileFragment extends Fragment {
                 if (proposals.size() > 1) {
                     mIconEnd.setVisibility(View.VISIBLE);
                     mRecyclerView.addOnScrollListener(mOnScrollListener);
+
+                    mProposalsContainer.setVisibility(View.VISIBLE);
+                    mNoProposals.setVisibility(View.GONE);
+                } else if (proposals.size() == 1) {
+                    mIconEnd.setVisibility(View.GONE);
+                    mIconStart.setVisibility(View.GONE);
+                    mRecyclerView.removeOnScrollListener(mOnScrollListener);
+
+                    mProposalsContainer.setVisibility(View.VISIBLE);
+                    mNoProposals.setVisibility(View.GONE);
+                } else {
+                    mProposalsContainer.setVisibility(View.GONE);
+                    mNoProposals.setVisibility(View.VISIBLE);
                 }
+
                 mAdapter.setData(proposals);
             }
         });

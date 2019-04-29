@@ -1,4 +1,4 @@
-package com.android.voyce.data.local;
+package com.android.voyce.utils;
 
 import android.util.Log;
 

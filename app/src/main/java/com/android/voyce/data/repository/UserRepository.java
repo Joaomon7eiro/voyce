@@ -2,28 +2,16 @@ package com.android.voyce.data.repository;
 
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 
 import com.android.voyce.data.local.AppDatabase;
-import com.android.voyce.data.local.AppExecutors;
 import com.android.voyce.data.local.UserDao;
 import com.android.voyce.data.local.UserGoalDao;
 import com.android.voyce.data.local.UserProposalsDao;
 import com.android.voyce.data.model.Goal;
 import com.android.voyce.data.model.Proposal;
 import com.android.voyce.data.model.User;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
-import java.util.concurrent.Executor;
-
-import javax.annotation.Nullable;
 
 public class UserRepository {
     private static UserRepository sInstance;

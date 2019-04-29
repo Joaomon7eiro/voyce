@@ -105,8 +105,6 @@ public class MusicianFragment extends Fragment {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         mUserId = sharedPreferences.getString(Constants.KEY_CURRENT_USER_ID, null);
-        mUserName = sharedPreferences.getString(Constants.KEY_CURRENT_USER_NAME, null);
-        mUserImage = sharedPreferences.getString(Constants.KEY_CURRENT_USER_IMAGE, null);
 
         mTabsTitle = new String[]{getString(R.string.info_tab), getString(R.string.proposal_tab)};
     }
@@ -116,12 +114,10 @@ public class MusicianFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         UserFollowingMusician userFollowingMusician = new UserFollowingMusician();
+        userFollowingMusician.setId(mId);
+        userFollowingMusician.setImage(mImage);
+        userFollowingMusician.setName(mName);
         userFollowingMusician.setFollower_id(mUserId);
-        userFollowingMusician.setFollower_name(mUserName);
-        userFollowingMusician.setFollower_image(mUserImage);
-        userFollowingMusician.setMusician_id(mId);
-        userFollowingMusician.setMusician_name(mName);
-        userFollowingMusician.setMusician_image(mImage);
 
         mViewModel = ViewModelProviders.of(this).get(MusicianViewModel.class);
         mViewModel.init(userFollowingMusician);

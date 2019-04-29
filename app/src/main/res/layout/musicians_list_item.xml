@@ -98,19 +98,19 @@
                 android:id="@+id/listeners"
                 style="@style/CardMusicianValues"
                 app:layout_constraintBaseline_toBaselineOf="@+id/listeners_label"
-                app:layout_constraintEnd_toEndOf="@+id/sponsors"
-                app:layout_constraintStart_toStartOf="@+id/sponsors" />
-
-            <TextView
-                android:id="@+id/sponsors"
-                style="@style/CardMusicianValues"
-                app:layout_constraintBottom_toTopOf="@+id/followers"
                 app:layout_constraintEnd_toEndOf="@+id/followers"
-                app:layout_constraintStart_toStartOf="@+id/followers"
-                app:layout_constraintTop_toBottomOf="@+id/listeners" />
+                app:layout_constraintStart_toStartOf="@+id/followers" />
 
             <TextView
                 android:id="@+id/followers"
+                style="@style/CardMusicianValues"
+                app:layout_constraintBottom_toTopOf="@+id/sponsors"
+                app:layout_constraintEnd_toEndOf="@+id/sponsors"
+                app:layout_constraintStart_toStartOf="@+id/sponsors"
+                app:layout_constraintTop_toBottomOf="@+id/listeners" />
+
+            <TextView
+                android:id="@+id/sponsors"
                 style="@style/CardMusicianValues"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="16dp"

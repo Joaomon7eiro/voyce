@@ -22,7 +22,6 @@ public class User {
     private String twitter_url;
     private String phone_number;
     private String biography;
-    private double goal_value;
 
     public User() {
     }
@@ -99,14 +98,6 @@ public class User {
         this.biography = biography;
     }
 
-    public double getGoal_value() {
-        return goal_value;
-    }
-
-    public void setGoal_value(double goal_value) {
-        this.goal_value = goal_value;
-    }
-
     public long getSponsors() {
         return sponsors;
     }
@@ -139,4 +130,5 @@ public class User {
     public void setId(@NonNull String id) {
         this.id = id;
     }
+
 }

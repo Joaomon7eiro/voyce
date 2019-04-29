@@ -3,7 +3,7 @@ package com.android.voyce.data.repository;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
-import com.android.voyce.data.local.AppExecutors;
+import com.android.voyce.utils.AppExecutors;
 import com.android.voyce.data.model.User;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;

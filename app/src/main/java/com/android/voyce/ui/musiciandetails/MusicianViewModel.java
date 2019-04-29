@@ -29,11 +29,11 @@ public class MusicianViewModel extends AndroidViewModel {
         if (mMusician != null) {
             return;
         }
-        mRepository.setUserFollowingMusician(userFollowingMusician);
+        mRepository.setUserAndMusicianId(userFollowingMusician);
         mMusician = mRepository.getMusician();
         mProposals = mRepository.getProposals();
-        mIsLoading = mRepository.getIsLoading();
         mIsFollowing = mRepository.getIsFollowing();
+        mIsLoading = mRepository.getIsLoading();
     }
 
     public LiveData<User> getMusician() {

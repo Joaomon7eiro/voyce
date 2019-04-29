@@ -14,14 +14,14 @@ import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 @Dao
 public interface UserFollowingMusicianDao {
 
-    @Query("SELECT * FROM UserFollowingMusician WHERE follower_id = :id")
+    @Query("SELECT * FROM UserFollowingMusician where follower_id = :id")
     LiveData<List<UserFollowingMusician>> queryMusiciansByUser(String  id);
-
-    @Query("SELECT * FROM UserFollowingMusician WHERE musician_id = :id")
-    LiveData<UserFollowingMusician> queryMusiciansById(String id);
 
     @Insert(onConflict = REPLACE)
     void insertUserFollowingMusicians(List<UserFollowingMusician> userFollowingMusician);
+
+    @Insert(onConflict = REPLACE)
+    void insertUserFollowingMusician(UserFollowingMusician userFollowingMusician);
 
     @Query("DELETE FROM UserFollowingMusician WHERE id = :id")
     void deleteById(String id);
