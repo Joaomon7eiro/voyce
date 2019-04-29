@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.voyce.R;
-import com.android.voyce.data.model.Musician;
 import com.android.voyce.data.model.User;
 
 import java.util.regex.Matcher;

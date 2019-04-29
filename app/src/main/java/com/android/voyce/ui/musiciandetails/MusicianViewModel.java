@@ -3,11 +3,8 @@ package com.android.voyce.ui.musiciandetails;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 
-import com.android.voyce.data.model.Musician;
 import com.android.voyce.data.model.Proposal;
 import com.android.voyce.data.model.User;
 import com.android.voyce.data.model.UserFollowingMusician;

@@ -15,7 +15,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -27,7 +26,6 @@ import com.android.voyce.ui.usermusicianprofile.UserMusicianProfileFragment;
 import com.android.voyce.ui.userprofile.UserProfileFragment;
 import com.android.voyce.utils.ConnectivityHelper;
 import com.android.voyce.utils.Constants;
-import com.google.firebase.FirebaseApp;
 
 public class MainActivity extends AppCompatActivity {
 

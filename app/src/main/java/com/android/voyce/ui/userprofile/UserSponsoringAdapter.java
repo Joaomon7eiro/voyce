@@ -9,13 +9,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.voyce.R;
-import com.android.voyce.data.model.Musician;
+import com.android.voyce.data.model.User;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class UserSponsoringAdapter extends RecyclerView.Adapter<UserSponsoringAdapter.UserSponsoringAdapterViewHolder> {
 
-    private ArrayList<Musician> mMusicians;
+    private List<User> mMusicians = new ArrayList<>();
 
     class UserSponsoringAdapterViewHolder extends RecyclerView.ViewHolder {
         ImageView mMusicianImage;
@@ -48,7 +49,7 @@ public class UserSponsoringAdapter extends RecyclerView.Adapter<UserSponsoringAd
         return mMusicians.size();
     }
 
-    public void setData(ArrayList<Musician> musicians) {
+    public void setData(List<User> musicians) {
         mMusicians = musicians;
         notifyDataSetChanged();
     }

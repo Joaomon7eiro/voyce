@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.android.voyce.R;
-import com.android.voyce.data.model.Musician;
 
 import java.util.ArrayList;
 
@@ -38,17 +37,6 @@ public class UserSponsorsFragment extends Fragment {
 
         UserSponsoringAdapter adapter = new UserSponsoringAdapter();
         recyclerView.setAdapter(adapter);
-
-        ArrayList<Musician> musicians = new ArrayList<>();
-
-        musicians.add(new Musician("1","1","1",1,1,1));
-        musicians.add(new Musician("1","1","1",1,1,1));
-        musicians.add(new Musician("1","1","1",1,1,1));
-        musicians.add(new Musician("1","1","1",1,1,1));
-        musicians.add(new Musician("1","1","1",1,1,1));
-        musicians.add(new Musician("1","1","1",1,1,1));
-
-        adapter.setData(musicians);
 
         return view;
     }

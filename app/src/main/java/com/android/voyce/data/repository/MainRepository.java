@@ -14,7 +14,6 @@ import com.android.voyce.data.model.Goal;
 import com.android.voyce.data.model.Proposal;
 import com.android.voyce.data.model.User;
 import com.android.voyce.data.model.UserFollowingMusician;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;

@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.voyce.R;
-import com.android.voyce.data.model.Musician;
 import com.android.voyce.data.model.User;
 import com.squareup.picasso.Picasso;
 
