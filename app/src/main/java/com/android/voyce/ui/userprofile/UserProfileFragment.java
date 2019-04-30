@@ -65,6 +65,16 @@ public class UserProfileFragment extends Fragment {
             }
         });
 
+        sponsoring.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.addToBackStack(null);
+                transaction.replace(R.id.fragments_container, UserSponsorsFragment.newInstance());
+                transaction.commit();
+            }
+        });
+
         view.post(new Runnable() {
             @Override
             public void run() {
