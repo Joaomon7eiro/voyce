@@ -35,7 +35,6 @@ public class UserFollowingFragment extends Fragment implements UserFollowingAdap
     private UserFollowingAdapter mAdapter;
     private String mUserId;
     private TextView mNoFollowing;
-    private RecyclerView mRecyclerView;
     private LinearLayout mContainer;
 
     public UserFollowingFragment() {
@@ -62,13 +61,13 @@ public class UserFollowingFragment extends Fragment implements UserFollowingAdap
         mNoFollowing = view.findViewById(R.id.no_following);
         mContainer = view.findViewById(R.id.following_container);
 
-        mRecyclerView = view.findViewById(R.id.rv_user_following);
+        RecyclerView recyclerView = view.findViewById(R.id.rv_user_following);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mAdapter = new UserFollowingAdapter(this);
 
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setAdapter(mAdapter);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(mAdapter);
         return view;
     }
 
@@ -97,7 +96,7 @@ public class UserFollowingFragment extends Fragment implements UserFollowingAdap
         viewModel.getUserFollowingMusicians().observe(this, new Observer<List<UserFollowingMusician>>() {
             @Override
             public void onChanged(@Nullable List<UserFollowingMusician> userFollowingMusicians) {
-                if (userFollowingMusicians.size() < 1) {
+                if (userFollowingMusicians != null && userFollowingMusicians.size() < 1) {
                     mContainer.setVisibility(View.GONE);
                     mNoFollowing.setVisibility(View.VISIBLE);
                 } else {

@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.android.voyce.data.local.AppDatabase;
+import com.android.voyce.data.model.Goal;
 import com.android.voyce.utils.AppExecutors;
 import com.android.voyce.data.local.UserFollowingMusicianDao;
 import com.android.voyce.data.model.Proposal;
@@ -22,6 +23,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 
 
 import java.util.HashMap;
@@ -30,10 +33,10 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 
-public class MusicianRepository {
-    private static final String TAG = MusiciansRepository.class.getSimpleName();
+public class MusicianDetailsRepository {
+    private static final String TAG = SearchRepository.class.getSimpleName();
 
-    private static MusicianRepository sInstance;
+    private static MusicianDetailsRepository sInstance;
     private final FirebaseFirestore mDb = FirebaseFirestore.getInstance();
     private CollectionReference mUsersCollectionReference = mDb.collection("users");
     private CollectionReference mFollowersCollectionReference = mDb.collection("user_following");
@@ -45,16 +48,16 @@ public class MusicianRepository {
 
     private boolean mBolIsFollowing;
     private UserFollowingMusician mUserFollowingMusician;
+    private MutableLiveData<Goal> mGoal = new MutableLiveData<>();
 
-
-    private MusicianRepository(Executor diskExecutor, UserFollowingMusicianDao userFollowingMusicianDao) {
+    private MusicianDetailsRepository(Executor diskExecutor, UserFollowingMusicianDao userFollowingMusicianDao) {
         mDiskExecutor = diskExecutor;
         mUserFollowingMusicianDao = userFollowingMusicianDao;
     }
 
-    public static MusicianRepository getInstance(Application application) {
+    public static MusicianDetailsRepository getInstance(Application application) {
         if (sInstance == null) {
-            sInstance = new MusicianRepository(
+            sInstance = new MusicianDetailsRepository(
                     AppExecutors.getInstance().getDiskIO(),
                     AppDatabase.getInstance(application).userFollowingMusicianDao());
         }
@@ -77,7 +80,11 @@ public class MusicianRepository {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (documentSnapshot != null) {
                     User musician = documentSnapshot.toObject(User.class);
-                    userLiveData.postValue(musician);
+                    userLiveData.setValue(musician);
+
+                    Goal goal = hashToGoalObject(documentSnapshot.get("goal"));
+                    mGoal.setValue(goal);
+
                 }
                 mIsLoading.setValue(false);
             }
@@ -98,13 +105,23 @@ public class MusicianRepository {
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 if (queryDocumentSnapshots != null) {
                     List<Proposal> proposals = queryDocumentSnapshots.toObjects(Proposal.class);
-                    liveData.postValue(proposals);
+                    liveData.setValue(proposals);
                 }
                 mIsLoading.setValue(false);
             }
         });
 
         return liveData;
+    }
+
+    public LiveData<Goal> getGoal() {
+        return mGoal;
+    }
+
+    private Goal hashToGoalObject(Object hashMap) {
+        Gson gson = new Gson();
+        JsonElement jsonElement = gson.toJsonTree(hashMap);
+        return gson.fromJson(jsonElement, Goal.class);
     }
 
     public void handleFollower() {

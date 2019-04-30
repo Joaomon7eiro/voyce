@@ -154,7 +154,7 @@ public class MainRepository {
 
     }
 
-    public Goal hashToGoalObject(Object hashMap) {
+    private Goal hashToGoalObject(Object hashMap) {
         Gson gson = new Gson();
         JsonElement jsonElement = gson.toJsonTree(hashMap);
         return gson.fromJson(jsonElement, Goal.class);

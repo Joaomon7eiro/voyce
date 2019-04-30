@@ -5,10 +5,11 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
+import com.android.voyce.data.model.Goal;
 import com.android.voyce.data.model.Proposal;
 import com.android.voyce.data.model.User;
 import com.android.voyce.data.model.UserFollowingMusician;
-import com.android.voyce.data.repository.MusicianRepository;
+import com.android.voyce.data.repository.MusicianDetailsRepository;
 
 import java.util.List;
 
@@ -18,11 +19,12 @@ public class MusicianViewModel extends AndroidViewModel {
     private LiveData<List<Proposal>> mProposals;
     private LiveData<Boolean> mIsLoading;
     private LiveData<Boolean> mIsFollowing;
-    private MusicianRepository mRepository;
+    private LiveData<Goal> mGoal;
+    private MusicianDetailsRepository mRepository;
 
     public MusicianViewModel(@NonNull Application application) {
         super(application);
-        mRepository = MusicianRepository.getInstance(application);
+        mRepository = MusicianDetailsRepository.getInstance(application);
     }
 
     public void init(UserFollowingMusician userFollowingMusician) {
@@ -32,6 +34,7 @@ public class MusicianViewModel extends AndroidViewModel {
         mRepository.setUserFollowingMusician(userFollowingMusician);
         mMusician = mRepository.getMusician();
         mProposals = mRepository.getProposals();
+        mGoal = mRepository.getGoal();
         mIsFollowing = mRepository.getIsFollowing();
         mIsLoading = mRepository.getIsLoading();
     }
@@ -56,4 +59,7 @@ public class MusicianViewModel extends AndroidViewModel {
         return mIsFollowing;
     }
 
+    public LiveData<Goal> getGoal() {
+        return mGoal;
+    }
 }

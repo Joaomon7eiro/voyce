@@ -1,141 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
+    android:orientation="vertical"
     tools:context=".ui.musiciandetails.MusicianInfoFragment">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/musician_monthly_income"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:text="R$ 0"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/monthly_income"
+        android:textColor="@color/colorLightGray" />
 
-            <TextView
-                android:id="@+id/monthly_income"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:textColor="@android:color/white"
-                android:textSize="32sp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/biography"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/monthly_income"
-                android:layout_alignParentStart="true"
-                android:text="@string/monthly_income"
-                android:textColor="@color/colorGray"
-                android:textSize="16sp" />
+    <TextView
+        android:id="@+id/musician_biography"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white" />
+
+</LinearLayout>
 
 
-            <TextView
-                android:id="@+id/total_sponsors"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@id/monthly_income"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:textColor="@android:color/white"
-                android:textSize="28sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/total_sponsors"
-                android:layout_alignParentEnd="true"
-                android:text="@string/sponsors"
-                android:textColor="@color/colorGray"
-                android:textSize="16sp" />
-
-        </RelativeLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/activity_vertical_margin"
-            android:gravity="center"
-            android:text="@string/biography"
-            android:textColor="@android:color/white"
-            android:textSize="24sp" />
-
-        <TextView
-            android:id="@+id/biography_text"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="@dimen/activity_vertical_margin"
-            android:textColor="@android:color/white"
-            android:textSize="16sp" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp">
-
-            <ImageView
-                android:id="@+id/instagram_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:src="@drawable/ic_action_social_media" />
-
-            <TextView
-                android:id="@+id/instagram_url"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:layout_toEndOf="@id/instagram_icon"
-                android:text="@string/instagram"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
-
-            <ImageView
-                android:id="@+id/facebook_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/instagram_icon"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:src="@drawable/ic_action_social_media" />
-
-            <TextView
-                android:id="@+id/facebook_url"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/instagram_icon"
-                android:layout_margin="8dp"
-                android:layout_toEndOf="@id/facebook_icon"
-                android:text="@string/facebook"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
-
-            <ImageView
-                android:id="@+id/twitter_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/facebook_icon"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:src="@drawable/ic_action_social_media" />
-
-            <TextView
-                android:id="@+id/twitter_url"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/facebook_icon"
-                android:layout_margin="8dp"
-                android:layout_toEndOf="@id/twitter_icon"
-                android:text="@string/twitter"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
-        </RelativeLayout>
-
-    </LinearLayout>
-
-</android.support.v4.widget.NestedScrollView>

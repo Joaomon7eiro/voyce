@@ -13,22 +13,22 @@ import com.android.voyce.data.model.User;
 
 import java.util.List;
 
-public class UserRepository {
-    private static UserRepository sInstance;
+public class UserMusicianRepository {
+    private static UserMusicianRepository sInstance;
     private String mUserId;
     private final UserDao mUserDao;
     private final UserGoalDao mUserGoalDao;
     private final UserProposalsDao mUserProposalsDao;
 
-    private UserRepository(UserDao userDao, UserGoalDao userGoalDao, UserProposalsDao userProposalsDao) {
+    private UserMusicianRepository(UserDao userDao, UserGoalDao userGoalDao, UserProposalsDao userProposalsDao) {
         mUserDao = userDao;
         mUserGoalDao = userGoalDao;
         mUserProposalsDao = userProposalsDao;
     }
 
-    public static UserRepository getInstance(Application application) {
+    public static UserMusicianRepository getInstance(Application application) {
         if (sInstance == null) {
-            sInstance = new UserRepository(AppDatabase.getInstance(application).userDao(),
+            sInstance = new UserMusicianRepository(AppDatabase.getInstance(application).userDao(),
                     AppDatabase.getInstance(application).userGoalDao(),
                     AppDatabase.getInstance(application).userProposalsDao());
         }

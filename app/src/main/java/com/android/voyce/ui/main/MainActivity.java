@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
     private FrameLayout mFrameLayout;
     private BottomNavigationView mNavigation;
     private FloatingActionButton mFloatingButton;
-    private String mUserId;
 
     private int mCurrentMenuId = R.id.navigation_search;
 
@@ -98,8 +97,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void openFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-//        transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out,
-//                R.anim.fade_in, R.anim.fade_out);
+        transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out,
+                R.anim.fade_in, R.anim.fade_out);
         transaction.replace(R.id.fragments_container, fragment);
         transaction.commit();
     }
@@ -131,14 +130,14 @@ public class MainActivity extends AppCompatActivity {
     // TODO: remove this
     private void verifyUser() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mUserId = sharedPreferences.getString(Constants.KEY_CURRENT_USER_ID, null);
-        if (mUserId == null) {
+        String userId = sharedPreferences.getString(Constants.KEY_CURRENT_USER_ID, null);
+        if (userId == null) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
         } else {
             MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-            viewModel.init(mUserId);
+            viewModel.init(userId);
             viewModel.getUserLiveData().observe(this, new Observer<User>() {
                 @Override
                 public void onChanged(@Nullable User user) {

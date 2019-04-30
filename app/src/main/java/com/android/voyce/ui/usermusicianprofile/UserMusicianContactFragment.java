@@ -4,10 +4,9 @@ package com.android.voyce.ui.usermusicianprofile;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +30,7 @@ public class UserMusicianContactFragment extends Fragment {
     private TextView mInstagramUrl;
     private TextView mTwitterUrl;
 
-    Linkify.TransformFilter mTransformFilter = new Linkify.TransformFilter() {
+    private Linkify.TransformFilter mTransformFilter = new Linkify.TransformFilter() {
         public final String transformUrl(final Matcher match, String url) {
             return "";
         }
@@ -42,7 +41,7 @@ public class UserMusicianContactFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user_musician_contact, container, false);

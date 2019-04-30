@@ -22,23 +22,23 @@ import java.util.concurrent.Executor;
 import javax.annotation.Nullable;
 
 
-public class MusiciansRepository {
-    private static final String TAG = MusiciansRepository.class.getSimpleName();
+public class SearchRepository {
+    private static final String TAG = SearchRepository.class.getSimpleName();
     private static final long REFRESH_DELAY = 3600000; // 1 hour in milliseconds
-    private static MusiciansRepository sInstance;
+    private static SearchRepository sInstance;
     private final FirebaseFirestore mDb = FirebaseFirestore.getInstance();
     private final UserDao mUserDao;
     private final Executor mExecutor;
     private MutableLiveData<Boolean> mIsLoading = new MutableLiveData<>();
 
-    private MusiciansRepository(UserDao userDao, Executor executor) {
+    private SearchRepository(UserDao userDao, Executor executor) {
         mUserDao = userDao;
         mExecutor = executor;
     }
 
-    public static MusiciansRepository getInstance(Application application) {
+    public static SearchRepository getInstance(Application application) {
         if (sInstance == null) {
-            sInstance = new MusiciansRepository(AppDatabase.getInstance(application).userDao(),
+            sInstance = new SearchRepository(AppDatabase.getInstance(application).userDao(),
                     AppExecutors.getInstance().getDiskIO());
         }
         return sInstance;

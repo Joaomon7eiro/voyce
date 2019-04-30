@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="250dp"
         android:padding="16dp"
+        android:contentDescription="@string/proposal_image"
         android:scaleType="fitCenter"
         android:src="@drawable/proposal_placeholder_image" />
 

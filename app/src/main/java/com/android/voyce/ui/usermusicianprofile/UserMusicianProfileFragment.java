@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -17,7 +18,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -42,8 +42,6 @@ import java.util.List;
 public class UserMusicianProfileFragment extends Fragment {
 
     private NestedScrollView mContainer;
-    private ImageView mIconStart;
-    private ImageView mIconEnd;
 
     private String mUserId;
     private TextView mName;
@@ -58,7 +56,6 @@ public class UserMusicianProfileFragment extends Fragment {
     private ProgressBar mGoalProgress;
 
     private UserMusicianProposalsAdapter mAdapter;
-    private RecyclerView mRecyclerView;
 
     private LinearLayout mGoalContainer;
     private TextView mNoGoal;
@@ -69,26 +66,6 @@ public class UserMusicianProfileFragment extends Fragment {
     public UserMusicianProfileFragment() {
         // Required empty public constructor
     }
-
-    RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
-
-            if (!recyclerView.canScrollHorizontally(1)) {
-                mIconStart.setVisibility(View.VISIBLE);
-            } else {
-                mIconStart.setVisibility(View.GONE);
-            }
-
-            if (!recyclerView.canScrollHorizontally(-1)) {
-                mIconEnd.setVisibility(View.VISIBLE);
-            } else {
-                mIconEnd.setVisibility(View.GONE);
-            }
-        }
-    };
-
 
     public static UserMusicianProfileFragment newInstance() {
         UserMusicianProfileFragment fragment = new UserMusicianProfileFragment();
@@ -104,7 +81,7 @@ public class UserMusicianProfileFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_user_musician_profile, container, false);
@@ -142,9 +119,6 @@ public class UserMusicianProfileFragment extends Fragment {
         mImage = view.findViewById(R.id.user_musician_profile_image);
         mBackgroundImage = view.findViewById(R.id.user_musician_background);
 
-        mIconStart = view.findViewById(R.id.icon_start);
-        mIconEnd = view.findViewById(R.id.icon_end);
-
         String[] tabsTitle = new String[]{"Info", "Contato"};
         UserMusicianProfileFragmentPagerAdapter pagerAdapter =
                 new UserMusicianProfileFragmentPagerAdapter(getChildFragmentManager(), tabsTitle);
@@ -157,9 +131,9 @@ public class UserMusicianProfileFragment extends Fragment {
 
         mAdapter = new UserMusicianProposalsAdapter();
 
-        mRecyclerView = view.findViewById(R.id.rv_user_musician_proposals);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        mRecyclerView.setAdapter(mAdapter);
+        RecyclerView recyclerView = view.findViewById(R.id.rv_user_musician_proposals);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        recyclerView.setAdapter(mAdapter);
 
         ((MainActivity) getActivity()).visibilityEditButton(true);
 
@@ -180,7 +154,6 @@ public class UserMusicianProfileFragment extends Fragment {
                     mFollowers.setText(String.valueOf(user.getFollowers()));
                     mSponsors.setText((String.valueOf(user.getSponsors())));
                     mListeners.setText((String.valueOf(user.getListeners())));
-                    mLocation.setText(getString(R.string.user_location, user.getCity(), user.getState()));
                     mLocation.setText(getString(R.string.user_location, user.getCity(), user.getState()));
                     Picasso.get().load(user.getImage()).into(mImage);
                 }
@@ -209,17 +182,7 @@ public class UserMusicianProfileFragment extends Fragment {
         viewModel.getProposals().observe(this, new Observer<List<Proposal>>() {
             @Override
             public void onChanged(@Nullable List<Proposal> proposals) {
-                if (proposals.size() > 1) {
-                    mIconEnd.setVisibility(View.VISIBLE);
-                    mRecyclerView.addOnScrollListener(mOnScrollListener);
-
-                    mProposalsContainer.setVisibility(View.VISIBLE);
-                    mNoProposals.setVisibility(View.GONE);
-                } else if (proposals.size() == 1) {
-                    mIconEnd.setVisibility(View.GONE);
-                    mIconStart.setVisibility(View.GONE);
-                    mRecyclerView.removeOnScrollListener(mOnScrollListener);
-
+               if (proposals != null && proposals.size() >= 1) {
                     mProposalsContainer.setVisibility(View.VISIBLE);
                     mNoProposals.setVisibility(View.GONE);
                 } else {

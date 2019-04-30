@@ -1,14 +1,12 @@
 package com.android.voyce.ui.usermusicianprofile;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.voyce.R;
@@ -24,14 +22,12 @@ public class UserMusicianProposalsAdapter extends RecyclerView.Adapter<UserMusic
     class UserMusicianProposalAdapterViewHolder extends RecyclerView.ViewHolder {
         TextView mName;
         TextView mPrice;
-        ImageView mCollapseIcon;
         TextView mDescription;
 
         public UserMusicianProposalAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
             mName = itemView.findViewById(R.id.proposal_name);
             mPrice = itemView.findViewById(R.id.proposal_price);
-            mCollapseIcon = itemView.findViewById(R.id.collapse_icon);
             mDescription = itemView.findViewById(R.id.proposal_description);
         }
     }
@@ -70,7 +66,6 @@ public class UserMusicianProposalsAdapter extends RecyclerView.Adapter<UserMusic
         viewHolder.mPrice.setText(String.valueOf(proposal.getPrice()));
         viewHolder.mName.setText(proposal.getName());
         viewHolder.mDescription.setText(proposal.getDescription());
-        viewHolder.mCollapseIcon.setVisibility(View.GONE);
     }
 
     @Override

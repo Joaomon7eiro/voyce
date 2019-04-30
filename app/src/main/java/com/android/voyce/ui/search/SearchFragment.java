@@ -30,7 +30,7 @@ public class SearchFragment extends Fragment implements MusiciansAdapter.ListIte
     private MusiciansAdapter mMusiciansAdapter;
 
     private ProgressBar mProgressBar;
-    RecyclerView mMusiciansGridRecyclerView;
+    private RecyclerView mMusiciansGridRecyclerView;
 
     public SearchFragment() {}
 

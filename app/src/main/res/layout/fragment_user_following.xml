@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Todos os Artistas"
+            android:text="@string/all_musicians"
             android:textColor="@android:color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -36,7 +36,7 @@
         android:visibility="gone"
         android:gravity="center"
         android:textColor="@android:color/white"
-        android:text="Você ainda não segue seus artistas favoritos"
+        android:text="@string/not_following_text"
         android:layout_width="wrap_content"
         android:layout_gravity="center"
         android:layout_height="wrap_content" />

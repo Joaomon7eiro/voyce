@@ -1,6 +1,8 @@
 package com.android.voyce.ui.musiciandetails;
 
+import android.app.AlertDialog;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +13,6 @@ import android.widget.TextView;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.Proposal;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,6 @@ import java.util.List;
 public class ProposalsAdapter extends RecyclerView.Adapter<ProposalsAdapter.ProposalAdapterViewHolder> {
 
     private List<Proposal> mProposals = new ArrayList<>();
-    private int mExpandedPosition = -1;
 
     public ProposalsAdapter() {}
 
@@ -33,24 +33,32 @@ public class ProposalsAdapter extends RecyclerView.Adapter<ProposalsAdapter.Prop
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ProposalAdapterViewHolder proposalHolder, final int position) {
-        Proposal proposal = mProposals.get(position);
-        final boolean isExpanded = position == mExpandedPosition;
-        proposalHolder.mProposalDescriptionContainer.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
-        proposalHolder.mCollapseIcon.setImageResource(isExpanded ? R.drawable.ic_action_drop_up : R.drawable.ic_action_drop_down);
-        proposalHolder.itemView.setActivated(isExpanded);
-        proposalHolder.itemView.setOnClickListener(new View.OnClickListener() {
+    public void onBindViewHolder(@NonNull final ProposalAdapterViewHolder viewHolder, int position) {
+        final Proposal proposal = mProposals.get(position);
+
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mExpandedPosition = isExpanded ? -1 : position;
-                notifyItemChanged(position);
+                LayoutInflater layoutInflater = ((AppCompatActivity)viewHolder.itemView.getContext()).getLayoutInflater();
+                View view = layoutInflater.inflate(R.layout.proposal_dialog, null, false);
+                TextView name = view.findViewById(R.id.proposal_detail_name);
+                TextView price = view.findViewById(R.id.proposal_detail_price);
+                TextView description = view.findViewById(R.id.proposal_detail_description);
+
+                name.setText(proposal.getName());
+                description.setText(proposal.getDescription());
+                price.setText(viewHolder.itemView.getContext().getString(R.string.proposal_price,
+                        String.valueOf(proposal.getPrice())));
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(viewHolder.itemView.getContext());
+                builder.setView(view);
+                builder.show();
             }
         });
 
-        //Picasso.get().load(proposal.getImage()).into(proposalHolder.mImage);
-        proposalHolder.mDescription.setText(proposal.getDescription());
-        proposalHolder.mName.setText(proposal.getName());
-        proposalHolder.mPrice.setText(String.valueOf(proposal.getPrice()));
+        viewHolder.mPrice.setText(String.valueOf(proposal.getPrice()));
+        viewHolder.mName.setText(proposal.getName());
+        viewHolder.mDescription.setText(proposal.getDescription());
     }
 
     @Override
@@ -62,7 +70,6 @@ public class ProposalsAdapter extends RecyclerView.Adapter<ProposalsAdapter.Prop
     class ProposalAdapterViewHolder extends RecyclerView.ViewHolder {
 
         LinearLayout mProposalDescriptionContainer;
-        ImageView mCollapseIcon;
 
         TextView mDescription;
         TextView mName;
@@ -72,7 +79,6 @@ public class ProposalsAdapter extends RecyclerView.Adapter<ProposalsAdapter.Prop
         private ProposalAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
             mProposalDescriptionContainer = itemView.findViewById(R.id.proposal_description_container);
-            mCollapseIcon = itemView.findViewById(R.id.collapse_icon);
             mName = itemView.findViewById(R.id.proposal_name);
             mImage = itemView.findViewById(R.id.proposal_image);
             mPrice = itemView.findViewById(R.id.proposal_price);

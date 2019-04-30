@@ -22,4 +22,21 @@
     <string name="proposal_price">R$ <xliff:g id="proposal_price">%s</xliff:g></string>
     <string name="user_location"><xliff:g id="city">%s</xliff:g>, <xliff:g id="state">%s</xliff:g></string>
     <string name="user_goal">Valor da Meta Atual: R$<xliff:g id="current_value">%s</xliff:g>  de R$<xliff:g id="goal_value">%s</xliff:g></string>
+    <string name="settings">Configurações</string>
+    <string name="playlists">Playlists</string>
+    <string name="sponsoring">Patrocinando</string>
+    <string name="phone_icon">phone icon</string>
+    <string name="instagram_icon">instagram icon</string>
+    <string name="facebook_icon">facebook icon</string>
+    <string name="twitter_icon">twitter icon</string>
+    <string name="all_musicians">Todos os Músicos</string>
+    <string name="not_following_text">Você ainda não segue seus artistas favoritos</string>
+    <string name="create_plan_advice">Crie seus planos no nosso site</string>
+    <string name="create_goal_advice">Crie uma meta no nosso site</string>
+    <string name="logout_button">Logout button</string>
+    <string name="profile_photo_background">profile photo background</string>
+    <string name="back_button">back button</string>
+    <string name="musician_image">musician image</string>
+    <string name="proposal_image">proposaL_image</string>
+    <string name="dollar_icon">dollar icon</string>
 </resources>

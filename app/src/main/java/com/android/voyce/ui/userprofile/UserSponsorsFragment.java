@@ -12,8 +12,6 @@ import android.view.ViewGroup;
 
 import com.android.voyce.R;
 
-import java.util.ArrayList;
-
 /**
  * A simple {@link Fragment} subclass.
  */
