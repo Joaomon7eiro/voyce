@@ -19,7 +19,7 @@ public class MusicianFragmentPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return MusicianInfoFragment.newInstance();
             case 1:
-                return ProposalFragment.newInstance();
+                return MusicianContactFragment.newInstance();
             default:
                 return null;
         }

@@ -1,57 +1,87 @@
 package com.android.voyce.data.repository;
 
+import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.util.Log;
 
-import com.android.voyce.utils.AppExecutors;
+import com.android.voyce.data.local.AppDatabase;
+import com.android.voyce.data.local.UserDao;
 import com.android.voyce.data.model.User;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.android.voyce.utils.AppExecutors;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.concurrent.Executor;
 
+import javax.annotation.Nullable;
+
 
 public class MusiciansRepository {
+    private static final String TAG = MusiciansRepository.class.getSimpleName();
+    private static final long REFRESH_DELAY = 3600000; // 1 hour in milliseconds
     private static MusiciansRepository sInstance;
-    private final Executor mExecutor;
     private final FirebaseFirestore mDb = FirebaseFirestore.getInstance();
+    private final UserDao mUserDao;
+    private final Executor mExecutor;
     private MutableLiveData<Boolean> mIsLoading = new MutableLiveData<>();
 
-    private MusiciansRepository(Executor executor) {
+    private MusiciansRepository(UserDao userDao, Executor executor) {
+        mUserDao = userDao;
         mExecutor = executor;
     }
-    public static MusiciansRepository getInstance() {
+
+    public static MusiciansRepository getInstance(Application application) {
         if (sInstance == null) {
-            sInstance = new MusiciansRepository(AppExecutors.getInstance().getNetworkIO());
+            sInstance = new MusiciansRepository(AppDatabase.getInstance(application).userDao(),
+                    AppExecutors.getInstance().getDiskIO());
         }
         return sInstance;
     }
 
     public LiveData<List<User>> getMusicians() {
-        final Query query = mDb.collection("users").whereEqualTo("type",  1);
-        final MutableLiveData<List<User>> liveData = new MutableLiveData<>();
+        refreshUsers();
+        return mUserDao.getUsers();
+    }
 
-        mIsLoading.setValue(true);
+    private void refreshUsers() {
+        final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if (queryDocumentSnapshots != null) {
-                            List<User> musicians = queryDocumentSnapshots.toObjects(User.class);
-                            liveData.setValue(musicians);
+                int count = mUserDao.getUsersCount();
+                boolean needsRefresh = (mUserDao.getUpdatedUsersCount(timestamp.getTime(), REFRESH_DELAY) > 0);
+                if (needsRefresh || count <= 1) {
+                    Log.i(TAG, "Refreshing search users");
+                    final Query query = mDb.collection("users").whereEqualTo("type", 1);
+
+                    mIsLoading.postValue(true);
+                    query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                            if (queryDocumentSnapshots != null) {
+                                final List<User> musicians = queryDocumentSnapshots.toObjects(User.class);
+                                for (User user : musicians) {
+                                    user.setLast_update_timestamp(timestamp.getTime());
+                                }
+                                mExecutor.execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mUserDao.insertUsers(musicians);
+                                        mIsLoading.postValue(false);
+                                    }
+                                });
+                            }
                         }
-                        mIsLoading.setValue(false);
-                    }
-                });
+                    });
+                }
             }
         });
-
-        return liveData;
     }
 
     public LiveData<Boolean> getIsLoading() {

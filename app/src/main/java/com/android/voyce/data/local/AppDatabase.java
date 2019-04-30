@@ -13,7 +13,6 @@ import com.android.voyce.data.model.User;
 import com.android.voyce.data.model.UserFollowingMusician;
 
 @Database(entities = {User.class, Goal.class, Proposal.class, UserFollowingMusician.class}, version = 1, exportSchema = false)
-@TypeConverters(BitMapConverter.class)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static final String TAG = AppDatabase.class.getSimpleName();

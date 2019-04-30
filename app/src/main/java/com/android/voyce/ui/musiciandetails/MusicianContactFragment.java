@@ -16,23 +16,22 @@ import android.view.ViewGroup;
 import com.android.voyce.R;
 import com.android.voyce.data.model.Proposal;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ProposalFragment extends Fragment{
+public class MusicianContactFragment extends Fragment{
 
     private ProposalsAdapter mAdapter;
 
-    public ProposalFragment() {
+    public MusicianContactFragment() {
         // Required empty public constructor
     }
 
-    public static ProposalFragment newInstance() {
-        return new ProposalFragment();
+    public static MusicianContactFragment newInstance() {
+        return new MusicianContactFragment();
     }
 
     @Override

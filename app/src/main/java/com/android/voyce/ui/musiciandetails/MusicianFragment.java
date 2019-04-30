@@ -10,25 +10,28 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.User;
 import com.android.voyce.data.model.UserFollowingMusician;
 import com.android.voyce.ui.main.MainActivity;
+import com.android.voyce.ui.usermusicianprofile.UserMusicianProposalsAdapter;
 import com.android.voyce.utils.ConnectivityHelper;
 import com.android.voyce.utils.Constants;
-import com.jgabrielfreitas.core.BlurImageView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -40,27 +43,38 @@ public class MusicianFragment extends Fragment {
 
     private Button mFollowButton;
 
-    private String mId;
-    private String mName;
-    private String mImage;
-    private Bitmap mBitMapImage;
-
-    private String mUserId;
-    private String mUserName;
-    private String mUserImage;
+    private String mMusicianId;
+    private String mMusicianName;
+    private String mMusicianImage;
 
     private String[] mTabsTitle;
 
-    private ProgressBar mProgressBar;
-    private AppBarLayout mAppBarLayout;
-    private BlurImageView mBackgroundImage;
-    private ImageView mProfileImage;
-    private TextView mMusicianName;
-
-
-    private ViewPager mViewPager;
-
     private MusicianViewModel mViewModel;
+
+    private NestedScrollView mContainer;
+
+    private ImageView mImage;
+    private TextView mName;
+
+    private ImageView mIconStart;
+    private ImageView mIconEnd;
+
+    private String mUserId;
+    private TextView mFollowers;
+    private TextView mSponsors;
+    private TextView mListeners;
+    private TextView mLocation;
+    private TextView mGoalValue;
+    private TextView mGoalDescription;
+    private ImageView mBackgroundImage;
+    private ProgressBar mGoalProgress;
+
+    private UserMusicianProposalsAdapter mAdapter;
+    private RecyclerView mRecyclerView;
+    private ProgressBar mProgressBar;
+
+    private LinearLayout mGoalContainer;
+    private RelativeLayout mProposalsContainer;
 
     private View.OnClickListener mBackOnClickListener = new View.OnClickListener() {
         @Override
@@ -72,6 +86,25 @@ public class MusicianFragment extends Fragment {
                     MainActivity activity = (MainActivity) getActivity();
                     if (activity != null) activity.setLayoutVisibility(false);
                 }
+            }
+        }
+    };
+
+    RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+
+            if (!recyclerView.canScrollHorizontally(1)) {
+                mIconStart.setVisibility(View.VISIBLE);
+            } else {
+                mIconStart.setVisibility(View.GONE);
+            }
+
+            if (!recyclerView.canScrollHorizontally(-1)) {
+                mIconEnd.setVisibility(View.VISIBLE);
+            } else {
+                mIconEnd.setVisibility(View.GONE);
             }
         }
     };
@@ -98,15 +131,15 @@ public class MusicianFragment extends Fragment {
         Bundle args = getArguments();
 
         if (args != null) {
-            mId = args.getString(Constants.KEY_MUSICIAN_ID);
-            mName = args.getString(Constants.KEY_MUSICIAN_NAME);
-            mImage = args.getString(Constants.KEY_MUSICIAN_IMAGE);
+            mMusicianId = args.getString(Constants.KEY_MUSICIAN_ID);
+            mMusicianName = args.getString(Constants.KEY_MUSICIAN_NAME);
+            mMusicianImage = args.getString(Constants.KEY_MUSICIAN_IMAGE);
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         mUserId = sharedPreferences.getString(Constants.KEY_CURRENT_USER_ID, null);
 
-        mTabsTitle = new String[]{getString(R.string.info_tab), getString(R.string.proposal_tab)};
+        mTabsTitle = new String[]{"Info", "Contato"};
     }
 
     @Override
@@ -114,9 +147,9 @@ public class MusicianFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         UserFollowingMusician userFollowingMusician = new UserFollowingMusician();
-        userFollowingMusician.setId(mId);
-        userFollowingMusician.setImage(mImage);
-        userFollowingMusician.setName(mName);
+        userFollowingMusician.setId(mMusicianId);
+        userFollowingMusician.setImage(mMusicianImage);
+        userFollowingMusician.setName(mMusicianName);
         userFollowingMusician.setFollower_id(mUserId);
 
         mViewModel = ViewModelProviders.of(this).get(MusicianViewModel.class);
@@ -136,16 +169,15 @@ public class MusicianFragment extends Fragment {
                 if (isLoading != null) {
                     if (isLoading) {
                         mProgressBar.setVisibility(View.VISIBLE);
-                        mViewPager.setVisibility(View.GONE);
-                        mAppBarLayout.setVisibility(View.GONE);
+                        mContainer.setVisibility(View.GONE);
                     } else {
                         mProgressBar.setVisibility(View.GONE);
-                        mAppBarLayout.setVisibility(View.VISIBLE);
-                        mViewPager.setVisibility(View.VISIBLE);
+                        mContainer.setVisibility(View.VISIBLE);
                     }
                 }
             }
         });
+
         mViewModel.getIsFollowing().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(@Nullable Boolean isFollowing) {
@@ -163,24 +195,7 @@ public class MusicianFragment extends Fragment {
     }
 
     private void updateUi(User user) {
-        Picasso.get().load(user.getImage()).into(new Target() {
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                mBitMapImage = bitmap;
-                mBackgroundImage.setImageBitmap(mBitMapImage);
-                mProfileImage.setImageBitmap(mBitMapImage);
-                mBackgroundImage.setBlur(2);
-            }
 
-            @Override
-            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-            }
-
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
-            }
-        });
-        mMusicianName.setText(mName);
     }
 
     @Override
@@ -188,6 +203,25 @@ public class MusicianFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_musician, container, false);
+
+        mContainer = view.findViewById(R.id.container_musician);
+
+        mGoalContainer = view.findViewById(R.id.goal_container);
+
+        mProposalsContainer = view.findViewById(R.id.proposals_container);
+
+        mSponsors = view.findViewById(R.id.musician_sponsors_number);
+        mFollowers = view.findViewById(R.id.musician_followers_number);
+        mListeners = view.findViewById(R.id.musician_listeners_number);
+        mLocation = view.findViewById(R.id.musician_location);
+        mGoalValue = view.findViewById(R.id.musician_goal_value);
+        mGoalDescription = view.findViewById(R.id.goal_description);
+        mGoalProgress = view.findViewById(R.id.sb_goal_progress);
+        mImage = view.findViewById(R.id.musician_profile_image);
+        mBackgroundImage = view.findViewById(R.id.musician_background);
+
+        mIconStart = view.findViewById(R.id.icon_start);
+        mIconEnd = view.findViewById(R.id.icon_end);
 
         ImageView backButton = view.findViewById(R.id.musician_back_button);
         backButton.setOnClickListener(mBackOnClickListener);
@@ -200,19 +234,17 @@ public class MusicianFragment extends Fragment {
             }
         });
 
-        mProgressBar = view.findViewById(R.id.musician_details_progress_bar);
-        mAppBarLayout = view.findViewById(R.id.musician_details_appbar);
+        mProgressBar = view.findViewById(R.id.musician_progress_bar);
 
-        mViewPager = view.findViewById(R.id.view_pager);
-        TabLayout tabLayout = view.findViewById(R.id.tab_layout);
+        ViewPager viewPager = view.findViewById(R.id.musician_view_pager);
+        TabLayout tabLayout = view.findViewById(R.id.musician_tab_layout);
 
-        mBackgroundImage = view.findViewById(R.id.musician_background_image);
-        mProfileImage = view.findViewById(R.id.musician_profile_image);
-        mMusicianName = view.findViewById(R.id.musician_name);
+        mImage = view.findViewById(R.id.musician_profile_image);
+        mName = view.findViewById(R.id.musician_name);
 
         MusicianFragmentPagerAdapter mPagerAdapter = new MusicianFragmentPagerAdapter(getChildFragmentManager(), mTabsTitle);
-        mViewPager.setAdapter(mPagerAdapter);
-        tabLayout.setupWithViewPager(mViewPager);
+        viewPager.setAdapter(mPagerAdapter);
+        tabLayout.setupWithViewPager(viewPager);
 
         return view;
     }

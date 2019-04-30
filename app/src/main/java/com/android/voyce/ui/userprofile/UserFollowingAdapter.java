@@ -70,4 +70,9 @@ public class UserFollowingAdapter extends RecyclerView.Adapter<UserFollowingAdap
         mMusicians = musicians;
         notifyDataSetChanged();
     }
+
+    public List<UserFollowingMusician> getData() {
+        return mMusicians;
+    }
+
 }

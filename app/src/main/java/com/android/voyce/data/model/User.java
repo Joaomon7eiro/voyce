@@ -22,6 +22,7 @@ public class User {
     private String twitter_url;
     private String phone_number;
     private String biography;
+    private long last_update_timestamp;
 
     public User() {
     }
@@ -131,4 +132,11 @@ public class User {
         this.id = id;
     }
 
+    public long getLast_update_timestamp() {
+        return last_update_timestamp;
+    }
+
+    public void setLast_update_timestamp(long last_update_timestamp) {
+        this.last_update_timestamp = last_update_timestamp;
+    }
 }

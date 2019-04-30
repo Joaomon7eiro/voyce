@@ -29,7 +29,7 @@ public class MusicianViewModel extends AndroidViewModel {
         if (mMusician != null) {
             return;
         }
-        mRepository.setUserAndMusicianId(userFollowingMusician);
+        mRepository.setUserFollowingMusician(userFollowingMusician);
         mMusician = mRepository.getMusician();
         mProposals = mRepository.getProposals();
         mIsFollowing = mRepository.getIsFollowing();

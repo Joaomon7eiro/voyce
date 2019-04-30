@@ -1,6 +1,9 @@
 package com.android.voyce.ui.usermusicianprofile;
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,11 +25,14 @@ public class UserMusicianProposalsAdapter extends RecyclerView.Adapter<UserMusic
         TextView mName;
         TextView mPrice;
         ImageView mCollapseIcon;
+        TextView mDescription;
+
         public UserMusicianProposalAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
             mName = itemView.findViewById(R.id.proposal_name);
             mPrice = itemView.findViewById(R.id.proposal_price);
             mCollapseIcon = itemView.findViewById(R.id.collapse_icon);
+            mDescription = itemView.findViewById(R.id.proposal_description);
         }
     }
 
@@ -38,10 +44,32 @@ public class UserMusicianProposalsAdapter extends RecyclerView.Adapter<UserMusic
     }
 
     @Override
-    public void onBindViewHolder(@NonNull UserMusicianProposalAdapterViewHolder viewHolder, int i) {
-        Proposal proposal = mProposals.get(i);
+    public void onBindViewHolder(@NonNull final UserMusicianProposalAdapterViewHolder viewHolder, int position) {
+        final Proposal proposal = mProposals.get(position);
+
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LayoutInflater layoutInflater = ((AppCompatActivity)viewHolder.itemView.getContext()).getLayoutInflater();
+                View view = layoutInflater.inflate(R.layout.proposal_dialog, null, false);
+                TextView name = view.findViewById(R.id.proposal_detail_name);
+                TextView price = view.findViewById(R.id.proposal_detail_price);
+                TextView description = view.findViewById(R.id.proposal_detail_description);
+
+                name.setText(proposal.getName());
+                description.setText(proposal.getDescription());
+                price.setText(viewHolder.itemView.getContext().getString(R.string.proposal_price,
+                        String.valueOf(proposal.getPrice())));
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(viewHolder.itemView.getContext());
+                builder.setView(view);
+                builder.show();
+            }
+        });
+
         viewHolder.mPrice.setText(String.valueOf(proposal.getPrice()));
         viewHolder.mName.setText(proposal.getName());
+        viewHolder.mDescription.setText(proposal.getDescription());
         viewHolder.mCollapseIcon.setVisibility(View.GONE);
     }
 

@@ -109,7 +109,6 @@ public class UserMusicianProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_user_musician_profile, container, false);
 
-
         ImageView logout = view.findViewById(R.id.logout);
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,7 +122,6 @@ public class UserMusicianProfileFragment extends Fragment {
                 getActivity().finish();
             }
         });
-
 
         mContainer = view.findViewById(R.id.container_user_musician);
 

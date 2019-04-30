@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 //                case R.id.navigation_home:
 //                    return true;
                 case R.id.navigation_search:
-                    checkInternetConnectivity();
+                    setLayoutVisibility(true);
                     fragment = SearchFragment.newInstance();
                     break;
                 case R.id.navigation_profile:
@@ -123,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             Fragment searchFragment = new SearchFragment();
             openFragment(searchFragment);
-            checkInternetConnectivity();
         } else {
             mCurrentMenuId = savedInstanceState.getInt(Constants.KEY_CURRENT_MENU_ID);
         }

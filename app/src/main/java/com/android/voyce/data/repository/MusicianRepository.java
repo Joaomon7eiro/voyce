@@ -61,7 +61,7 @@ public class MusicianRepository {
         return sInstance;
     }
 
-    public void setUserAndMusicianId(UserFollowingMusician userFollowingMusician) {
+    public void setUserFollowingMusician(UserFollowingMusician userFollowingMusician) {
         mUserFollowingMusician = userFollowingMusician;
     }
 
@@ -72,7 +72,6 @@ public class MusicianRepository {
         final MutableLiveData<User> userLiveData = new MutableLiveData<>();
 
         mIsLoading.setValue(true);
-
         reference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -80,7 +79,7 @@ public class MusicianRepository {
                     User musician = documentSnapshot.toObject(User.class);
                     userLiveData.postValue(musician);
                 }
-                mIsLoading.postValue(false);
+                mIsLoading.setValue(false);
             }
         });
 
@@ -101,7 +100,7 @@ public class MusicianRepository {
                     List<Proposal> proposals = queryDocumentSnapshots.toObjects(Proposal.class);
                     liveData.postValue(proposals);
                 }
-                mIsLoading.postValue(false);
+                mIsLoading.setValue(false);
             }
         });
 
@@ -110,7 +109,7 @@ public class MusicianRepository {
 
     public void handleFollower() {
         final DocumentReference reference = mUsersCollectionReference.document(mUserFollowingMusician.getId());
-
+        mIsLoading.setValue(true);
         if (!mBolIsFollowing) {
             Map<String, Object> hashMapUser = new HashMap<>();
             hashMapUser.put("image", mUserFollowingMusician.getImage());
@@ -152,8 +151,8 @@ public class MusicianRepository {
 
             mIsFollowing.setValue(true);
             mBolIsFollowing = true;
-        } else {
 
+        } else {
             mFollowersCollectionReference
                     .document(mUserFollowingMusician.getFollower_id())
                     .collection("users")
@@ -191,6 +190,7 @@ public class MusicianRepository {
             mIsFollowing.setValue(false);
             mBolIsFollowing = false;
         }
+        mIsLoading.setValue(false);
     }
 
     public LiveData<Boolean> getIsLoading() {
@@ -200,7 +200,6 @@ public class MusicianRepository {
     public LiveData<Boolean> getIsFollowing() {
         DocumentReference reference = mFollowersCollectionReference
                 .document(mUserFollowingMusician.getFollower_id()).collection("users").document(mUserFollowingMusician.getId());
-
 
         reference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override

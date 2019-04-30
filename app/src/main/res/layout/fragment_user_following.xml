@@ -5,9 +5,40 @@
     android:layout_height="match_parent"
     tools:context=".ui.userprofile.UserFollowingFragment">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_user_following"
+    <LinearLayout
+        android:id="@+id/following_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:orientation="vertical"
+        android:clipToPadding="false"
+        android:paddingTop="?actionBarSize"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Todos os Artistas"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_user_following"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/no_following"
+        android:textSize="20sp"
+        android:layout_margin="16dp"
+        android:visibility="gone"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:text="Você ainda não segue seus artistas favoritos"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content" />
 
 </FrameLayout>
