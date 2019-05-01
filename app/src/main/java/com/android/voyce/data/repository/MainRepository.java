@@ -26,7 +26,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 
 import javax.annotation.Nullable;
@@ -158,6 +160,15 @@ public class MainRepository {
         Gson gson = new Gson();
         JsonElement jsonElement = gson.toJsonTree(hashMap);
         return gson.fromJson(jsonElement, Goal.class);
+    }
+
+    public void setSignalId(String id) {
+        CollectionReference userCollectionReference = mDb.collection("users");
+        DocumentReference userReference = userCollectionReference.document(mUserId);
+
+        Map<String, Object> updateSignalId = new HashMap<>();
+        updateSignalId.put("signal_id", id);
+        userReference.update(updateSignalId);
     }
 
     public LiveData<User> getUser() {

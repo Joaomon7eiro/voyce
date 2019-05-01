@@ -16,22 +16,22 @@
             android:id="@+id/user_profile_image"
             android:layout_width="230dp"
             android:layout_height="230dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             android:src="@drawable/musician"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.513"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/followers_circle"
-            android:layout_width="200dp"
+            android:layout_width="203dp"
             android:layout_height="200dp"
-            android:layout_marginStart="72dp"
-            android:layout_marginTop="108dp"
+            android:layout_marginBottom="96dp"
             android:src="@drawable/followers"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/user_profile_image" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -49,11 +49,10 @@
             android:id="@+id/sponsoring_circle"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:layout_marginTop="140dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginStart="84dp"
             android:src="@drawable/sponsoring"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toTopOf="@+id/user_profile_image"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -71,11 +70,11 @@
             android:id="@+id/playlists_circle"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:layout_marginEnd="56dp"
-            android:layout_marginBottom="116dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="76dp"
             android:src="@drawable/playlists"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/user_profile_image" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -93,12 +92,11 @@
             android:id="@+id/settings_circle"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginBottom="140dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="124dp"
             android:src="@drawable/settings"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/user_profile_image"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toEndOf="@+id/user_profile_image"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:layout_width="wrap_content"

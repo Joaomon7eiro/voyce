@@ -12,7 +12,9 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -26,13 +28,17 @@ import com.android.voyce.ui.usermusicianprofile.UserMusicianProfileFragment;
 import com.android.voyce.ui.userprofile.UserProfileFragment;
 import com.android.voyce.utils.ConnectivityHelper;
 import com.android.voyce.utils.Constants;
+import com.onesignal.OSSubscriptionObserver;
+import com.onesignal.OSSubscriptionStateChanges;
+import com.onesignal.OneSignal;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OSSubscriptionObserver {
 
     private TextView mNoInternetConnection;
     private FrameLayout mFrameLayout;
     private BottomNavigationView mNavigation;
     private FloatingActionButton mFloatingButton;
+    private MainViewModel mViewModel;
 
     private int mCurrentMenuId = R.id.navigation_search;
 
@@ -110,6 +116,8 @@ public class MainActivity extends AppCompatActivity {
         // TODO: remove this
         verifyUser();
 
+        OneSignal.addSubscriptionObserver(this);
+
         setContentView(R.layout.activity_main);
 
         mNavigation = findViewById(R.id.navigation);
@@ -136,9 +144,9 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         } else {
-            MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-            viewModel.init(userId);
-            viewModel.getUserLiveData().observe(this, new Observer<User>() {
+            mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+            mViewModel.init(userId);
+            mViewModel.getUserLiveData().observe(this, new Observer<User>() {
                 @Override
                 public void onChanged(@Nullable User user) {
                     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -174,5 +182,17 @@ public class MainActivity extends AppCompatActivity {
         } else {
             mNavigation.setSelectedItemId(R.id.navigation_search);
         }
+    }
+
+    @Override
+    public void onOSSubscriptionChanged(OSSubscriptionStateChanges stateChanges) {
+        if (!stateChanges.getFrom().getSubscribed() &&
+                stateChanges.getTo().getSubscribed()) {
+            // get player ID
+            String id = stateChanges.getTo().getUserId();
+            mViewModel.setSignalId(id);
+        }
+
+        Log.d("Debug", "onOSPermissionChanged: " + stateChanges);
     }
 }

@@ -10,6 +10,7 @@ public class User {
     @NonNull
     @PrimaryKey
     private String id;
+    private String signal_id;
     private String name;
     private String image;
     private String city;
@@ -138,5 +139,13 @@ public class User {
 
     public void setLast_update_timestamp(long last_update_timestamp) {
         this.last_update_timestamp = last_update_timestamp;
+    }
+
+    public String getSignal_id() {
+        return signal_id;
+    }
+
+    public void setSignal_id(String signal_id) {
+        this.signal_id = signal_id;
     }
 }

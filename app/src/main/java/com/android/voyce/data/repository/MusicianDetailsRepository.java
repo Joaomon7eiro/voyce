@@ -25,7 +25,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.onesignal.OneSignal;
 
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.List;
@@ -124,7 +128,7 @@ public class MusicianDetailsRepository {
         return gson.fromJson(jsonElement, Goal.class);
     }
 
-    public void handleFollower() {
+    public void handleFollower(String signalId, String name) {
         final DocumentReference reference = mUsersCollectionReference.document(mUserFollowingMusician.getId());
         mIsLoading.setValue(true);
         if (!mBolIsFollowing) {
@@ -169,6 +173,15 @@ public class MusicianDetailsRepository {
             mIsFollowing.setValue(true);
             mBolIsFollowing = true;
 
+            try {
+                JSONObject notificationContent = new JSONObject("{'contents': {'en': '" + name + " começou a te seguir' }," +
+                        "'include_player_ids': ['" + signalId + "'], " +
+                        "'headings': {'en': 'Novo Seguidor'}}");
+
+                OneSignal.postNotification(notificationContent, null);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         } else {
             mFollowersCollectionReference
                     .document(mUserFollowingMusician.getFollower_id())

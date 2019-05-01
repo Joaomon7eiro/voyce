@@ -57,6 +57,7 @@ public class MusicianFragment extends Fragment {
     private TextView mName;
 
     private String mUserId;
+    private String mSignalId;
     private TextView mFollowers;
     private TextView mSponsors;
     private TextView mListeners;
@@ -85,6 +86,7 @@ public class MusicianFragment extends Fragment {
             }
         }
     };
+    private String mUserName;
 
     public MusicianFragment() {
     }
@@ -115,6 +117,7 @@ public class MusicianFragment extends Fragment {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         mUserId = sharedPreferences.getString(Constants.KEY_CURRENT_USER_ID, null);
+        mUserName = sharedPreferences.getString(Constants.KEY_CURRENT_USER_NAME, null);
 
         mTabsTitle = new String[]{"Info", "Contato"};
     }
@@ -141,6 +144,7 @@ public class MusicianFragment extends Fragment {
                     mSponsors.setText(String.valueOf(user.getSponsors()));
                     mListeners.setText(String.valueOf(user.getListeners()));
                     mLocation.setText(getString(R.string.user_location, user.getCity(), user.getState()));
+                    mSignalId = user.getSignal_id();
                 }
             }
         });
@@ -233,7 +237,7 @@ public class MusicianFragment extends Fragment {
         mFollowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mViewModel.handleFollower();
+                mViewModel.handleFollower(mSignalId, mUserName);
             }
         });
 

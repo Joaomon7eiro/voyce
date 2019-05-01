@@ -23,6 +23,10 @@ public class MainViewModel extends AndroidViewModel {
         mUserLiveData = mRepository.getUser();
     }
 
+    public void setSignalId(String id) {
+        mRepository.setSignalId(id);
+    }
+
     public LiveData<User> getUserLiveData() {
         return mUserLiveData;
     }

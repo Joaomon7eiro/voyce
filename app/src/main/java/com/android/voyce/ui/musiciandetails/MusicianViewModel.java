@@ -51,8 +51,8 @@ public class MusicianViewModel extends AndroidViewModel {
         return mProposals;
     }
 
-    public void handleFollower() {
-        mRepository.handleFollower();
+    public void handleFollower(String signalId, String name) {
+        mRepository.handleFollower(signalId, name);
     }
 
     public LiveData<Boolean> getIsFollowing() {
