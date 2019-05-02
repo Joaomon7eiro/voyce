@@ -18,6 +18,8 @@ public class User {
     private long sponsors;
     private long listeners;
     private long followers;
+    private long following;
+    private long sponsoring;
     private String facebook_url;
     private String instagram_url;
     private String twitter_url;
@@ -147,5 +149,21 @@ public class User {
 
     public void setSignal_id(String signal_id) {
         this.signal_id = signal_id;
+    }
+
+    public long getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(long following) {
+        this.following = following;
+    }
+
+    public long getSponsoring() {
+        return sponsoring;
+    }
+
+    public void setSponsoring(long sponsoring) {
+        this.sponsoring = sponsoring;
     }
 }

@@ -76,9 +76,10 @@ public class MainRepository {
         mIsLoading.setValue(true);
 
         CollectionReference userCollectionReference = mDb.collection("users");
-        DocumentReference userReference = userCollectionReference.document(mUserId);
+        final DocumentReference userReference = userCollectionReference.document(mUserId);
         CollectionReference proposalsCollectionReference = userReference.collection("proposals");
-        CollectionReference followersReference = mDb.collection("user_following").document(mUserId).collection("users");
+        CollectionReference followingReference = mDb.collection("user_following").document(mUserId).collection("users");
+        CollectionReference followersReference = mDb.collection("user_followers").document(mUserId).collection("users");
 
         proposalsCollectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -130,7 +131,7 @@ public class MainRepository {
             }
         });
 
-        followersReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+        followingReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 if (queryDocumentSnapshots != null) {
@@ -143,6 +144,10 @@ public class MainRepository {
                         userFollowingMusicians.add(userFollowingMusician);
                     }
 
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("following", userFollowingMusicians.size());
+                    userReference.update(map);
+
                     mDiskExecutor.execute(new Runnable() {
                         @Override
                         public void run() {
@@ -150,6 +155,17 @@ public class MainRepository {
                             mIsLoading.postValue(false);
                         }
                     });
+                }
+            }
+        });
+
+        followersReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                if (queryDocumentSnapshots != null) {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("followers", queryDocumentSnapshots.size());
+                    userReference.update(map);
                 }
             }
         });

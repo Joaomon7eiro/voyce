@@ -13,6 +13,7 @@ import java.util.List;
 public class SearchViewModel extends AndroidViewModel {
     private LiveData<List<User>> mMusicians;
     private LiveData<Boolean> mIsLoading;
+    private static final long REFRESH_DELAY = 3600000; // 1 hour in milliseconds
     private SearchRepository mRepository;
 
     public SearchViewModel(@NonNull Application application) {
@@ -24,7 +25,7 @@ public class SearchViewModel extends AndroidViewModel {
         if (mMusicians != null) {
             return;
         }
-        mMusicians = mRepository.getMusicians();
+        mMusicians = mRepository.getMusicians(REFRESH_DELAY);
         mIsLoading = mRepository.getIsLoading();
     }
 
@@ -34,5 +35,9 @@ public class SearchViewModel extends AndroidViewModel {
 
     public LiveData<Boolean> getIsLoading() {
         return mIsLoading;
+    }
+
+    public void refreshData(long refresh) {
+        mRepository.getMusicians(refresh);
     }
 }

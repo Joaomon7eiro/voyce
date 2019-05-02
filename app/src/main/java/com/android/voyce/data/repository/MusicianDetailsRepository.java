@@ -3,9 +3,6 @@ package com.android.voyce.data.repository;
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.android.voyce.data.local.AppDatabase;
 import com.android.voyce.data.model.Goal;
@@ -14,15 +11,12 @@ import com.android.voyce.data.local.UserFollowingMusicianDao;
 import com.android.voyce.data.model.Proposal;
 import com.android.voyce.data.model.User;
 import com.android.voyce.data.model.UserFollowingMusician;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.Transaction;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.onesignal.OneSignal;
@@ -37,13 +31,15 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 
+
 public class MusicianDetailsRepository {
     private static final String TAG = SearchRepository.class.getSimpleName();
 
     private static MusicianDetailsRepository sInstance;
     private final FirebaseFirestore mDb = FirebaseFirestore.getInstance();
     private CollectionReference mUsersCollectionReference = mDb.collection("users");
-    private CollectionReference mFollowersCollectionReference = mDb.collection("user_following");
+    private CollectionReference mFollowingCollectionReference = mDb.collection("user_following");
+    private CollectionReference mFollowersCollectionReference = mDb.collection("user_followers");
 
     private final Executor mDiskExecutor;
     private final UserFollowingMusicianDao mUserFollowingMusicianDao;
@@ -72,6 +68,13 @@ public class MusicianDetailsRepository {
         mUserFollowingMusician = userFollowingMusician;
     }
 
+    public LiveData<Goal> getGoal() {
+        return mGoal;
+    }
+
+    public LiveData<Boolean> getIsLoading() {
+        return mIsLoading;
+    }
 
     public LiveData<User> getMusician() {
         final DocumentReference reference = mUsersCollectionReference.document(mUserFollowingMusician.getId());
@@ -79,6 +82,7 @@ public class MusicianDetailsRepository {
         final MutableLiveData<User> userLiveData = new MutableLiveData<>();
 
         mIsLoading.setValue(true);
+
         reference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -88,9 +92,7 @@ public class MusicianDetailsRepository {
 
                     Goal goal = hashToGoalObject(documentSnapshot.get("goal"));
                     mGoal.setValue(goal);
-
                 }
-                mIsLoading.setValue(false);
             }
         });
 
@@ -103,7 +105,6 @@ public class MusicianDetailsRepository {
 
         final MutableLiveData<List<Proposal>> liveData = new MutableLiveData<>();
 
-        mIsLoading.setValue(true);
         proposalsCollectionReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -111,15 +112,10 @@ public class MusicianDetailsRepository {
                     List<Proposal> proposals = queryDocumentSnapshots.toObjects(Proposal.class);
                     liveData.setValue(proposals);
                 }
-                mIsLoading.setValue(false);
             }
         });
 
         return liveData;
-    }
-
-    public LiveData<Goal> getGoal() {
-        return mGoal;
     }
 
     private Goal hashToGoalObject(Object hashMap) {
@@ -129,17 +125,23 @@ public class MusicianDetailsRepository {
     }
 
     public void handleFollower(String signalId, String name) {
-        final DocumentReference reference = mUsersCollectionReference.document(mUserFollowingMusician.getId());
-        mIsLoading.setValue(true);
         if (!mBolIsFollowing) {
-            Map<String, Object> hashMapUser = new HashMap<>();
-            hashMapUser.put("image", mUserFollowingMusician.getImage());
-            hashMapUser.put("name", mUserFollowingMusician.getName());
+            Map<String, Object> hashMapMusician = new HashMap<>();
+            hashMapMusician.put("image", mUserFollowingMusician.getImage());
+            hashMapMusician.put("name", mUserFollowingMusician.getName());
 
-            mFollowersCollectionReference
+            mFollowingCollectionReference
                     .document(mUserFollowingMusician.getFollower_id())
                     .collection("users")
-                    .document(mUserFollowingMusician.getId()).set(hashMapUser);
+                    .document(mUserFollowingMusician.getId()).set(hashMapMusician);
+
+            Map<String, Object> hashMapUser = new HashMap<>();
+            hashMapUser.put("id", mUserFollowingMusician.getFollower_id());
+
+            mFollowersCollectionReference
+                    .document(mUserFollowingMusician.getId())
+                    .collection("users")
+                    .document(mUserFollowingMusician.getFollower_id()).set(hashMapUser);
 
             mDiskExecutor.execute(new Runnable() {
                 @Override
@@ -147,31 +149,6 @@ public class MusicianDetailsRepository {
                     mUserFollowingMusicianDao.insertUserFollowingMusician(mUserFollowingMusician);
                 }
             });
-
-            mDb.runTransaction(new Transaction.Function<Object>() {
-                @Nullable
-                @Override
-                public Object apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
-                    DocumentSnapshot documentSnapshot = transaction.get(reference);
-                    long newFollowers = documentSnapshot.getLong("followers") + 1;
-                    transaction.update(reference, "followers", newFollowers);
-
-                    return null;
-                }
-            }).addOnSuccessListener(new OnSuccessListener<Object>() {
-                @Override
-                public void onSuccess(Object o) {
-                    Log.d(TAG, "Transaction success!");
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.d(TAG, "Transaction failure!", e);
-                }
-            });
-
-            mIsFollowing.setValue(true);
-            mBolIsFollowing = true;
 
             try {
                 JSONObject notificationContent = new JSONObject("{'contents': {'en': '" + name + " começou a te seguir' }," +
@@ -182,11 +159,19 @@ public class MusicianDetailsRepository {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+            mIsFollowing.setValue(true);
+            mBolIsFollowing = true;
         } else {
-            mFollowersCollectionReference
+            mFollowingCollectionReference
                     .document(mUserFollowingMusician.getFollower_id())
                     .collection("users")
                     .document(mUserFollowingMusician.getId()).delete();
+
+            mFollowersCollectionReference
+                    .document(mUserFollowingMusician.getId())
+                    .collection("users")
+                    .document(mUserFollowingMusician.getFollower_id()).delete();
 
             mDiskExecutor.execute(new Runnable() {
                 @Override
@@ -195,40 +180,27 @@ public class MusicianDetailsRepository {
                 }
             });
 
-            mDb.runTransaction(new Transaction.Function<Object>() {
-                @Nullable
-                @Override
-                public Object apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
-                    DocumentSnapshot documentSnapshot = transaction.get(reference);
-                    long newFollowers = documentSnapshot.getLong("followers") - 1;
-                    transaction.update(reference, "followers", newFollowers);
-
-                    return null;
-                }
-            }).addOnSuccessListener(new OnSuccessListener<Object>() {
-                @Override
-                public void onSuccess(Object o) {
-                    Log.d(TAG, "Transaction success!");
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.d(TAG, "Transaction failure!", e);
-                }
-            });
-
             mIsFollowing.setValue(false);
             mBolIsFollowing = false;
         }
-        mIsLoading.setValue(false);
+        final DocumentReference reference = mUsersCollectionReference.document(mUserFollowingMusician.getId());
+        CollectionReference followersReference = mFollowersCollectionReference.document(mUserFollowingMusician.getId()).collection("users");
+        followersReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                if (queryDocumentSnapshots != null) {
+                    final long followersNumber = queryDocumentSnapshots.size();
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("followers", followersNumber);
+                    reference.update(map);
+                }
+            }
+        });
     }
 
-    public LiveData<Boolean> getIsLoading() {
-        return mIsLoading;
-    }
 
     public LiveData<Boolean> getIsFollowing() {
-        DocumentReference reference = mFollowersCollectionReference
+        DocumentReference reference = mFollowingCollectionReference
                 .document(mUserFollowingMusician.getFollower_id()).collection("users").document(mUserFollowingMusician.getId());
 
         reference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -244,6 +216,7 @@ public class MusicianDetailsRepository {
                         mBolIsFollowing = false;
                     }
                 }
+                mIsLoading.setValue(false);
             }
         });
 

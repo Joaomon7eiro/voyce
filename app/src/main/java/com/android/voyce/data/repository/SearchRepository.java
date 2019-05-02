@@ -9,9 +9,8 @@ import com.android.voyce.data.local.AppDatabase;
 import com.android.voyce.data.local.UserDao;
 import com.android.voyce.data.model.User;
 import com.android.voyce.utils.AppExecutors;
-import com.google.firebase.firestore.EventListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -19,12 +18,10 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-import javax.annotation.Nullable;
 
 
 public class SearchRepository {
     private static final String TAG = SearchRepository.class.getSimpleName();
-    private static final long REFRESH_DELAY = 3600000; // 1 hour in milliseconds
     private static SearchRepository sInstance;
     private final FirebaseFirestore mDb = FirebaseFirestore.getInstance();
     private final UserDao mUserDao;
@@ -44,26 +41,27 @@ public class SearchRepository {
         return sInstance;
     }
 
-    public LiveData<List<User>> getMusicians() {
-        refreshUsers();
+    public LiveData<List<User>> getMusicians(long refresh) {
+        refreshUsers(refresh);
         return mUserDao.getUsers();
     }
 
-    private void refreshUsers() {
+    private void refreshUsers(final long refresh) {
         final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
                 int count = mUserDao.getUsersCount();
-                boolean needsRefresh = (mUserDao.getUpdatedUsersCount(timestamp.getTime(), REFRESH_DELAY) > 0);
+                boolean needsRefresh = (mUserDao.getUpdatedUsersCount(timestamp.getTime(), refresh) > 0);
                 if (needsRefresh || count <= 1) {
                     Log.i(TAG, "Refreshing search users");
-                    final Query query = mDb.collection("users").whereEqualTo("type", 1);
+                    final Query query = mDb.collection("users")
+                            .whereEqualTo("type", 1);
 
                     mIsLoading.postValue(true);
-                    query.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
-                        public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                             if (queryDocumentSnapshots != null) {
                                 final List<User> musicians = queryDocumentSnapshots.toObjects(User.class);
                                 for (User user : musicians) {
