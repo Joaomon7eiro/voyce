@@ -54,8 +54,7 @@ public class UserMusicianProposalsAdapter extends RecyclerView.Adapter<UserMusic
 
                 name.setText(proposal.getName());
                 description.setText(proposal.getDescription());
-                price.setText(viewHolder.itemView.getContext().getString(R.string.proposal_price,
-                        String.valueOf(proposal.getPrice())));
+                price.setText(String.valueOf(proposal.getPrice()));
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(viewHolder.itemView.getContext());
                 builder.setView(view);
