@@ -39,4 +39,9 @@
     <string name="musician_image">musician image</string>
     <string name="proposal_image">proposaL_image</string>
     <string name="dollar_icon">dollar icon</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="main_in_region">Principais na Região</string>
+    <string name="city_highlight">Destaques da sua cidade</string>
 </resources>

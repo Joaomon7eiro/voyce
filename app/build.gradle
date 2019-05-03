@@ -1,6 +1,6 @@
 buildscript {
     repositories {
-        maven { url 'https://plugins.gradle.org/m2/'}
+        maven { url 'https://plugins.gradle.org/m2/' }
     }
     dependencies {
         classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:0.12.1'
@@ -19,7 +19,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         manifestPlaceholders = [
-                onesignal_app_id: '26d3bc83-212d-46db-a091-1df7ddf0c471',
+                onesignal_app_id               : '26d3bc83-212d-46db-a091-1df7ddf0c471',
                 // Project number pulled from dashboard, local value is ignored.
                 onesignal_google_project_number: 'REMOTE'
         ]
@@ -70,4 +70,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:18.2.0'
     implementation 'com.google.firebase:firebase-core:16.0.8'
     implementation 'com.onesignal:OneSignal:3.10.8'
+    implementation 'com.github.iammert:ScalingLayout:1.2.1'
 }
