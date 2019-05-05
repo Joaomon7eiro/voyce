@@ -3,7 +3,9 @@ package com.android.voyce.ui.search;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -20,11 +22,11 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.android.voyce.data.model.User;
-import com.android.voyce.ui.SearchResultsFragment;
 import com.android.voyce.ui.main.MainActivity;
 import com.android.voyce.ui.musiciandetails.MusicianFragment;
 import com.android.voyce.R;
 import com.android.voyce.utils.ConnectivityHelper;
+import com.android.voyce.utils.Constants;
 
 
 import java.util.List;
@@ -44,6 +46,7 @@ public class SearchFragment extends Fragment implements
     private SearchViewModel mViewModel;
     private static final long REFRESH_TIME = 60000;
     private LinearLayout mRecyclersViewsContainer;
+    private String mUserId;
 
     public SearchFragment() {
     }
@@ -51,6 +54,13 @@ public class SearchFragment extends Fragment implements
     public static SearchFragment newInstance() {
         SearchFragment fragment = new SearchFragment();
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        mUserId = sharedPreferences.getString(Constants.KEY_CURRENT_USER_ID, null);
     }
 
     @Override
@@ -63,6 +73,7 @@ public class SearchFragment extends Fragment implements
             @Override
             public void onChanged(@Nullable List<User> users) {
                 mMusiciansAdapter.setData(users);
+                mMusiciansAdapter.getFilter().filter(mUserId);
             }
         });
 

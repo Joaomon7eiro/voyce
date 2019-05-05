@@ -2,7 +2,7 @@
 
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="200dp"
+    android:layout_width="190dp"
     android:layout_height="295dp"
     android:layout_gravity="center"
     android:layout_marginStart="8dp"
@@ -24,7 +24,7 @@
         android:layout_height="match_parent"
         android:background="@drawable/musician_card_gradient">
 
-        <TextView
+        <com.android.voyce.CapitalizedTextView
             android:id="@+id/musician_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
