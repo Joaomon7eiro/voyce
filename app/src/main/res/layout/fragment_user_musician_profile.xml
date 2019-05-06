@@ -355,4 +355,16 @@
 
     </android.support.v4.widget.NestedScrollView>
 
+    <TextView
+        android:id="@+id/became_musician_button"
+        android:layout_width="match_parent"
+        android:layout_margin="32dp"
+        android:text="Tenha um perfil de músico no Voyce acessando nosso site!"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:layout_height="wrap_content" />
+
 </android.support.design.widget.CoordinatorLayout>

@@ -70,7 +70,6 @@ public class SearchResultsFragment extends Fragment implements MusiciansAdapter.
                     if (users.size() > 0) {
                         mResultsLabel.setVisibility(View.VISIBLE);
                         mAdapter.setData(users);
-                        mAdapter.getFilter().filter(mUserId);
                     } else {
                         mResultsLabel.setVisibility(View.GONE);
                     }

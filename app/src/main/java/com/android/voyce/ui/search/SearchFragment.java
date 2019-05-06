@@ -46,7 +46,6 @@ public class SearchFragment extends Fragment implements
     private SearchViewModel mViewModel;
     private static final long REFRESH_TIME = 60000;
     private LinearLayout mRecyclersViewsContainer;
-    private String mUserId;
 
     public SearchFragment() {
     }
@@ -54,13 +53,6 @@ public class SearchFragment extends Fragment implements
     public static SearchFragment newInstance() {
         SearchFragment fragment = new SearchFragment();
         return fragment;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        mUserId = sharedPreferences.getString(Constants.KEY_CURRENT_USER_ID, null);
     }
 
     @Override
@@ -73,7 +65,6 @@ public class SearchFragment extends Fragment implements
             @Override
             public void onChanged(@Nullable List<User> users) {
                 mMusiciansAdapter.setData(users);
-                mMusiciansAdapter.getFilter().filter(mUserId);
             }
         });
 

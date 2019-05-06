@@ -8,6 +8,7 @@ public final class Constants {
     public static final String KEY_MUSICIAN_IMAGE = "musician_image";
 
     public static final String KEY_CURRENT_USER_ID = "current_user_id";
+    public static final String KEY_CURRENT_USER_TYPE = "current_user_type";
     public static final String KEY_CURRENT_USER_NAME = "current_user_name";
     public static final String KEY_CURRENT_USER_IMAGE = "current_user_image";
 

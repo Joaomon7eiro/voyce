@@ -75,13 +75,25 @@ public class UserProfileFragment extends Fragment {
             }
         });
 
+        settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.addToBackStack(null);
+                transaction.replace(R.id.fragments_container, new UserSettingsFragment());
+                transaction.commit();
+            }
+        });
+
+        playlists.setVisibility(View.GONE);
+
         view.post(new Runnable() {
             @Override
             public void run() {
                 view.scrollTo(mImage.getLeft() / 2, 0);
             }
         });
-        Picasso.get().load(mUserImage).into(mImage);
+        Picasso.get().load(mUserImage).placeholder(R.drawable.profile_placeholder).into(mImage);
 
         return view;
     }

@@ -18,6 +18,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -62,6 +63,8 @@ public class UserMusicianProfileFragment extends Fragment {
 
     private RelativeLayout mProposalsContainer;
     private TextView mNoProposals;
+    private TextView mBecameMusician;
+    private int mUserType;
 
     public UserMusicianProfileFragment() {
         // Required empty public constructor
@@ -78,6 +81,7 @@ public class UserMusicianProfileFragment extends Fragment {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         mUserId = sharedPreferences.getString(Constants.KEY_CURRENT_USER_ID, null);
+        mUserType = sharedPreferences.getInt(Constants.KEY_CURRENT_USER_TYPE, 0);
     }
 
     @Override
@@ -85,6 +89,18 @@ public class UserMusicianProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_user_musician_profile, container, false);
+
+        mContainer = view.findViewById(R.id.container_user_musician);
+        mBecameMusician = view.findViewById(R.id.became_musician_button);
+
+        if (mUserType == 0) {
+            mContainer.setVisibility(View.GONE);
+            mBecameMusician.setVisibility(View.VISIBLE);
+            return view;
+        } else {
+            mContainer.setVisibility(View.VISIBLE);
+            mBecameMusician.setVisibility(View.GONE);
+        }
 
         ImageView logout = view.findViewById(R.id.logout);
         logout.setOnClickListener(new View.OnClickListener() {
@@ -99,8 +115,6 @@ public class UserMusicianProfileFragment extends Fragment {
                 getActivity().finish();
             }
         });
-
-        mContainer = view.findViewById(R.id.container_user_musician);
 
         mGoalContainer = view.findViewById(R.id.goal_container);
         mNoGoal = view.findViewById(R.id.no_goal);
@@ -135,64 +149,64 @@ public class UserMusicianProfileFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         recyclerView.setAdapter(mAdapter);
 
-        ((MainActivity) getActivity()).visibilityEditButton(true);
-
         return view;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        UserMusicianProfileViewModel viewModel = ViewModelProviders.of(this).get(UserMusicianProfileViewModel.class);
-        viewModel.init(mUserId);
+        if (mUserType != 0) {
+            UserMusicianProfileViewModel viewModel = ViewModelProviders.of(this).get(UserMusicianProfileViewModel.class);
+            viewModel.init(mUserId);
 
-        viewModel.getUserLiveData().observe(this, new Observer<User>() {
-            @Override
-            public void onChanged(@Nullable User user) {
-                if (user != null) {
-                    mName.setText(user.getName());
-                    mFollowers.setText(String.valueOf(user.getFollowers()));
-                    mSponsors.setText((String.valueOf(user.getSponsors())));
-                    mListeners.setText((String.valueOf(user.getListeners())));
-                    mLocation.setText(getString(R.string.user_location, user.getCity(), user.getState()));
-                    Picasso.get().load(user.getImage()).into(mImage);
+            viewModel.getUserLiveData().observe(this, new Observer<User>() {
+                @Override
+                public void onChanged(@Nullable User user) {
+                    if (user != null) {
+                        mName.setText(user.getName());
+                        mFollowers.setText(String.valueOf(user.getFollowers()));
+                        mSponsors.setText((String.valueOf(user.getSponsors())));
+                        mListeners.setText((String.valueOf(user.getListeners())));
+                        mLocation.setText(getString(R.string.user_location, user.getCity(), user.getState()));
+                        Picasso.get().load(user.getImage()).into(mImage);
+                    }
                 }
-            }
-        });
+            });
 
-        viewModel.getGoalLiveData().observe(this, new Observer<Goal>() {
-            @Override
-            public void onChanged(@Nullable Goal goal) {
-                if (goal != null) {
-                    String goalValue = String.valueOf(goal.getValue());
-                    String currentGoalValue = String.valueOf(goal.getCurrent_value());
-                    mGoalValue.setText(getString(R.string.user_goal, currentGoalValue, goalValue));
-                    mGoalDescription.setText(goal.getDescription());
-                    int progress = (int) (goal.getCurrent_value() * 100 / goal.getValue());
-                    mGoalProgress.setProgress(progress);
-                    mNoGoal.setVisibility(View.GONE);
-                    mGoalContainer.setVisibility(View.VISIBLE);
-                } else {
-                    mGoalContainer.setVisibility(View.GONE);
-                    mNoGoal.setVisibility(View.VISIBLE);
+            viewModel.getGoalLiveData().observe(this, new Observer<Goal>() {
+                @Override
+                public void onChanged(@Nullable Goal goal) {
+                    if (goal != null) {
+                        String goalValue = String.valueOf(goal.getValue());
+                        String currentGoalValue = String.valueOf(goal.getCurrent_value());
+                        mGoalValue.setText(getString(R.string.user_goal, currentGoalValue, goalValue));
+                        mGoalDescription.setText(goal.getDescription());
+                        int progress = (int) (goal.getCurrent_value() * 100 / goal.getValue());
+                        mGoalProgress.setProgress(progress);
+                        mNoGoal.setVisibility(View.GONE);
+                        mGoalContainer.setVisibility(View.VISIBLE);
+                    } else {
+                        mGoalContainer.setVisibility(View.GONE);
+                        mNoGoal.setVisibility(View.VISIBLE);
+                    }
                 }
-            }
-        });
+            });
 
-        viewModel.getProposals().observe(this, new Observer<List<Proposal>>() {
-            @Override
-            public void onChanged(@Nullable List<Proposal> proposals) {
-               if (proposals != null && proposals.size() >= 1) {
-                    mProposalsContainer.setVisibility(View.VISIBLE);
-                    mNoProposals.setVisibility(View.GONE);
-                } else {
-                    mProposalsContainer.setVisibility(View.GONE);
-                    mNoProposals.setVisibility(View.VISIBLE);
+            viewModel.getProposals().observe(this, new Observer<List<Proposal>>() {
+                @Override
+                public void onChanged(@Nullable List<Proposal> proposals) {
+                    if (proposals != null && proposals.size() >= 1) {
+                        mProposalsContainer.setVisibility(View.VISIBLE);
+                        mNoProposals.setVisibility(View.GONE);
+                    } else {
+                        mProposalsContainer.setVisibility(View.GONE);
+                        mNoProposals.setVisibility(View.VISIBLE);
+                    }
+
+                    mAdapter.setData(proposals);
                 }
-
-                mAdapter.setData(proposals);
-            }
-        });
+            });
+        }
     }
 
 }

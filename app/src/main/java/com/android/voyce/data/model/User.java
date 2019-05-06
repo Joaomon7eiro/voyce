@@ -11,10 +11,13 @@ public class User {
     @PrimaryKey
     private String id;
     private String signal_id;
+    private String email;
     private String name;
     private String image;
     private String city;
     private String state;
+    private int genre;
+    private int type;
     private long sponsors;
     private long listeners;
     private long followers;
@@ -36,6 +39,14 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getImage() {
@@ -165,5 +176,21 @@ public class User {
 
     public void setSponsoring(long sponsoring) {
         this.sponsoring = sponsoring;
+    }
+
+    public int getGenre() {
+        return genre;
+    }
+
+    public void setGenre(int genre) {
+        this.genre = genre;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 }

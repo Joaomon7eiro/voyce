@@ -47,6 +47,17 @@
             android:text="Logar como Leonardo"
             android:textColor="@android:color/white" />
 
+        <Button
+            android:id="@+id/login_activity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:background="@drawable/rounded_background"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="Login Activity"
+            android:textColor="@android:color/white" />
+
     </LinearLayout>
 
 </RelativeLayout>

@@ -27,6 +27,8 @@ import com.android.voyce.ui.usermusicianprofile.UserMusicianProfileFragment;
 import com.android.voyce.ui.userprofile.UserProfileFragment;
 import com.android.voyce.utils.ConnectivityHelper;
 import com.android.voyce.utils.Constants;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.onesignal.OSSubscriptionObserver;
 import com.onesignal.OSSubscriptionStateChanges;
 import com.onesignal.OneSignal;
@@ -36,9 +38,8 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
     private TextView mNoInternetConnection;
     private FrameLayout mFrameLayout;
     private BottomNavigationView mNavigation;
-    private FloatingActionButton mFloatingButton;
     private MainViewModel mViewModel;
-
+    private FirebaseAuth mAuth;
 
     private int mCurrentMenuId = R.id.navigation_search;
 
@@ -58,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
             }
 
             mCurrentMenuId = menuId;
-            visibilityEditButton(false);
             Fragment fragment;
             switch (menuId) {
 //                case R.id.navigation_home:
@@ -93,14 +93,6 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
         }
     }
 
-    public void visibilityEditButton(boolean visible) {
-        if (visible) {
-            ((View) mFloatingButton).setVisibility(View.VISIBLE);
-        } else {
-            ((View) mFloatingButton).setVisibility(View.GONE);
-        }
-    }
-
     private void openFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out,
@@ -112,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TODO: remove this
+
         verifyUser();
 
         OneSignal.addSubscriptionObserver(this);
@@ -124,7 +116,6 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
 
         mNoInternetConnection = findViewById(R.id.no_connection_text);
         mFrameLayout = findViewById(R.id.fragments_container);
-        mFloatingButton = findViewById(R.id.edit_button);
 
         if (savedInstanceState == null) {
             Fragment searchFragment = new SearchFragment();
@@ -134,28 +125,30 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
         }
     }
 
-    // TODO: remove this
     private void verifyUser() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String userId = sharedPreferences.getString(Constants.KEY_CURRENT_USER_ID, null);
-        if (userId == null) {
-            Intent intent = new Intent(this, LoginTesteActivity.class);
-            startActivity(intent);
-            finish();
-        } else {
+        mAuth = FirebaseAuth.getInstance();
+        final FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null) {
             mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-            mViewModel.init(userId);
+            mViewModel.init(currentUser.getUid());
             mViewModel.getUserLiveData().observe(this, new Observer<User>() {
                 @Override
                 public void onChanged(@Nullable User user) {
                     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     SharedPreferences.Editor edit = sharedPreferences.edit();
+                    edit.putString(Constants.KEY_CURRENT_USER_ID, currentUser.getUid());
                     edit.putString(Constants.KEY_CURRENT_USER_IMAGE, user.getImage());
                     edit.putString(Constants.KEY_CURRENT_USER_NAME, user.getName());
                     edit.apply();
                 }
             });
+        } else {
+            Intent intent = new Intent(this, LoginTesteActivity.class);
+            startActivity(intent);
+            finish();
         }
+
     }
 
     @Override
@@ -174,8 +167,7 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
 
     @Override
     public void onBackPressed() {
-        visibilityEditButton(false);
-        checkInternetConnectivity();
+        //checkInternetConnectivity();
         if (mNavigation.getSelectedItemId() == R.id.navigation_search) {
             super.onBackPressed();
         } else {

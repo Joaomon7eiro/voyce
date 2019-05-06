@@ -1,4 +1,4 @@
-package com.android.voyce.ui;
+package com.android.voyce.ui.signup;
 
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -13,7 +13,7 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        if (savedInstanceState != null) {
+        if (savedInstanceState == null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out,
                     R.anim.fade_in, R.anim.fade_out);

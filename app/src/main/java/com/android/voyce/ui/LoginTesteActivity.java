@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import com.android.voyce.R;
 import com.android.voyce.ui.main.MainActivity;
+import com.android.voyce.ui.signup.SignUpActivity;
 import com.android.voyce.utils.Constants;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,6 +31,7 @@ public class LoginTesteActivity extends AppCompatActivity {
         Button user1 = findViewById(R.id.user1);
         Button user2 = findViewById(R.id.user2);
         Button user3 = findViewById(R.id.user3);
+        Button login = findViewById(R.id.login_activity);
 
         user1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,22 +71,14 @@ public class LoginTesteActivity extends AppCompatActivity {
                 finish();
             }
         });
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-
-        if (currentUser != null) {
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            SharedPreferences.Editor edit = sharedPreferences.edit();
-            edit.putString(Constants.KEY_CURRENT_USER_ID, currentUser.getUid());
-            edit.apply();
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-            finish();
-        }
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 }

@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/colorPrimaryVeryDark"
     android:layout_height="match_parent"
-    tools:context=".ui.LoginActivity">
+    android:background="@color/colorPrimaryVeryDark"
+    tools:context=".ui.signup.SignUpStepOneFragment">
 
     <View
         android:id="@+id/line"
@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="120dp"
-        android:text="Voyce"
+        android:text="Cadastro"
         android:textColor="@android:color/white"
         android:textSize="32sp"
         android:textStyle="bold"
@@ -31,86 +31,105 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <TextView
-        android:id="@+id/login_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:text="Entrar"
-        android:textColor="@android:color/white"
-        android:textSize="60sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/voyce_title" />
-
-    <EditText
-        android:id="@+id/login_email_et"
+    <Spinner
+        android:id="@+id/sign_up_city_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="120dp"
         android:layout_marginEnd="16dp"
-        android:hint="Digite seu e-mail"
-        android:inputType="textEmailAddress"
+        android:hint="Cidade"
+        android:inputType="textCapWords"
         android:textColor="@android:color/white"
         android:textColorHint="@color/colorGray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_label" />
+        app:layout_constraintTop_toBottomOf="@+id/voyce_title" />
 
     <EditText
-        android:id="@+id/login_password_et"
+        android:id="@+id/sign_up_state_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:textColorHint="@color/colorGray"
-        android:textColor="@android:color/white"
         android:layout_marginEnd="16dp"
-        android:inputType="textPassword"
+        android:hint="Estado"
+        android:inputType="textCapCharacters"
+        android:textColor="@android:color/white"
+        android:textColorHint="@color/colorGray"
         app:layout_constraintEnd_toEndOf="parent"
-        android:hint="Digite sua senha"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_email_et" />
+        app:layout_constraintTop_toBottomOf="@+id/sign_up_city_et" />
+
+
+    <EditText
+        android:id="@+id/sign_up_date_of_birth_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Data de Nascimento"
+        android:inputType="date"
+        android:textColor="@android:color/white"
+        android:textColorHint="@color/colorGray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sign_up_state_et" />
+
+    <RadioGroup
+        android:id="@+id/genre_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sign_up_date_of_birth_et">
+
+        <RadioButton
+            android:id="@+id/genre_male"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="true"
+            android:text="Masculino"
+            android:textColor="@android:color/white" />
+
+        <RadioButton
+            android:id="@+id/genre_female"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Feminino"
+            android:textColor="@android:color/white" />
+
+        <RadioButton
+            android:id="@+id/genre_others"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Outros"
+            android:textColor="@android:color/white" />
+
+    </RadioGroup>
 
 
     <Button
-        android:id="@+id/login_button"
+        android:id="@+id/sign_up_login_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="60dp"
         android:background="@drawable/transparent_bg_bordered"
-        android:text="ENTRAR"
+        android:text="Entrar"
         android:textColor="@android:color/white"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/login_forgot_password"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_password_et" />
+        app:layout_constraintTop_toBottomOf="@+id/genre_container" />
 
-    <TextView
-        android:id="@+id/login_sign_up"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="Cadastre-se"
-        android:textColor="@color/colorGray"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/login_forgot_password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="Esqueceu sua senha?"
-        android:textColor="@color/colorGray"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-    
 </android.support.constraint.ConstraintLayout>

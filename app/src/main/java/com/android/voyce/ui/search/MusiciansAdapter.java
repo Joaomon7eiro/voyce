@@ -17,11 +17,10 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.MusiciansAdapterViewHolder> implements Filterable {
+public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.MusiciansAdapterViewHolder> {
 
     private final ListItemClickListener mOnClickListener;
     private List<User> mMusiciansData = new ArrayList<>();
-    private List<User> mMusiciansDataFull;
 
     public MusiciansAdapter(ListItemClickListener listItemClickListener) {
         mOnClickListener = listItemClickListener;
@@ -67,41 +66,6 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
         return numberString;
     }
 
-    @Override
-    public Filter getFilter() {
-        return musiciansDataFilter;
-    }
-
-    private Filter musiciansDataFilter = new Filter() {
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-            List<User> filteredList = new ArrayList<>();
-
-            if (constraint == null || constraint.length() == 0) {
-                filteredList.addAll(mMusiciansDataFull);
-            } else {
-                String filterPattern = constraint.toString();
-
-                for (User musician : mMusiciansDataFull) {
-                    if (!musician.getId().equals(filterPattern)) {
-                        filteredList.add(musician);
-                    }
-                }
-            }
-
-            FilterResults filterResults = new FilterResults();
-            filterResults.values = filteredList;
-            return filterResults;
-        }
-
-        @Override
-        protected void publishResults(CharSequence constraint, FilterResults results) {
-            mMusiciansData.clear();
-            mMusiciansData.addAll((List) results.values);
-            notifyDataSetChanged();
-        }
-    };
-
     class MusiciansAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView mImage;
         TextView mName;
@@ -135,9 +99,6 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
 
     public void setData(List<User> musiciansData) {
         mMusiciansData = musiciansData;
-        if (musiciansData != null) {
-            mMusiciansDataFull = new ArrayList<>(musiciansData);
-        }
         notifyDataSetChanged();
     }
 }
