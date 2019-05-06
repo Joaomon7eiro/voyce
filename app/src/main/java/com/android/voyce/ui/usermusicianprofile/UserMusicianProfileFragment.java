@@ -28,7 +28,7 @@ import com.android.voyce.R;
 import com.android.voyce.data.model.Goal;
 import com.android.voyce.data.model.Proposal;
 import com.android.voyce.data.model.User;
-import com.android.voyce.ui.LoginActivity;
+import com.android.voyce.ui.LoginTesteActivity;
 import com.android.voyce.ui.main.MainActivity;
 import com.android.voyce.utils.Constants;
 import com.squareup.picasso.Picasso;
@@ -94,7 +94,7 @@ public class UserMusicianProfileFragment extends Fragment {
                 SharedPreferences.Editor edit = sharedPreferences.edit();
                 edit.putString(Constants.KEY_CURRENT_USER_ID, null);
                 edit.apply();
-                Intent intent = new Intent(getContext(), LoginActivity.class);
+                Intent intent = new Intent(getContext(), LoginTesteActivity.class);
                 startActivity(intent);
                 getActivity().finish();
             }

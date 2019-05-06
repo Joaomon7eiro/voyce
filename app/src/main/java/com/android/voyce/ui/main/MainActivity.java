@@ -12,7 +12,6 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -22,7 +21,7 @@ import android.widget.TextView;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.User;
-import com.android.voyce.ui.LoginActivity;
+import com.android.voyce.ui.LoginTesteActivity;
 import com.android.voyce.ui.search.SearchFragment;
 import com.android.voyce.ui.usermusicianprofile.UserMusicianProfileFragment;
 import com.android.voyce.ui.userprofile.UserProfileFragment;
@@ -39,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
     private BottomNavigationView mNavigation;
     private FloatingActionButton mFloatingButton;
     private MainViewModel mViewModel;
+
 
     private int mCurrentMenuId = R.id.navigation_search;
 
@@ -112,7 +112,6 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         // TODO: remove this
         verifyUser();
 
@@ -140,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String userId = sharedPreferences.getString(Constants.KEY_CURRENT_USER_ID, null);
         if (userId == null) {
-            Intent intent = new Intent(this, LoginActivity.class);
+            Intent intent = new Intent(this, LoginTesteActivity.class);
             startActivity(intent);
             finish();
         } else {
