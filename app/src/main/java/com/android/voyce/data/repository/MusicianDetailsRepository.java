@@ -5,7 +5,9 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
 import com.android.voyce.data.local.AppDatabase;
+import com.android.voyce.data.local.UserSponsoringDao;
 import com.android.voyce.data.model.Goal;
+import com.android.voyce.data.model.UserSponsoringProposal;
 import com.android.voyce.utils.AppExecutors;
 import com.android.voyce.data.local.UserFollowingMusicianDao;
 import com.android.voyce.data.model.Proposal;
@@ -33,33 +35,41 @@ import java.util.concurrent.Executor;
 
 
 public class MusicianDetailsRepository {
-    private static final String TAG = SearchRepository.class.getSimpleName();
 
     private static MusicianDetailsRepository sInstance;
     private final FirebaseFirestore mDb = FirebaseFirestore.getInstance();
     private CollectionReference mUsersCollectionReference = mDb.collection("users");
     private CollectionReference mFollowingCollectionReference = mDb.collection("user_following");
     private CollectionReference mFollowersCollectionReference = mDb.collection("user_followers");
+    private CollectionReference mSponsoringCollectionReference = mDb.collection("user_sponsoring");
+    private CollectionReference mProposalUsersCollectionReference = mDb.collection("proposal_users");
 
     private final Executor mDiskExecutor;
     private final UserFollowingMusicianDao mUserFollowingMusicianDao;
+    private final UserSponsoringDao mUserSponsoringDao;
     private MutableLiveData<Boolean> mIsLoading = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mIsFollowing = new MutableLiveData<>();
 
     private boolean mBolIsFollowing;
     private UserFollowingMusician mUserFollowingMusician;
     private MutableLiveData<Goal> mGoal = new MutableLiveData<>();
+    private boolean mBolIsSponsoring;
+    private MutableLiveData<Boolean> mIsSponsoring = new MutableLiveData<>();
 
-    private MusicianDetailsRepository(Executor diskExecutor, UserFollowingMusicianDao userFollowingMusicianDao) {
+    private MusicianDetailsRepository(Executor diskExecutor,
+                                      UserFollowingMusicianDao userFollowingMusicianDao,
+                                      UserSponsoringDao userSponsoringDao) {
         mDiskExecutor = diskExecutor;
         mUserFollowingMusicianDao = userFollowingMusicianDao;
+        mUserSponsoringDao = userSponsoringDao;
     }
 
     public static MusicianDetailsRepository getInstance(Application application) {
         if (sInstance == null) {
             sInstance = new MusicianDetailsRepository(
                     AppExecutors.getInstance().getDiskIO(),
-                    AppDatabase.getInstance(application).userFollowingMusicianDao());
+                    AppDatabase.getInstance(application).userFollowingMusicianDao(),
+                    AppDatabase.getInstance(application).userSponsoringDao());
         }
         return sInstance;
     }
@@ -110,6 +120,12 @@ public class MusicianDetailsRepository {
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 if (queryDocumentSnapshots != null) {
                     List<Proposal> proposals = queryDocumentSnapshots.toObjects(Proposal.class);
+                    List<DocumentSnapshot> documents = queryDocumentSnapshots.getDocuments();
+
+                    for (int i = 0; i < proposals.size(); i++) {
+                        proposals.get(i).setId(documents.get(i).getId());
+                    }
+
                     liveData.setValue(proposals);
                 }
             }
@@ -223,4 +239,96 @@ public class MusicianDetailsRepository {
         return mIsFollowing;
     }
 
+    public void handleSponsor(String signalId, String userName, final Proposal proposal) {
+        if (!mBolIsSponsoring) {
+            Map<String, Object> hashMapSponsoring = new HashMap<>();
+            hashMapSponsoring.put("user_image", mUserFollowingMusician.getImage());
+            hashMapSponsoring.put("user_name", mUserFollowingMusician.getName());
+            hashMapSponsoring.put("price", proposal.getPrice());
+            hashMapSponsoring.put("name", proposal.getName());
+
+            mSponsoringCollectionReference
+                    .document(mUserFollowingMusician.getFollower_id())
+                    .collection("sponsoring")
+                    .document(proposal.getId()).set(hashMapSponsoring);
+
+            Map<String, Object> hashMapProposalUser = new HashMap<>();
+            hashMapProposalUser.put("id", mUserFollowingMusician.getFollower_id());
+
+            mProposalUsersCollectionReference
+                    .document(proposal.getId())
+                    .collection("users")
+                    .document(mUserFollowingMusician.getFollower_id()).set(hashMapProposalUser);
+
+            mDiskExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    UserSponsoringProposal userSponsoringProposal = new UserSponsoringProposal();
+                    userSponsoringProposal.setId(proposal.getId());
+                    userSponsoringProposal.setName(proposal.getName());
+                    userSponsoringProposal.setPrice(proposal.getPrice());
+                    userSponsoringProposal.setSponsor_id(mUserFollowingMusician.getFollower_id());
+                    userSponsoringProposal.setUser_image(mUserFollowingMusician.getImage());
+                    userSponsoringProposal.setUser_name(mUserFollowingMusician.getName());
+
+                    mUserSponsoringDao.insertUserSponsoringProposal(userSponsoringProposal);
+                }
+            });
+
+            try {
+                JSONObject notificationContent = new JSONObject("{'contents': {'en': '" + userName + " assinou seu plano: " + proposal.getName() + "' }," +
+                        "'include_player_ids': ['" + signalId + "'], " +
+                        "'headings': {'en': 'Novo Patrocinador'}}");
+
+                OneSignal.postNotification(notificationContent, null);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            mIsSponsoring.setValue(true);
+            mBolIsSponsoring = true;
+        } else {
+            mSponsoringCollectionReference
+                    .document(mUserFollowingMusician.getFollower_id())
+                    .collection("sponsoring")
+                    .document(proposal.getId()).delete();
+
+            mProposalUsersCollectionReference
+                    .document(proposal.getId())
+                    .collection("users")
+                    .document(mUserFollowingMusician.getFollower_id()).delete();
+
+            mDiskExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    mUserSponsoringDao.deleteById(proposal.getId());
+                }
+            });
+
+            mIsSponsoring.setValue(false);
+            mBolIsSponsoring = false;
+        }
+    }
+
+    public LiveData<Boolean> getIsSponsoring(String proposalId) {
+        DocumentReference reference = mSponsoringCollectionReference
+                .document(mUserFollowingMusician.getFollower_id()).collection("sponsoring").document(proposalId);
+
+        reference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot != null) {
+                    UserSponsoringProposal userSponsoringProposal = documentSnapshot.toObject(UserSponsoringProposal.class);
+                    if (userSponsoringProposal != null) {
+                        mIsSponsoring.setValue(true);
+                        mBolIsSponsoring = true;
+                    } else {
+                        mIsSponsoring.setValue(false);
+                        mBolIsSponsoring = false;
+                    }
+                }
+            }
+        });
+        return mIsSponsoring;
+    }
 }

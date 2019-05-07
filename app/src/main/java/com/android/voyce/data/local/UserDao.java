@@ -20,6 +20,12 @@ public interface UserDao {
     @Query("SELECT * FROM user WHERE id != :id AND type = 1")
     LiveData<List<User>> getUsers(String id);
 
+    @Query("SELECT * FROM user WHERE id != :id AND type = 1 AND city = :city AND state = :state")
+    LiveData<List<User>> getUsersByCity(String id, String city, String state);
+
+    @Query("SELECT * FROM user WHERE id != :id AND type = 1 AND state = :state")
+    LiveData<List<User>> getUsersByState(String id, String state);
+
     @Insert(onConflict = REPLACE)
     void insertUser(User user);
 

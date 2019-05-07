@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:background="@color/colorPrimaryVeryDark"
     android:clipToPadding="false"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".ui.userprofile.UserSettingsFragment">
 
     <TextView
         android:id="@+id/settings_logout"
-        android:layout_marginTop="60dp"
-        android:text="Sair"
+        android:text="@string/exit"
         android:gravity="start"
         android:background="@color/colorPrimary"
         android:textColor="@android:color/white"
@@ -19,4 +19,4 @@
         android:textSize="16sp"
         android:layout_height="wrap_content" />
 
-</FrameLayout>
+</android.support.design.widget.CoordinatorLayout>

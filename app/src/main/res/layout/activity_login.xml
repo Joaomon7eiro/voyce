@@ -87,6 +87,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
+            android:contentDescription="@string/password_icon_description"
             android:src="@drawable/ic_action_not_visible"
             app:layout_constraintBottom_toBottomOf="@+id/login_password_et"
             app:layout_constraintEnd_toEndOf="@+id/login_password_et"

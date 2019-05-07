@@ -18,6 +18,9 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void init(String id) {
+        if (mUserLiveData != null) {
+            return;
+        }
         mRepository.setUserId(id);
         mRepository.startUser();
         mUserLiveData = mRepository.getUser();

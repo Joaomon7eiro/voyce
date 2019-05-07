@@ -69,4 +69,9 @@
     <string name="password_login_hint">Digite sua senha</string>
     <string name="emai_login_hint">Digite seu e-mail</string>
     <string name="password_min_hint">mínimo de 8 caracteres</string>
+    <string name="password_icon_description">password visibility icon</string>
+    <string name="search_icon_description">search icon</string>
+    <string name="voyce_create_musician_profile_hint">Tenha um perfil de músico no Voyce acessando nosso site!</string>
+    <string name="exit">Sair</string>
+    <string name="sponsor_artist">Patrocinar</string>
 </resources>

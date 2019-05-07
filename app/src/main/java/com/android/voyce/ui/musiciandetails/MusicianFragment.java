@@ -1,6 +1,7 @@
 package com.android.voyce.ui.musiciandetails;
 
 
+import android.app.AlertDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.SharedPreferences;
@@ -12,6 +13,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +24,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.Goal;
@@ -39,7 +42,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MusicianFragment extends Fragment {
+public class MusicianFragment extends Fragment implements ProposalsAdapter.OnListItemClickListener {
 
     private Button mFollowButton;
 
@@ -254,7 +257,7 @@ public class MusicianFragment extends Fragment {
         tabLayout.setupWithViewPager(viewPager);
 
         RecyclerView recyclerView = view.findViewById(R.id.rv_musician_proposals);
-        mAdapter = new ProposalsAdapter();
+        mAdapter = new ProposalsAdapter(this);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
@@ -262,5 +265,44 @@ public class MusicianFragment extends Fragment {
         recyclerView.setAdapter(mAdapter);
 
         return view;
+    }
+
+    @Override
+    public void onListItemClick(int index) {
+        final Proposal proposal = mAdapter.getData().get(index);
+        if (proposal != null) {
+            LayoutInflater layoutInflater = ((AppCompatActivity) getContext()).getLayoutInflater();
+            View view = layoutInflater.inflate(R.layout.proposal_dialog, null, false);
+            TextView name = view.findViewById(R.id.proposal_detail_name);
+            TextView price = view.findViewById(R.id.proposal_detail_price);
+            TextView description = view.findViewById(R.id.proposal_detail_description);
+            final Button sponsorButton = view.findViewById(R.id.sponsor_button);
+
+            mViewModel.getIsSponsoring(proposal.getId()).observe(this, new Observer<Boolean>() {
+                @Override
+                public void onChanged(@Nullable Boolean isSponsoring) {
+                    if (isSponsoring != null && isSponsoring) {
+                        sponsorButton.setText("Cancelar Plano");
+                    } else {
+                        sponsorButton.setText("Patrocinar");
+                    }
+                }
+            });
+
+            sponsorButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mViewModel.handleSponsor(mSignalId, mUserName, proposal);
+                }
+            });
+
+            name.setText(proposal.getName());
+            price.setText(String.valueOf(proposal.getPrice()));
+            description.setText(proposal.getDescription());
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setView(view);
+            builder.show();
+        }
     }
 }

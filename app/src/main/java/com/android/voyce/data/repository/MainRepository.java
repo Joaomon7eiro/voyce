@@ -5,7 +5,9 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
 import com.android.voyce.data.local.AppDatabase;
+import com.android.voyce.data.local.UserSponsoringDao;
 import com.android.voyce.data.model.UserFollowingMusician;
+import com.android.voyce.data.model.UserSponsoringProposal;
 import com.android.voyce.utils.AppExecutors;
 import com.android.voyce.data.local.UserDao;
 import com.android.voyce.data.local.UserFollowingMusicianDao;
@@ -41,18 +43,22 @@ public class MainRepository {
     private final UserGoalDao mUserGoalDao;
     private final UserProposalsDao mUserProposalsDao;
     private final UserFollowingMusicianDao mUserFollowingMusiciansDao;
+    private final UserSponsoringDao mUserSponsoringDao;
     private final FirebaseFirestore mDb = FirebaseFirestore.getInstance();
     private MutableLiveData<Boolean> mIsLoading = new MutableLiveData<>();
     private MutableLiveData<User> mUserLiveData = new MutableLiveData<>();
 
     private MainRepository(Executor diskExecutor, UserDao userDao,
                            UserGoalDao userGoalDao, UserProposalsDao userProposalsDao,
-                           UserFollowingMusicianDao userFollowingMusicianDao) {
+                           UserFollowingMusicianDao userFollowingMusicianDao,
+                           UserSponsoringDao userSponsoringDao
+    ) {
         mUserDao = userDao;
         mUserGoalDao = userGoalDao;
         mUserProposalsDao = userProposalsDao;
         mUserFollowingMusiciansDao = userFollowingMusicianDao;
         mDiskExecutor = diskExecutor;
+        mUserSponsoringDao = userSponsoringDao;
     }
 
     public static MainRepository getInstance(Application application) {
@@ -62,7 +68,8 @@ public class MainRepository {
                     AppDatabase.getInstance(application).userDao(),
                     AppDatabase.getInstance(application).userGoalDao(),
                     AppDatabase.getInstance(application).userProposalsDao(),
-                    AppDatabase.getInstance(application).userFollowingMusicianDao()
+                    AppDatabase.getInstance(application).userFollowingMusicianDao(),
+                    AppDatabase.getInstance(application).userSponsoringDao()
             );
         }
         return sInstance;
@@ -80,6 +87,7 @@ public class MainRepository {
         CollectionReference proposalsCollectionReference = userReference.collection("proposals");
         CollectionReference followingReference = mDb.collection("user_following").document(mUserId).collection("users");
         CollectionReference followersReference = mDb.collection("user_followers").document(mUserId).collection("users");
+        CollectionReference sponsoringReference = mDb.collection("user_sponsoring").document(mUserId).collection("sponsoring");
 
         proposalsCollectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -137,7 +145,7 @@ public class MainRepository {
                 if (queryDocumentSnapshots != null) {
                     final List<UserFollowingMusician> userFollowingMusicians = new ArrayList<>();
 
-                    for (QueryDocumentSnapshot documentSnapshot: queryDocumentSnapshots) {
+                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                         UserFollowingMusician userFollowingMusician = documentSnapshot.toObject(UserFollowingMusician.class);
                         userFollowingMusician.setFollower_id(mUserId);
                         userFollowingMusician.setId(documentSnapshot.getId());
@@ -152,6 +160,30 @@ public class MainRepository {
                         @Override
                         public void run() {
                             mUserFollowingMusiciansDao.insertUserFollowingMusicians(userFollowingMusicians);
+                            mIsLoading.postValue(false);
+                        }
+                    });
+                }
+            }
+        });
+
+        sponsoringReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                if (queryDocumentSnapshots != null) {
+                    final List<UserSponsoringProposal> userSponsoringProposals = new ArrayList<>();
+
+                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                        UserSponsoringProposal userSponsoringProposal = documentSnapshot.toObject(UserSponsoringProposal.class);
+                        userSponsoringProposal.setSponsor_id(mUserId);
+                        userSponsoringProposal.setId(documentSnapshot.getId());
+                        userSponsoringProposals.add(userSponsoringProposal);
+                    }
+
+                    mDiskExecutor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            mUserSponsoringDao.insertUserSponsoringProposals(userSponsoringProposals);
                             mIsLoading.postValue(false);
                         }
                     });

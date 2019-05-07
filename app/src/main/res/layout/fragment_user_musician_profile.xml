@@ -359,7 +359,7 @@
         android:id="@+id/became_musician_button"
         android:layout_width="match_parent"
         android:layout_margin="32dp"
-        android:text="Tenha um perfil de músico no Voyce acessando nosso site!"
+        android:text="@string/voyce_create_musician_profile_hint"
         android:textColor="@android:color/white"
         android:textSize="20sp"
         android:gravity="center"

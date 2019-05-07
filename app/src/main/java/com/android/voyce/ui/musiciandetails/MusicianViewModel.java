@@ -19,6 +19,7 @@ public class MusicianViewModel extends AndroidViewModel {
     private LiveData<List<Proposal>> mProposals;
     private LiveData<Boolean> mIsLoading;
     private LiveData<Boolean> mIsFollowing;
+    private LiveData<Boolean> mIsSponsoring;
     private LiveData<Goal> mGoal;
     private MusicianDetailsRepository mRepository;
 
@@ -53,6 +54,15 @@ public class MusicianViewModel extends AndroidViewModel {
 
     public void handleFollower(String signalId, String name) {
         mRepository.handleFollower(signalId, name);
+    }
+
+    public void handleSponsor(String signalId, String name, Proposal proposal) {
+        mRepository.handleSponsor(signalId, name, proposal);
+    }
+
+    public LiveData<Boolean> getIsSponsoring(String proposalId) {
+        mIsSponsoring = mRepository.getIsSponsoring(proposalId);
+        return mIsSponsoring;
     }
 
     public LiveData<Boolean> getIsFollowing() {

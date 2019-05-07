@@ -25,6 +25,9 @@ public class UserMusicianProfileViewModel extends AndroidViewModel {
     }
 
     public void init(String userId) {
+        if (mUserLiveData != null) {
+            return;
+        }
         mRepository.setUserId(userId);
         mUserLiveData = mRepository.getUser();
         mGoalLiveData = mRepository.getGoalValue();

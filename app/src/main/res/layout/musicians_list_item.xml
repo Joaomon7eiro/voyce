@@ -2,8 +2,8 @@
 
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="190dp"
-    android:layout_height="295dp"
+    android:layout_width="170dp"
+    android:layout_height="270dp"
     android:layout_gravity="center"
     android:layout_marginStart="8dp"
     android:layout_marginTop="8dp"
@@ -30,9 +30,9 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:maxLines="1"
-            android:padding="4dp"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+            android:padding="2dp"
             android:textColor="@android:color/white"
+            android:textSize="14sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -62,9 +62,10 @@
             style="@style/CardMusicianLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
             android:text="@string/listeners"
+            android:textSize="12sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/musician_name" />
 
@@ -73,8 +74,9 @@
             style="@style/CardMusicianLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:text="@string/followers"
+            android:textSize="12sp"
             app:layout_constraintBottom_toTopOf="@+id/sponsors_label"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/listeners_label" />
@@ -84,16 +86,18 @@
             style="@style/CardMusicianLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:layout_marginBottom="8dp"
             android:maxLines="1"
             android:text="@string/sponsors"
+            android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/listeners"
             style="@style/CardMusicianValues"
+            android:textSize="12sp"
             app:layout_constraintBaseline_toBaselineOf="@+id/listeners_label"
             app:layout_constraintEnd_toEndOf="@+id/followers"
             app:layout_constraintStart_toStartOf="@+id/followers" />
@@ -101,6 +105,7 @@
         <TextView
             android:id="@+id/followers"
             style="@style/CardMusicianValues"
+            android:textSize="12sp"
             app:layout_constraintBottom_toTopOf="@+id/sponsors"
             app:layout_constraintEnd_toEndOf="@+id/sponsors"
             app:layout_constraintStart_toStartOf="@+id/sponsors"
@@ -111,6 +116,7 @@
             style="@style/CardMusicianValues"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="16dp"
+            android:textSize="12sp"
             app:layout_constraintBaseline_toBaselineOf="@+id/sponsors_label"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/sponsors_label" />

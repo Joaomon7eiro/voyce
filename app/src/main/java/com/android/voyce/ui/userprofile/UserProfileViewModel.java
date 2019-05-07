@@ -21,6 +21,9 @@ public class UserProfileViewModel extends AndroidViewModel {
     }
 
     public void init (String id) {
+        if (mUserFollowingMusicians != null) {
+            return;
+        }
         mRepository.setUserId(id);
         mUserFollowingMusicians = mRepository.getUserFollowingMusicians();
     }

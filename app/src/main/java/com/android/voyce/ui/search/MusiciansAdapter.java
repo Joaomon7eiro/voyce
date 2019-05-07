@@ -5,8 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,9 +19,11 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
 
     private final ListItemClickListener mOnClickListener;
     private List<User> mMusiciansData = new ArrayList<>();
+    private String mAdapterName;
 
-    public MusiciansAdapter(ListItemClickListener listItemClickListener) {
+    public MusiciansAdapter(ListItemClickListener listItemClickListener, String adapterName) {
         mOnClickListener = listItemClickListener;
+        mAdapterName = adapterName;
     }
 
     @NonNull
@@ -85,12 +85,12 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
 
         @Override
         public void onClick(View view) {
-            mOnClickListener.onListItemClick(getAdapterPosition());
+            mOnClickListener.onListItemClick(getAdapterPosition(), mAdapterName);
         }
     }
 
     public interface ListItemClickListener {
-        void onListItemClick(int index);
+        void onListItemClick(int index, String adapterName);
     }
 
     public List<User> getData() {

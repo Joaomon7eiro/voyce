@@ -3,10 +3,9 @@ package com.android.voyce.ui.search;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -40,7 +39,6 @@ public class SearchResultsFragment extends Fragment implements MusiciansAdapter.
     private MusiciansAdapter mAdapter;
     private SearchResultsViewModel mViewModel;
     private TextView mResultsLabel;
-    private String mUserId;
 
     public SearchResultsFragment() {
         // Required empty public constructor
@@ -89,15 +87,9 @@ public class SearchResultsFragment extends Fragment implements MusiciansAdapter.
         });
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        mUserId = sharedPreferences.getString(Constants.KEY_CURRENT_USER_ID, null);
-    }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_search_results, container, false);
@@ -127,7 +119,7 @@ public class SearchResultsFragment extends Fragment implements MusiciansAdapter.
         });
 
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
-        mAdapter = new MusiciansAdapter(this);
+        mAdapter = new MusiciansAdapter(this, Constants.ADAPTER_GENERAL);
 
         RecyclerView recyclerView = view.findViewById(R.id.search_results_rv);
         recyclerView.setLayoutManager(layoutManager);
@@ -139,7 +131,7 @@ public class SearchResultsFragment extends Fragment implements MusiciansAdapter.
     }
 
     @Override
-    public void onListItemClick(int index) {
+    public void onListItemClick(int index, String adapterName) {
         if (ConnectivityHelper.isConnected(getContext())) {
             User musician = mAdapter.getData().get(index);
             MusicianFragment musicianFragment = MusicianFragment.newInstance(musician.getId(),

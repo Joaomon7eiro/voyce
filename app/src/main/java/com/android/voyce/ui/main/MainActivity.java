@@ -9,7 +9,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -25,7 +24,6 @@ import com.android.voyce.ui.LoginTesteActivity;
 import com.android.voyce.ui.search.SearchFragment;
 import com.android.voyce.ui.usermusicianprofile.UserMusicianProfileFragment;
 import com.android.voyce.ui.userprofile.UserProfileFragment;
-import com.android.voyce.utils.ConnectivityHelper;
 import com.android.voyce.utils.Constants;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -39,7 +37,6 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
     private FrameLayout mFrameLayout;
     private BottomNavigationView mNavigation;
     private MainViewModel mViewModel;
-    private FirebaseAuth mAuth;
 
     private int mCurrentMenuId = R.id.navigation_search;
 
@@ -50,10 +47,12 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             int menuId = item.getItemId();
 
+            // if its not the tab main fragment then pop the seconds fragment
             if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                 getSupportFragmentManager().popBackStack();
             }
 
+            // if is the same tab and its visibility is true then just return
             if (mCurrentMenuId == menuId && mFrameLayout.getVisibility() != View.GONE) {
                 return true;
             }
@@ -65,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
 //                    return true;
                 case R.id.navigation_search:
                     setLayoutVisibility(true);
-                    fragment = SearchFragment.newInstance();
+                    fragment = new SearchFragment();
                     break;
                 case R.id.navigation_profile:
                     setLayoutVisibility(true);
@@ -105,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        verifyUser();
+        verifyUser(savedInstanceState);
 
         OneSignal.addSubscriptionObserver(this);
 
@@ -117,17 +116,14 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
         mNoInternetConnection = findViewById(R.id.no_connection_text);
         mFrameLayout = findViewById(R.id.fragments_container);
 
-        if (savedInstanceState == null) {
-            Fragment searchFragment = new SearchFragment();
-            openFragment(searchFragment);
-        } else {
+        if (savedInstanceState != null) {
             mCurrentMenuId = savedInstanceState.getInt(Constants.KEY_CURRENT_MENU_ID);
         }
     }
 
-    private void verifyUser() {
-        mAuth = FirebaseAuth.getInstance();
-        final FirebaseUser currentUser = mAuth.getCurrentUser();
+    private void verifyUser(final Bundle savedInstanceState) {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        final FirebaseUser currentUser = auth.getCurrentUser();
 
         if (currentUser != null) {
             mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
@@ -135,12 +131,22 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
             mViewModel.getUserLiveData().observe(this, new Observer<User>() {
                 @Override
                 public void onChanged(@Nullable User user) {
+                    if (!user.getId().equals(currentUser.getUid())) return;
+
                     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     SharedPreferences.Editor edit = sharedPreferences.edit();
                     edit.putString(Constants.KEY_CURRENT_USER_ID, currentUser.getUid());
                     edit.putString(Constants.KEY_CURRENT_USER_IMAGE, user.getImage());
                     edit.putString(Constants.KEY_CURRENT_USER_NAME, user.getName());
+                    edit.putString(Constants.KEY_CURRENT_USER_CITY, user.getCity());
+                    edit.putString(Constants.KEY_CURRENT_USER_STATE, user.getState());
                     edit.apply();
+
+                    if (savedInstanceState == null) {
+                        Fragment fragment = SearchFragment.newInstance(user.getCity(), user.getState());
+                        openFragment(fragment);
+                    }
+
                 }
             });
         } else {
@@ -157,17 +163,8 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
         outState.putInt(Constants.KEY_CURRENT_MENU_ID, mCurrentMenuId);
     }
 
-    private void checkInternetConnectivity() {
-        if (ConnectivityHelper.isConnected(this)) {
-            setLayoutVisibility(true);
-        } else {
-            setLayoutVisibility(false);
-        }
-    }
-
     @Override
     public void onBackPressed() {
-        //checkInternetConnectivity();
         if (mNavigation.getSelectedItemId() == R.id.navigation_search) {
             super.onBackPressed();
         } else {
@@ -179,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
     public void onOSSubscriptionChanged(OSSubscriptionStateChanges stateChanges) {
         if (!stateChanges.getFrom().getSubscribed() &&
                 stateChanges.getTo().getSubscribed()) {
-            // get player ID
+            // get user id
             String id = stateChanges.getTo().getUserId();
             mViewModel.setSignalId(id);
         }
