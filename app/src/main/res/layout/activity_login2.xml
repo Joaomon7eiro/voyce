@@ -55,7 +55,7 @@
             android:background="@drawable/rounded_background"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            android:text="Login Activity"
+            android:text="ATIVIDADE LOGIN"
             android:textColor="@android:color/white" />
 
     </LinearLayout>

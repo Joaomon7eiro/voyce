@@ -17,7 +17,7 @@ public interface UserDao {
     @Query("SELECT * FROM user WHERE id = :id")
     LiveData<User> getUser(String id);
 
-    @Query("SELECT * FROM user WHERE id != :id")
+    @Query("SELECT * FROM user WHERE id != :id AND type = 1")
     LiveData<List<User>> getUsers(String id);
 
     @Insert(onConflict = REPLACE)

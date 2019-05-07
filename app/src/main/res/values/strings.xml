@@ -39,9 +39,6 @@
     <string name="musician_image">musician image</string>
     <string name="proposal_image">proposaL_image</string>
     <string name="dollar_icon">dollar icon</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="main_in_region">Principais na Região</string>
     <string name="city_highlight">Destaques da sua cidade</string>
     <string name="results">Resultados</string>
@@ -54,4 +51,22 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
+    <string name="next">Próximo</string>
+    <string name="password_hint">Digite uma senha</string>
+    <string name="email_hint">E-mail</string>
+    <string name="full_name_hint">Nome Completo</string>
+    <string name="register_label">Cadastro</string>
+    <string name="gender_others">Outros</string>
+    <string name="gender_female">Feminino</string>
+    <string name="gender_male">Masculino</string>
+    <string name="date_of_birth_hint">Data de Nascimento</string>
+    <string name="state_hint">Estado</string>
+    <string name="city_hint">Selecione a sua Cidade</string>
+    <string name="enter">Entrar</string>
+    <string name="gender_question">Qual é o seu gênero?</string>
+    <string name="sign_up_register">Cadastre-se</string>
+    <string name="forgot_password">Esqueceu sua senha?</string>
+    <string name="password_login_hint">Digite sua senha</string>
+    <string name="emai_login_hint">Digite seu e-mail</string>
+    <string name="password_min_hint">mínimo de 8 caracteres</string>
 </resources>

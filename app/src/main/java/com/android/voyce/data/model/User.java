@@ -16,7 +16,7 @@ public class User {
     private String image;
     private String city;
     private String state;
-    private int genre;
+    private int gender;
     private int type;
     private long sponsors;
     private long listeners;
@@ -178,12 +178,12 @@ public class User {
         this.sponsoring = sponsoring;
     }
 
-    public int getGenre() {
-        return genre;
+    public int getGender() {
+        return gender;
     }
 
-    public void setGenre(int genre) {
-        this.genre = genre;
+    public void setGender(int gender) {
+        this.gender = gender;
     }
 
     public int getType() {

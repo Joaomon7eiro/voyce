@@ -29,7 +29,7 @@ public class SearchRepository {
     private final UserDao mUserDao;
     private final Executor mExecutor;
     private MutableLiveData<Boolean> mIsLoading = new MutableLiveData<>();
-    private FirebaseUser mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
+    private static FirebaseUser mCurrentUser;
 
     private SearchRepository(UserDao userDao, Executor executor) {
         mUserDao = userDao;
@@ -41,6 +41,7 @@ public class SearchRepository {
             sInstance = new SearchRepository(AppDatabase.getInstance(application).userDao(),
                     AppExecutors.getInstance().getDiskIO());
         }
+        mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
         return sInstance;
     }
 
@@ -73,6 +74,7 @@ public class SearchRepository {
                                 mExecutor.execute(new Runnable() {
                                     @Override
                                     public void run() {
+                                        mUserDao.deleteUsers(mCurrentUser.getUid());
                                         mUserDao.insertUsers(musicians);
                                         mIsLoading.postValue(false);
                                     }

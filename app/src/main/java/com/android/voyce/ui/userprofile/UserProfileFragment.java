@@ -85,8 +85,6 @@ public class UserProfileFragment extends Fragment {
             }
         });
 
-        playlists.setVisibility(View.GONE);
-
         view.post(new Runnable() {
             @Override
             public void run() {
