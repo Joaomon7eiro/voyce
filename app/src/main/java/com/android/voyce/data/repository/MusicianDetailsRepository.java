@@ -48,6 +48,7 @@ public class MusicianDetailsRepository {
     private final UserFollowingMusicianDao mUserFollowingMusicianDao;
     private final UserSponsoringDao mUserSponsoringDao;
     private MutableLiveData<Boolean> mIsLoading = new MutableLiveData<>();
+    private MutableLiveData<Boolean> mIsProposalLoading = new MutableLiveData<>();
     private final MutableLiveData<Boolean> mIsFollowing = new MutableLiveData<>();
 
     private boolean mBolIsFollowing;
@@ -214,7 +215,6 @@ public class MusicianDetailsRepository {
         });
     }
 
-
     public LiveData<Boolean> getIsFollowing() {
         DocumentReference reference = mFollowingCollectionReference
                 .document(mUserFollowingMusician.getFollower_id()).collection("users").document(mUserFollowingMusician.getId());
@@ -310,7 +310,12 @@ public class MusicianDetailsRepository {
         }
     }
 
+    public LiveData<Boolean> getProposalLoading() {
+        return mIsProposalLoading;
+    }
+
     public LiveData<Boolean> getIsSponsoring(String proposalId) {
+        mIsProposalLoading.setValue(true);
         DocumentReference reference = mSponsoringCollectionReference
                 .document(mUserFollowingMusician.getFollower_id()).collection("sponsoring").document(proposalId);
 
@@ -327,6 +332,7 @@ public class MusicianDetailsRepository {
                         mBolIsSponsoring = false;
                     }
                 }
+                mIsProposalLoading.setValue(false);
             }
         });
         return mIsSponsoring;

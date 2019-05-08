@@ -33,7 +33,6 @@ import java.util.List;
 public class UserFollowingFragment extends Fragment implements UserFollowingAdapter.ListItemClickListener {
 
     private UserFollowingAdapter mAdapter;
-    private String mUserId;
     private TextView mNoFollowing;
     private LinearLayout mContainer;
 
@@ -44,13 +43,6 @@ public class UserFollowingFragment extends Fragment implements UserFollowingAdap
     public static UserFollowingFragment newInstance() {
         UserFollowingFragment fragment = new UserFollowingFragment();
         return fragment;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        mUserId = sharedPreferences.getString(Constants.KEY_CURRENT_USER_ID, null);
     }
 
     @Override
@@ -92,7 +84,7 @@ public class UserFollowingFragment extends Fragment implements UserFollowingAdap
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         UserProfileViewModel viewModel = ViewModelProviders.of(this).get(UserProfileViewModel.class);
-        viewModel.init(mUserId);
+        viewModel.init();
         viewModel.getUserFollowingMusicians().observe(this, new Observer<List<UserFollowingMusician>>() {
             @Override
             public void onChanged(@Nullable List<UserFollowingMusician> userFollowingMusicians) {

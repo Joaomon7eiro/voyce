@@ -106,12 +106,21 @@
         android:background="@drawable/rounded_background"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:text="@string/sponsor_artist"
         android:textColor="@android:color/white"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/proposal_loading"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/sponsor_button"
+        app:layout_constraintEnd_toEndOf="@+id/sponsor_button"
+        app:layout_constraintStart_toStartOf="@+id/sponsor_button"
+        app:layout_constraintTop_toTopOf="@+id/sponsor_button" />
 
 </android.support.constraint.ConstraintLayout>

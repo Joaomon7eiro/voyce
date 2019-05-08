@@ -142,7 +142,8 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
                     edit.putString(Constants.KEY_CURRENT_USER_STATE, user.getState());
                     edit.apply();
 
-                    if (savedInstanceState == null) {
+                    if (savedInstanceState == null
+                            && getSupportFragmentManager().getBackStackEntryCount() == 0) {
                         Fragment fragment = SearchFragment.newInstance(user.getCity(), user.getState());
                         openFragment(fragment);
                     }
@@ -154,7 +155,6 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
             startActivity(intent);
             finish();
         }
-
     }
 
     @Override

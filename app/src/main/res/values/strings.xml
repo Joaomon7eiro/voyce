@@ -74,4 +74,5 @@
     <string name="voyce_create_musician_profile_hint">Tenha um perfil de músico no Voyce acessando nosso site!</string>
     <string name="exit">Sair</string>
     <string name="sponsor_artist">Patrocinar</string>
+    <string name="no_sponsoring_text">Você ainda não assina os planos dos seus artistas favoritos</string>
 </resources>

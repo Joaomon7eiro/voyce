@@ -276,6 +276,7 @@ public class MusicianFragment extends Fragment implements ProposalsAdapter.OnLis
             TextView name = view.findViewById(R.id.proposal_detail_name);
             TextView price = view.findViewById(R.id.proposal_detail_price);
             TextView description = view.findViewById(R.id.proposal_detail_description);
+            final ProgressBar progressBar = view.findViewById(R.id.proposal_loading);
             final Button sponsorButton = view.findViewById(R.id.sponsor_button);
 
             mViewModel.getIsSponsoring(proposal.getId()).observe(this, new Observer<Boolean>() {
@@ -285,6 +286,18 @@ public class MusicianFragment extends Fragment implements ProposalsAdapter.OnLis
                         sponsorButton.setText("Cancelar Plano");
                     } else {
                         sponsorButton.setText("Patrocinar");
+                    }
+                }
+            });
+            mViewModel.getProposalLoading().observe(this, new Observer<Boolean>() {
+                @Override
+                public void onChanged(@Nullable Boolean isLoading) {
+                    if (isLoading != null && isLoading) {
+                        progressBar.setVisibility(View.VISIBLE);
+                        sponsorButton.setVisibility(View.INVISIBLE);
+                    } else {
+                        progressBar.setVisibility(View.GONE);
+                        sponsorButton.setVisibility(View.VISIBLE);
                     }
                 }
             });

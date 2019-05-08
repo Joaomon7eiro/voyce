@@ -35,7 +35,6 @@ public class UserProfileFragment extends Fragment {
         return fragment;
     }
 
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,7 +91,10 @@ public class UserProfileFragment extends Fragment {
             }
         });
         Picasso.get().load(mUserImage).placeholder(R.drawable.profile_placeholder).into(mImage);
-
+        Picasso.get().load(R.drawable.followers).fit().into(followers);
+        Picasso.get().load(R.drawable.sponsoring).fit().into(sponsoring);
+        Picasso.get().load(R.drawable.settings).fit().into(settings);
+        Picasso.get().load(R.drawable.playlists).fit().into(playlists);
         return view;
     }
 }

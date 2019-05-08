@@ -9,14 +9,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.voyce.R;
-import com.android.voyce.data.model.User;
+import com.android.voyce.data.model.UserSponsoringProposal;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserSponsoringAdapter extends RecyclerView.Adapter<UserSponsoringAdapter.UserSponsoringAdapterViewHolder> {
 
-    private List<User> mMusicians = new ArrayList<>();
+    private List<UserSponsoringProposal> mProposals = new ArrayList<>();
 
     class UserSponsoringAdapterViewHolder extends RecyclerView.ViewHolder {
         ImageView mMusicianImage;
@@ -41,16 +42,20 @@ public class UserSponsoringAdapter extends RecyclerView.Adapter<UserSponsoringAd
 
     @Override
     public void onBindViewHolder(@NonNull UserSponsoringAdapterViewHolder viewHolder, int i) {
+        UserSponsoringProposal userSponsoringProposal = mProposals.get(i);
+        Picasso.get().load(userSponsoringProposal.getUser_image()).into(viewHolder.mMusicianImage);
+        viewHolder.mMusicianName.setText(userSponsoringProposal.getUser_name());
+        viewHolder.mProposalName.setText(userSponsoringProposal.getName());
     }
 
     @Override
     public int getItemCount() {
-        if (mMusicians == null) return 0;
-        return mMusicians.size();
+        if (mProposals == null) return 0;
+        return mProposals.size();
     }
 
-    public void setData(List<User> musicians) {
-        mMusicians = musicians;
+    public void setData(List<UserSponsoringProposal> proposals) {
+        mProposals = proposals;
         notifyDataSetChanged();
     }
 }

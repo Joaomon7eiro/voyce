@@ -20,6 +20,7 @@ public class MusicianViewModel extends AndroidViewModel {
     private LiveData<Boolean> mIsLoading;
     private LiveData<Boolean> mIsFollowing;
     private LiveData<Boolean> mIsSponsoring;
+    private LiveData<Boolean> mIsProposalLoading;
     private LiveData<Goal> mGoal;
     private MusicianDetailsRepository mRepository;
 
@@ -48,6 +49,10 @@ public class MusicianViewModel extends AndroidViewModel {
         return mIsLoading;
     }
 
+    public LiveData<Boolean> getProposalLoading() {
+        return mIsProposalLoading;
+    }
+
     public LiveData<List<Proposal>> getProposals() {
         return mProposals;
     }
@@ -61,6 +66,7 @@ public class MusicianViewModel extends AndroidViewModel {
     }
 
     public LiveData<Boolean> getIsSponsoring(String proposalId) {
+        mIsProposalLoading = mRepository.getProposalLoading();
         mIsSponsoring = mRepository.getIsSponsoring(proposalId);
         return mIsSponsoring;
     }

@@ -16,7 +16,7 @@ import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 public interface UserSponsoringDao {
 
     @Query("SELECT * FROM usersponsoringproposal where sponsor_id = :id")
-    LiveData<List<UserFollowingMusician>> queryProposalsByUser(String  id);
+    LiveData<List<UserSponsoringProposal>> queryProposalsByUser(String  id);
 
     @Insert(onConflict = REPLACE)
     void insertUserSponsoringProposals(List<UserSponsoringProposal> userSponsoringProposals);
