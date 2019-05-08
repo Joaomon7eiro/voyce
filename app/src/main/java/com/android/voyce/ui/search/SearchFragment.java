@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.android.voyce.data.model.User;
 import com.android.voyce.ui.main.MainActivity;
@@ -49,6 +50,10 @@ public class SearchFragment extends Fragment implements
     private SwipeRefreshLayout mRefreshLayout;
     private SearchViewModel mViewModel;
     private LinearLayout mRecyclersViewsContainer;
+
+    private TextView mVoyceLabel;
+    private TextView mLocalLabel;
+    private TextView mRegionLabel;
 
     private String mUserCity;
     private String mUserState;
@@ -95,21 +100,43 @@ public class SearchFragment extends Fragment implements
         mViewModel.getMusicians().observe(this, new Observer<List<User>>() {
             @Override
             public void onChanged(@Nullable List<User> users) {
-                mMusiciansAdapter.setData(users);
+                if (users != null && users.size() > 0) {
+                    mMusiciansAdapter.setData(users);
+                    if (mVoyceLabel.getVisibility() == View.GONE) {
+                        mVoyceLabel.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    mVoyceLabel.setVisibility(View.GONE);
+                }
+
             }
         });
 
         mViewModel.getCityMusicians().observe(this, new Observer<List<User>>() {
             @Override
             public void onChanged(@Nullable List<User> users) {
-                mCityMusiciansAdapter.setData(users);
+                if (users != null && users.size() > 0) {
+                    mCityMusiciansAdapter.setData(users);
+                    if (mLocalLabel.getVisibility() == View.GONE) {
+                        mLocalLabel.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    mLocalLabel.setVisibility(View.GONE);
+                }
             }
         });
 
         mViewModel.getStateMusicians().observe(this, new Observer<List<User>>() {
             @Override
             public void onChanged(@Nullable List<User> users) {
-                mStateMusiciansAdapter.setData(users);
+                if (users != null && users.size() > 0) {
+                    mStateMusiciansAdapter.setData(users);
+                    if (mRegionLabel.getVisibility() == View.GONE) {
+                        mRegionLabel.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    mRegionLabel.setVisibility(View.GONE);
+                }
             }
         });
 
@@ -143,6 +170,10 @@ public class SearchFragment extends Fragment implements
 
         mRecyclersViewsContainer = view.findViewById(R.id.recyclers_views_container);
         mProgressBar = view.findViewById(R.id.search_progress_bar);
+
+        mVoyceLabel = view.findViewById(R.id.on_voyce_label);
+        mLocalLabel = view.findViewById(R.id.local_artists_label);
+        mRegionLabel = view.findViewById(R.id.region_artists_label);
 
         final ScalingLayout scalingLayout = view.findViewById(R.id.scaling_layout);
 

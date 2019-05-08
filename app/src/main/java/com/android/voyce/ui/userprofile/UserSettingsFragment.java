@@ -14,6 +14,11 @@ import android.widget.TextView;
 import com.android.voyce.R;
 import com.android.voyce.ui.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.onesignal.OneSignal;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,12 +41,23 @@ public class UserSettingsFragment extends Fragment {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
+                FirebaseAuth auth =  FirebaseAuth.getInstance();
+                String id = auth.getUid();
+                auth.signOut();
+
+                OneSignal.setSubscription(false);
+
+                Map<String, Object> map = new HashMap<>();
+                map.put("signal_id", "");
+                FirebaseFirestore.getInstance().collection("users")
+                        .document(id).update(map);
+
+                PreferenceManager.getDefaultSharedPreferences(getContext()).
+                        edit().clear().apply();
+
                 Intent intent = new Intent(getContext(), LoginActivity.class);
                 startActivity(intent);
                 getActivity().finish();
-                PreferenceManager.getDefaultSharedPreferences(getContext()).
-                        edit().clear().apply();
             }
         });
 

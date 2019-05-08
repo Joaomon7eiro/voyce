@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.User;
+import com.android.voyce.ui.FeedFragment;
 import com.android.voyce.ui.LoginTesteActivity;
 import com.android.voyce.ui.search.SearchFragment;
 import com.android.voyce.ui.usermusicianprofile.UserMusicianProfileFragment;
@@ -60,8 +61,9 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
             mCurrentMenuId = menuId;
             Fragment fragment;
             switch (menuId) {
-//                case R.id.navigation_home:
-//                    return true;
+                case R.id.navigation_feed:
+                    fragment = new FeedFragment();
+                    break;
                 case R.id.navigation_search:
                     setLayoutVisibility(true);
                     fragment = new SearchFragment();
@@ -104,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        verifyUser(savedInstanceState);
+        verifyUser();
 
         OneSignal.addSubscriptionObserver(this);
 
@@ -118,10 +120,13 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
 
         if (savedInstanceState != null) {
             mCurrentMenuId = savedInstanceState.getInt(Constants.KEY_CURRENT_MENU_ID);
+        } else {
+            Fragment fragment = new FeedFragment();
+            openFragment(fragment);
         }
     }
 
-    private void verifyUser(final Bundle savedInstanceState) {
+    private void verifyUser() {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         final FirebaseUser currentUser = auth.getCurrentUser();
 
@@ -140,16 +145,11 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
                     edit.putString(Constants.KEY_CURRENT_USER_NAME, user.getName());
                     edit.putString(Constants.KEY_CURRENT_USER_CITY, user.getCity());
                     edit.putString(Constants.KEY_CURRENT_USER_STATE, user.getState());
+                    edit.putInt(Constants.KEY_CURRENT_USER_TYPE, user.getType());
                     edit.apply();
-
-                    if (savedInstanceState == null
-                            && getSupportFragmentManager().getBackStackEntryCount() == 0) {
-                        Fragment fragment = SearchFragment.newInstance(user.getCity(), user.getState());
-                        openFragment(fragment);
-                    }
-
                 }
             });
+            OneSignal.setSubscription(true);
         } else {
             Intent intent = new Intent(this, LoginTesteActivity.class);
             startActivity(intent);

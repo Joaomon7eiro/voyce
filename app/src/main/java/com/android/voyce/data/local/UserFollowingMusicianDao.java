@@ -25,4 +25,7 @@ public interface UserFollowingMusicianDao {
 
     @Query("DELETE FROM UserFollowingMusician WHERE id = :id")
     void deleteById(String id);
+
+    @Query("DELETE FROM UserFollowingMusician")
+    void deleteAll();
 }

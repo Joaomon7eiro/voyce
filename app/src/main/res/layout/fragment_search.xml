@@ -26,6 +26,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/on_voyce_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -42,6 +43,7 @@
                     android:layout_gravity="center_horizontal" />
 
                 <TextView
+                    android:id="@+id/local_artists_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -58,6 +60,7 @@
                     android:layout_gravity="center_horizontal" />
 
                 <TextView
+                    android:id="@+id/region_artists_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"

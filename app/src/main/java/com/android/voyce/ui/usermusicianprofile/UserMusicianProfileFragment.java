@@ -100,20 +100,6 @@ public class UserMusicianProfileFragment extends Fragment {
             mBecameMusician.setVisibility(View.GONE);
         }
 
-        ImageView logout = view.findViewById(R.id.logout);
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-                SharedPreferences.Editor edit = sharedPreferences.edit();
-                edit.putString(Constants.KEY_CURRENT_USER_ID, null);
-                edit.apply();
-                Intent intent = new Intent(getContext(), LoginTesteActivity.class);
-                startActivity(intent);
-                getActivity().finish();
-            }
-        });
-
         mGoalContainer = view.findViewById(R.id.goal_container);
         mNoGoal = view.findViewById(R.id.no_goal);
 

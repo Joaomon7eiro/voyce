@@ -27,4 +27,8 @@ public interface UserSponsoringDao {
     @Query("DELETE FROM usersponsoringproposal WHERE id = :id")
     void deleteById(String id);
 
+    @Query("DELETE FROM usersponsoringproposal")
+    void deleteAll();
+
+
 }

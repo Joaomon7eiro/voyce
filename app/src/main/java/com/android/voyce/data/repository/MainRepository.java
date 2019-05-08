@@ -159,6 +159,7 @@ public class MainRepository {
                     mDiskExecutor.execute(new Runnable() {
                         @Override
                         public void run() {
+                            mUserFollowingMusiciansDao.deleteAll();
                             mUserFollowingMusiciansDao.insertUserFollowingMusicians(userFollowingMusicians);
                             mIsLoading.postValue(false);
                         }
@@ -183,6 +184,7 @@ public class MainRepository {
                     mDiskExecutor.execute(new Runnable() {
                         @Override
                         public void run() {
+                            mUserSponsoringDao.deleteAll();
                             mUserSponsoringDao.insertUserSponsoringProposals(userSponsoringProposals);
                             mIsLoading.postValue(false);
                         }

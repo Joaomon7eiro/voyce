@@ -26,19 +26,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/logout"
-                android:layout_width="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginTop="40dp"
-                android:contentDescription="@string/logout_button"
-                android:src="@drawable/ic_action_exit"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_height="wrap_content" />
-
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/user_musician_profile_image"
                 android:layout_width="100dp"

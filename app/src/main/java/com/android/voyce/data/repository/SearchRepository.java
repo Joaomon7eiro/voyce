@@ -55,7 +55,7 @@ public class SearchRepository {
     }
 
     public LiveData<List<User>> getCityMusicians() {
-        return mUserDao.getUsersByCity(mCurrentUser.getUid(), mUserCity.toLowerCase(), mUserState.toUpperCase());
+        return mUserDao.getUsersByCity(mCurrentUser.getUid(), mUserCity, mUserState.toUpperCase());
     }
 
     public LiveData<List<User>> getStateMusicians() {
@@ -79,7 +79,7 @@ public class SearchRepository {
 
                     final Query queryCity = mDb.collection("users")
                             .whereEqualTo("type", 1)
-                            .whereEqualTo("city", mUserCity.toLowerCase()).limit(10);
+                            .whereEqualTo("city", mUserCity).limit(10);
 
                     final Query queryState = mDb.collection("users")
                             .whereEqualTo("type", 1)
