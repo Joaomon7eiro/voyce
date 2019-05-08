@@ -43,10 +43,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/enter"
             android:textColor="@android:color/white"
             android:textSize="60sp"
             android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/login_email_et"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/voyce_title" />
 
@@ -55,16 +57,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="8dp"
             android:hint="@string/emai_login_hint"
             android:inputType="textEmailAddress"
             android:textColor="@android:color/white"
             android:textColorHint="@color/colorGray"
-            app:layout_constraintBottom_toTopOf="@+id/login_button"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/login_label" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
             android:id="@+id/login_password_et"
@@ -99,15 +102,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="100dp"
             android:background="@drawable/transparent_bordered_inactive"
             android:text="@string/enter"
             android:textColor="@android:color/darker_gray"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/login_forgot_password"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/login_password_et" />
 
         <TextView
             android:id="@+id/login_sign_up"

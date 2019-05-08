@@ -22,11 +22,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="80dp"
         android:text="@string/register_label"
         android:textColor="@android:color/white"
         android:textSize="32sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/sign_up_name_et"
         app:layout_constraintStart_toEndOf="@+id/line"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -44,6 +44,7 @@
         android:textColorHint="@color/colorGray"
         app:layout_constraintBottom_toTopOf="@+id/sign_up_email_et"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
@@ -53,15 +54,16 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="8dp"
         android:hint="@string/email_hint"
         android:inputType="textEmailAddress"
         android:textColor="@android:color/white"
         android:textColorHint="@color/colorGray"
-        app:layout_constraintBottom_toTopOf="@+id/sign_up_next_button"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/voyce_title" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/sign_up_password_et"
@@ -79,6 +81,7 @@
         app:layout_constraintTop_toBottomOf="@+id/sign_up_email_et" />
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -105,15 +108,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="100dp"
         android:background="@drawable/transparent_bordered_inactive"
         android:text="@string/next"
         android:textColor="@android:color/darker_gray"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
 
 </android.support.constraint.ConstraintLayout>

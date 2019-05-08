@@ -1,4 +1,4 @@
-package com.android.voyce.ui;
+package com.android.voyce.ui.feed;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.Post;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;

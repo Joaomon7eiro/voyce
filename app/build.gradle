@@ -51,9 +51,10 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:28.0.0'
 
     implementation 'android.arch.persistence.room:runtime:1.1.1'
-    implementation 'com.google.firebase:firebase-messaging:17.6.0'
-    implementation 'com.google.firebase:firebase-auth:16.2.1'
+    implementation 'com.google.firebase:firebase-messaging:18.0.0'
+    implementation 'com.google.firebase:firebase-auth:17.0.0'
     implementation 'com.android.support:support-annotations:28.0.0'
+    implementation 'com.google.firebase:firebase-storage:17.0.0'
     annotationProcessor 'android.arch.persistence.room:compiler:1.1.1'
     implementation 'android.arch.lifecycle:extensions:1.1.1'
     annotationProcessor 'android.arch.lifecycle:compiler:1.1.1'
@@ -69,8 +70,8 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation files('libs/CircleImageView-master/gradle/wrapper/gradle-wrapper.jar')
-    implementation 'com.google.firebase:firebase-firestore:18.2.0'
-    implementation 'com.google.firebase:firebase-core:16.0.8'
+    implementation 'com.google.firebase:firebase-firestore:19.0.0'
+    implementation 'com.google.firebase:firebase-core:16.0.9'
     implementation 'com.onesignal:OneSignal:3.10.8'
     implementation 'com.github.iammert:ScalingLayout:1.2.1'
 }

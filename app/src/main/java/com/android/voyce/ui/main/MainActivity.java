@@ -20,7 +20,7 @@ import android.widget.TextView;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.User;
-import com.android.voyce.ui.FeedFragment;
+import com.android.voyce.ui.feed.FeedFragment;
 import com.android.voyce.ui.LoginTesteActivity;
 import com.android.voyce.ui.search.SearchFragment;
 import com.android.voyce.ui.usermusicianprofile.UserMusicianProfileFragment;
@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
     private BottomNavigationView mNavigation;
     private MainViewModel mViewModel;
 
-    private int mCurrentMenuId = R.id.navigation_search;
+    private int mCurrentMenuId = R.id.navigation_feed;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {

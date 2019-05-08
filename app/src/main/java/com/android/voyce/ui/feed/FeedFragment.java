@@ -1,6 +1,7 @@
-package com.android.voyce.ui;
+package com.android.voyce.ui.feed;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +13,7 @@ import android.widget.Button;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.Post;
+import com.android.voyce.ui.NewPostActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,13 @@ public class FeedFragment extends Fragment {
         mAdapter = new FeedAdapter();
 
         Button newPost = view.findViewById(R.id.new_post);
+        newPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), NewPostActivity.class);
+                startActivity(intent);
+            }
+        });
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
 
