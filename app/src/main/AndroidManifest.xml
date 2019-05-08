@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme.NoActionBar"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".ui.NewPostActivity"
+            android:name=".ui.feed.NewPostActivity"
             android:label="@string/create_new_post"
             android:parentActivityName=".ui.main.MainActivity" />
         <activity

@@ -81,4 +81,5 @@
     <string name="new_post">Nova Publicação</string>
     <string name="title_activity_new_post">NewPostActivity</string>
     <string name="create_new_post">Criar Publicação</string>
+    <string name="publish">PUBLICAR</string>
 </resources>

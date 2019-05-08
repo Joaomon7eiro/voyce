@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.Post;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +30,15 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedAdapterVie
 
     @Override
     public void onBindViewHolder(@NonNull FeedAdapterViewHolder viewHolder, int i) {
-      //  Post post = postList.get(i);
-        //Picasso.get().load(post.getUser_image()).into(viewHolder.mUserImage);
-//        if (post.getImage() != null) {
-//            Picasso.get().load(post.getImage()).into(viewHolder.mImage);
-//        }
-//        viewHolder.mText.setText(post.getText());
-//        viewHolder.mUserName.setText(post.getUser_name());
-//        viewHolder.mTime.setText(String.valueOf(post.getTimestamp()));
+        Post post = postList.get(i);
+        Picasso.get().load(post.getUser_image()).into(viewHolder.mUserImage);
+        if (post.getImage() != null) {
+            viewHolder.mImage.setVisibility(View.VISIBLE);
+            Picasso.get().load(post.getImage()).into(viewHolder.mImage);
+        }
+        viewHolder.mText.setText(post.getText());
+        viewHolder.mUserName.setText(post.getUser_name());
+        viewHolder.mTime.setText(String.valueOf(post.getTimestamp()));
     }
 
     @Override

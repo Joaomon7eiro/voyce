@@ -20,6 +20,10 @@ public class Post {
         this.timestamp = timestamp;
     }
 
+    public Post() {
+
+    }
+
     public String getId() {
         return id;
     }

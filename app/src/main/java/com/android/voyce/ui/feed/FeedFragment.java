@@ -1,8 +1,11 @@
 package com.android.voyce.ui.feed;
 
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +16,6 @@ import android.widget.Button;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.Post;
-import com.android.voyce.ui.NewPostActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +27,11 @@ public class FeedFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private FeedAdapter mAdapter;
+    private FeedViewModel mViewModel;
 
     public FeedFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,14 +58,19 @@ public class FeedFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setNestedScrollingEnabled(false);
 
-        List<Post> posts = new ArrayList<>();
-        posts.add(new Post("1", "asd", null, "", "asd", "2", 123));
-        posts.add(new Post("1", "asd", null, "", "asd", "2", 123));
-        posts.add(new Post("1", "asd", null, "", "asd", "2", 123));
-        posts.add(new Post("1", "asd", null, "", "asd", "2", 123));
-        mAdapter.setData(posts);
-
         return view;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mViewModel = ViewModelProviders.of(this).get(FeedViewModel.class);
+        mViewModel.init();
+        mViewModel.getPostliveData().observe(this, new Observer<List<Post>>() {
+            @Override
+            public void onChanged(@Nullable List<Post> posts) {
+                mAdapter.setData(posts);
+            }
+        });
+    }
 }
