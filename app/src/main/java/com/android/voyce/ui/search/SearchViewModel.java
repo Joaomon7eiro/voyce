@@ -9,9 +9,10 @@ import com.android.voyce.data.model.User;
 import com.android.voyce.data.repository.SearchRepository;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class SearchViewModel extends AndroidViewModel {
-    private static final long REFRESH_DELAY = 3600000; // 1 hour in milliseconds
+    private static final long REFRESH_DELAY = TimeUnit.MINUTES.toMillis(60);
     private LiveData<List<User>> mMusicians;
     private LiveData<List<User>> mCityMusicians;
     private LiveData<List<User>> mStateMusicians;
@@ -53,8 +54,5 @@ public class SearchViewModel extends AndroidViewModel {
 
     public void refreshData(long refresh) {
         mRepository.refreshData(refresh);
-        mRepository.getMusicians();
-        mRepository.getCityMusicians();
-        mRepository.getStateMusicians();
     }
 }

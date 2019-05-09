@@ -1,34 +1,35 @@
 package com.android.voyce.data.model;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
+
+@Entity
 public class Post {
 
+    @NonNull
+    @PrimaryKey
     private String id;
     private String text;
     private String image;
     private String user_image;
     private String user_name;
     private String user_id;
-    private long timestamp;
+    private String current_user_id;
+    private long last_update_timestamp;
 
-    public Post(String id, String text, String image, String user_image, String user_name, String user_id, long timestamp) {
-        this.id = id;
-        this.text = text;
-        this.image = image;
-        this.user_image = user_image;
-        this.user_name = user_name;
-        this.user_id = user_id;
-        this.timestamp = timestamp;
-    }
+    private long timestamp;
 
     public Post() {
 
     }
 
+    @NonNull
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(@NonNull String id) {
         this.id = id;
     }
 
@@ -78,5 +79,21 @@ public class Post {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getCurrent_user_id() {
+        return current_user_id;
+    }
+
+    public void setCurrent_user_id(String current_user_id) {
+        this.current_user_id = current_user_id;
+    }
+
+    public long getLast_update_timestamp() {
+        return last_update_timestamp;
+    }
+
+    public void setLast_update_timestamp(long last_update_timestamp) {
+        this.last_update_timestamp = last_update_timestamp;
     }
 }

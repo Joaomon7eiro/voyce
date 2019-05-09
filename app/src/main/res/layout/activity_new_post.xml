@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryVeryDark"
     android:fitsSystemWindows="true"
-    tools:context=".ui.feed.NewPostActivity">
+    tools:context=".ui.newpost.NewPostActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"

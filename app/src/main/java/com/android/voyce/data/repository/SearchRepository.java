@@ -63,12 +63,12 @@ public class SearchRepository {
     }
 
     private void refreshUsers(final long refresh) {
-        final Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        final long timestamp = new Timestamp(System.currentTimeMillis()).getTime();
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
                 int count = mUserDao.getUsersCount();
-                boolean needsRefresh = (mUserDao.getUpdatedUsersCount(timestamp.getTime(), refresh, mCurrentUser.getUid()) > 0);
+                boolean needsRefresh = (mUserDao.getUpdatedUsersCount(timestamp, refresh, mCurrentUser.getUid()) > 0);
                 if (needsRefresh || count <= 1) {
                     mIsLoading.postValue(true);
 
@@ -98,7 +98,7 @@ public class SearchRepository {
                             if (queryDocumentSnapshots != null) {
                                 final List<User> musicians = queryDocumentSnapshots.toObjects(User.class);
                                 for (User user : musicians) {
-                                    user.setLast_update_timestamp(timestamp.getTime());
+                                    user.setLast_update_timestamp(timestamp);
                                 }
                                 mExecutor.execute(new Runnable() {
                                     @Override
@@ -117,7 +117,7 @@ public class SearchRepository {
                             if (queryDocumentSnapshots != null) {
                                 final List<User> musicians = queryDocumentSnapshots.toObjects(User.class);
                                 for (User user : musicians) {
-                                    user.setLast_update_timestamp(timestamp.getTime());
+                                    user.setLast_update_timestamp(timestamp);
                                 }
                                 mExecutor.execute(new Runnable() {
                                     @Override
@@ -136,7 +136,7 @@ public class SearchRepository {
                             if (queryDocumentSnapshots != null) {
                                 final List<User> musicians = queryDocumentSnapshots.toObjects(User.class);
                                 for (User user : musicians) {
-                                    user.setLast_update_timestamp(timestamp.getTime());
+                                    user.setLast_update_timestamp(timestamp);
                                 }
                                 mExecutor.execute(new Runnable() {
                                     @Override

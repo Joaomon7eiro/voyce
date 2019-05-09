@@ -2,6 +2,7 @@ package com.android.voyce.ui.feed;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedAdapterViewHolder> {
 
-    private List<Post> postList = new ArrayList<>();
+    private List<Post> mPostList = new ArrayList<>();
 
     @NonNull
     @Override
@@ -30,7 +31,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedAdapterVie
 
     @Override
     public void onBindViewHolder(@NonNull FeedAdapterViewHolder viewHolder, int i) {
-        Post post = postList.get(i);
+        Post post = mPostList.get(i);
         Picasso.get().load(post.getUser_image()).into(viewHolder.mUserImage);
         if (post.getImage() != null) {
             viewHolder.mImage.setVisibility(View.VISIBLE);
@@ -38,13 +39,13 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedAdapterVie
         }
         viewHolder.mText.setText(post.getText());
         viewHolder.mUserName.setText(post.getUser_name());
-        viewHolder.mTime.setText(String.valueOf(post.getTimestamp()));
+        viewHolder.mTime.setText(formatDate(post.getTimestamp()));
     }
 
     @Override
     public int getItemCount() {
-        if (postList.size() == 0) return 0;
-        return postList.size();
+        if (mPostList.size() == 0) return 0;
+        return mPostList.size();
     }
 
     class FeedAdapterViewHolder extends RecyclerView.ViewHolder {
@@ -66,7 +67,16 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedAdapterVie
     }
 
     public void setData(List<Post> posts) {
-        postList = posts;
+        mPostList = posts;
         notifyDataSetChanged();
+    }
+
+    public List<Post> getData() {
+        return mPostList;
+    }
+
+    private String formatDate(long timestamp) {
+        return (String) DateUtils.getRelativeTimeSpanString(timestamp,
+                System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS);
     }
 }

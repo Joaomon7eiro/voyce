@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.android.voyce.R;
 import com.android.voyce.ui.LoginActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.onesignal.OneSignal;
@@ -41,23 +43,30 @@ public class UserSettingsFragment extends Fragment {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseAuth auth =  FirebaseAuth.getInstance();
+                final FirebaseAuth auth =  FirebaseAuth.getInstance();
                 String id = auth.getUid();
-                auth.signOut();
-
-                OneSignal.setSubscription(false);
 
                 Map<String, Object> map = new HashMap<>();
                 map.put("signal_id", "");
-                FirebaseFirestore.getInstance().collection("users")
+                Task<Void> task = FirebaseFirestore.getInstance().collection("users")
                         .document(id).update(map);
 
-                PreferenceManager.getDefaultSharedPreferences(getContext()).
-                        edit().clear().apply();
+                task.addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        PreferenceManager.getDefaultSharedPreferences(getContext()).
+                                edit().clear().apply();
 
-                Intent intent = new Intent(getContext(), LoginActivity.class);
-                startActivity(intent);
-                getActivity().finish();
+                        OneSignal.setSubscription(false);
+
+                        auth.signOut();
+
+                        Intent intent = new Intent(getContext(), LoginActivity.class);
+                        startActivity(intent);
+                        getActivity().finish();
+                    }
+                });
+
             }
         });
 

@@ -82,4 +82,6 @@
     <string name="title_activity_new_post">NewPostActivity</string>
     <string name="create_new_post">Criar Publicação</string>
     <string name="publish">PUBLICAR</string>
+    <string name="no_feed_text">Nenhuma publicação disponível. Siga seus artistas favoritos para ver suas últimas publicações</string>
+    <string name="type_post_text_hint">Digite o texto da sua publicação</string>
 </resources>

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".ui.feed.NewPostActivity"
+    tools:context=".ui.newpost.NewPostActivity"
     tools:showIn="@layout/activity_new_post">
 
     <android.support.v4.widget.NestedScrollView
@@ -25,7 +25,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:background="@null"
-                android:hint="Digite o texto da sua publicação"
+                android:hint="@string/type_post_text_hint"
                 android:inputType="textMultiLine|textCapSentences"
                 android:textColor="@android:color/white"
                 android:textColorHint="@android:color/darker_gray"

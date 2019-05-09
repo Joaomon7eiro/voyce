@@ -5,35 +5,68 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <android.support.v4.widget.NestedScrollView
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/feed_refresh"
         android:layout_width="match_parent"
-        android:clipToPadding="false"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimaryVeryDark"
-        tools:context=".ui.feed.FeedFragment">
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:orientation="vertical"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <Button
-                android:id="@+id/new_post"
-                android:textColor="@android:color/white"
+            <android.support.v4.widget.NestedScrollView
                 android:layout_width="match_parent"
+                android:clipToPadding="false"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:textSize="16sp"
-                android:background="@drawable/transparent_bg_bordered"
-                android:text="@string/new_post" />
+                android:background="@color/colorPrimaryVeryDark"
+                tools:context=".ui.feed.FeedFragment">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/feed_rv"
-                android:layout_width="match_parent"
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <Button
+                        android:id="@+id/new_post"
+                        android:textColor="@android:color/white"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:textSize="16sp"
+                        android:background="@drawable/transparent_bg_bordered"
+                        android:text="@string/new_post" />
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/feed_rv"
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+            </android.support.v4.widget.NestedScrollView>
+
+            <TextView
+                android:id="@+id/no_feed"
+                android:layout_width="wrap_content"
+                android:layout_margin="16dp"
+                android:visibility="gone"
+                android:textSize="16sp"
+                android:textColor="@android:color/white"
+                android:layout_gravity="center"
+                android:text="@string/no_feed_text"
+                android:gravity="center"
                 android:layout_height="wrap_content" />
 
-        </LinearLayout>
+            <ProgressBar
+                android:id="@+id/feed_progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:layout_height="wrap_content" />
 
-    </android.support.v4.widget.NestedScrollView>
+        </FrameLayout>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </android.support.design.widget.CoordinatorLayout>

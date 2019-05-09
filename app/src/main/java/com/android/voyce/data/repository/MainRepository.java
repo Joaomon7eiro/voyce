@@ -159,8 +159,7 @@ public class MainRepository {
                     mDiskExecutor.execute(new Runnable() {
                         @Override
                         public void run() {
-                            mUserFollowingMusiciansDao.deleteAll();
-                            mUserFollowingMusiciansDao.insertUserFollowingMusicians(userFollowingMusicians);
+                            mUserFollowingMusiciansDao.updateData(userFollowingMusicians);
                             mIsLoading.postValue(false);
                         }
                     });
@@ -184,8 +183,7 @@ public class MainRepository {
                     mDiskExecutor.execute(new Runnable() {
                         @Override
                         public void run() {
-                            mUserSponsoringDao.deleteAll();
-                            mUserSponsoringDao.insertUserSponsoringProposals(userSponsoringProposals);
+                            mUserSponsoringDao.updateData(userSponsoringProposals);
                             mIsLoading.postValue(false);
                         }
                     });

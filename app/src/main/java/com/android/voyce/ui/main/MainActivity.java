@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
         if (savedInstanceState != null) {
             mCurrentMenuId = savedInstanceState.getInt(Constants.KEY_CURRENT_MENU_ID);
         } else {
-            Fragment fragment = new FeedFragment();
+            Fragment fragment = FeedFragment.newInstance(true);
             openFragment(fragment);
         }
     }
@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
                     edit.putString(Constants.KEY_CURRENT_USER_CITY, user.getCity());
                     edit.putString(Constants.KEY_CURRENT_USER_STATE, user.getState());
                     edit.putInt(Constants.KEY_CURRENT_USER_TYPE, user.getType());
-                    edit.apply();
+                    edit.commit();
                 }
             });
             OneSignal.setSubscription(true);

@@ -143,20 +143,10 @@ public class SearchFragment extends Fragment implements
         mViewModel.getIsLoading().observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(@Nullable Boolean isLoading) {
-                if (isLoading != null) {
-                    if (isLoading && mRecyclersViewsContainer.getVisibility() == View.VISIBLE) {
-                        mRecyclersViewsContainer.setVisibility(View.GONE);
-                        mProgressBar.setVisibility(View.VISIBLE);
-
-                    } else if (mRecyclersViewsContainer.getVisibility() == View.GONE) {
-                        mShowResultsHandler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                mProgressBar.setVisibility(View.GONE);
-                                mRecyclersViewsContainer.setVisibility(View.VISIBLE);
-                            }
-                        }, RESULTS_DELAY);
-                    }
+                if (isLoading != null && isLoading) {
+                    mProgressBar.setVisibility(View.VISIBLE);
+                } else {
+                    mProgressBar.setVisibility(View.GONE);
                 }
             }
         });

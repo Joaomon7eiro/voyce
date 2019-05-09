@@ -37,8 +37,9 @@ public class UserProfileRepository {
                     AppDatabase.getInstance(application).userFollowingMusicianDao(),
                     AppDatabase.getInstance(application).userSponsoringDao()
             );
-            mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
         }
+        mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
+
         return sInstance;
     }
 

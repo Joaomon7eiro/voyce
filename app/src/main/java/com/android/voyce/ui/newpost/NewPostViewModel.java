@@ -1,4 +1,4 @@
-package com.android.voyce.ui.feed;
+package com.android.voyce.ui.newpost;
 
 import android.arch.lifecycle.ViewModel;
 
