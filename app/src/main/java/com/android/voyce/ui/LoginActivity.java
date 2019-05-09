@@ -69,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
                         startActivity(intent);
                         finish();
                     } else {
-                        Toast.makeText(getApplicationContext(), "Email ou senha estão incorretos", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Erro na autenticação", Toast.LENGTH_SHORT).show();
                     }
                     mProgressBar.setVisibility(View.GONE);
                     mContainer.setVisibility(View.VISIBLE);
