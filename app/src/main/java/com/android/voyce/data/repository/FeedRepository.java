@@ -1,4 +1,4 @@
-package com.android.voyce.ui.feed;
+package com.android.voyce.data.repository;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -20,10 +20,10 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 public class FeedRepository {
-    public static FeedRepository sInstance;
-    public FirebaseFirestore mDb = FirebaseFirestore.getInstance();
-    public static FirebaseUser mUser;
-    public MutableLiveData<List<Post>> mPostsLiveData = new MutableLiveData<>();
+    private static FeedRepository sInstance;
+    private FirebaseFirestore mDb = FirebaseFirestore.getInstance();
+    private static FirebaseUser mUser;
+    private MutableLiveData<List<Post>> mPostsLiveData = new MutableLiveData<>();
 
     public static FeedRepository getInstance() {
         if (sInstance == null) {

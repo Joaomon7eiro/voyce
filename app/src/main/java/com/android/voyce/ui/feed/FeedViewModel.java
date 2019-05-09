@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 
 import com.android.voyce.data.model.Post;
+import com.android.voyce.data.repository.FeedRepository;
 
 import java.util.List;
 
