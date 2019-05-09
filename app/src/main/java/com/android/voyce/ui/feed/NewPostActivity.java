@@ -7,14 +7,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -38,10 +39,12 @@ public class NewPostActivity extends AppCompatActivity {
     private String mUserId;
     private String mUserName;
     private String mUserImage;
-    private String mImageUrl;
     private ImageView mPostImage;
-    private ProgressBar mImageLoading;
+    private ImageView mCancelImageIcon;
+    private ProgressBar mProgressBar;
     private StorageReference mPostImagesStorage;
+    private CoordinatorLayout mContainer;
+    private Uri mSelectedImageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,12 +54,23 @@ public class NewPostActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        mContainer = findViewById(R.id.new_post_container);
+
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mUserImage = sharedPreferences.getString(Constants.KEY_CURRENT_USER_IMAGE, null);
         mUserName = sharedPreferences.getString(Constants.KEY_CURRENT_USER_NAME, null);
         mUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        mImageLoading = findViewById(R.id.image_progress_bar);
+        mProgressBar = findViewById(R.id.post_progress_bar);
+        mCancelImageIcon = findViewById(R.id.cancel_image_icon);
+        mCancelImageIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSelectedImageUri = null;
+                mPostImage.setVisibility(View.GONE);
+                mCancelImageIcon.setVisibility(View.GONE);
+            }
+        });
 
         mPostImage = findViewById(R.id.post_image_iv);
         mPostText = findViewById(R.id.post_text_et);
@@ -68,11 +82,7 @@ public class NewPostActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (mPostText.getText().toString().length() > 0) {
-                    mPublishEnabled = true;
-                } else {
-                    mPublishEnabled = false;
-                }
+                mPublishEnabled = mPostText.getText().toString().length() > 0;
                 invalidateOptionsMenu();
             }
 
@@ -92,6 +102,7 @@ public class NewPostActivity extends AppCompatActivity {
                 intent.setType("image/*");
                 intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
                 startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
+                mProgressBar.setVisibility(View.VISIBLE);
             }
         });
 
@@ -103,31 +114,13 @@ public class NewPostActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_PHOTO_PICKER) {
-            Uri selectedImage = data.getData();
-            final StorageReference imageRef = mPostImagesStorage.child(selectedImage.getLastPathSegment());
-            mImageLoading.setVisibility(View.VISIBLE);
-            mPublishEnabled = false;
-            invalidateOptionsMenu();
-
-            imageRef.putFile(selectedImage)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            if (uri != null) {
-                                mImageUrl = uri.toString();
-                                Picasso.get().load(uri.toString()).into(mPostImage);
-                                mImageLoading.setVisibility(View.GONE);
-                                mPostImage.setVisibility(View.VISIBLE);
-                                mPublishEnabled = true;
-                                invalidateOptionsMenu();
-                            }
-                        }
-                    });
-                }
-            });
+            if (data != null) {
+                mSelectedImageUri = data.getData();
+                Picasso.get().load(mSelectedImageUri).into(mPostImage);
+                mPostImage.setVisibility(View.VISIBLE);
+                mCancelImageIcon.setVisibility(View.VISIBLE);
+            }
+            mProgressBar.setVisibility(View.GONE);
         }
     }
 
@@ -150,16 +143,49 @@ public class NewPostActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.publish) {
-            Post post = new Post();
-            post.setText(mPostText.getText().toString());
-            post.setUser_id(mUserId);
-            post.setUser_image(mUserImage);
-            post.setImage(mImageUrl);
-            post.setUser_name(mUserName);
-            mViewModel.createPost(post);
-            finish();
+            if (mSelectedImageUri != null) {
+                final StorageReference imageRef = mPostImagesStorage.child(mSelectedImageUri.getLastPathSegment());
+                mProgressBar.setVisibility(View.VISIBLE);
+                mContainer.setAlpha(0.9f);
+                imageRef.putFile(mSelectedImageUri)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        mProgressBar.setVisibility(View.GONE);
+                                        mContainer.setAlpha(1);
+                                        if (uri != null) {
+                                            publishPost(uri.toString());
+                                        }
+                                    }
+                                });
+                            }
+                        });
+            } else {
+                publishPost(null);
+            }
+
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void publishPost(String imageUrl) {
+        Post post = new Post();
+        post.setText(mPostText.getText().toString());
+        post.setUser_id(mUserId);
+        post.setUser_image(mUserImage);
+        post.setImage(imageUrl);
+        post.setUser_name(mUserName);
+        mViewModel.createPost(post);
+        finish();
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (mProgressBar.getVisibility() == View.VISIBLE) return false;
+        return super.dispatchTouchEvent(ev);
     }
 }

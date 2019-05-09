@@ -17,6 +17,7 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".ui.feed.NewPostActivity"
+            android:windowSoftInputMode="adjustResize"
             android:label="@string/create_new_post"
             android:parentActivityName=".ui.main.MainActivity" />
         <activity
