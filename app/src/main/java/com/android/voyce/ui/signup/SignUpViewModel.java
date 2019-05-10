@@ -1,6 +1,6 @@
 package com.android.voyce.ui.signup;
 
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModel;
 
 import com.android.voyce.data.model.User;
 import com.android.voyce.data.repository.SignUpRepository;

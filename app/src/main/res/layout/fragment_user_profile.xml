@@ -7,7 +7,7 @@
     android:background="@color/colorPrimaryVeryDark"
     tools:context=".ui.userprofile.UserProfileFragment">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
 
@@ -108,6 +108,6 @@
             app:layout_constraintEnd_toEndOf="@+id/settings_circle"
             app:layout_constraintStart_toStartOf="@+id/settings_circle" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </HorizontalScrollView>

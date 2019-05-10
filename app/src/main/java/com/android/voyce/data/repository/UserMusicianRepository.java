@@ -1,7 +1,7 @@
 package com.android.voyce.data.repository;
 
 import android.app.Application;
-import android.arch.lifecycle.LiveData;
+import androidx.lifecycle.LiveData;
 
 import com.android.voyce.data.local.AppDatabase;
 import com.android.voyce.data.local.UserDao;

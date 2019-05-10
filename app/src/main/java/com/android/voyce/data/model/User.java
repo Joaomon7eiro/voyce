@@ -1,8 +1,8 @@
 package com.android.voyce.data.model;
 
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.annotation.NonNull;
 
 @Entity(tableName = "user")
 public class User {
@@ -16,6 +16,7 @@ public class User {
     private String image;
     private String city;
     private String state;
+    private long date_of_birth_timestamp;
     private int gender;
     private int type;
     private long sponsors;
@@ -28,7 +29,6 @@ public class User {
     private String twitter_url;
     private String phone_number;
     private String biography;
-    private long last_update_timestamp;
 
     public User() {
     }
@@ -146,14 +146,6 @@ public class User {
         this.id = id;
     }
 
-    public long getLast_update_timestamp() {
-        return last_update_timestamp;
-    }
-
-    public void setLast_update_timestamp(long last_update_timestamp) {
-        this.last_update_timestamp = last_update_timestamp;
-    }
-
     public String getSignal_id() {
         return signal_id;
     }
@@ -192,5 +184,13 @@ public class User {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public long getDate_of_birth_timestamp() {
+        return date_of_birth_timestamp;
+    }
+
+    public void setDate_of_birth_timestamp(long date_of_birth_timestamp) {
+        this.date_of_birth_timestamp = date_of_birth_timestamp;
     }
 }

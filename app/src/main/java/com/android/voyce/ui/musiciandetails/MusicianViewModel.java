@@ -1,9 +1,9 @@
 package com.android.voyce.ui.musiciandetails;
 
 import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.LiveData;
-import android.support.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.annotation.NonNull;
 
 import com.android.voyce.data.model.Goal;
 import com.android.voyce.data.model.Proposal;

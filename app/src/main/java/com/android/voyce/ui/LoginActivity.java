@@ -1,9 +1,8 @@
 package com.android.voyce.ui;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -33,7 +32,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mPassword;
     private ImageView mPasswordIcon;
     private ProgressBar mProgressBar;
-    private ConstraintLayout mContainer;
     private boolean mPasswordIsVisible = false;
     private Button mLogin;
 
@@ -57,8 +55,8 @@ public class LoginActivity extends AppCompatActivity {
     private View.OnClickListener mLoginClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mContainer.setVisibility(View.GONE);
             mProgressBar.setVisibility(View.VISIBLE);
+            mLogin.setVisibility(View.INVISIBLE);
             mAuth.signInWithEmailAndPassword(
                     mEmail.getText().toString().trim(),
                     mPassword.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -72,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Erro na autenticação", Toast.LENGTH_SHORT).show();
                     }
                     mProgressBar.setVisibility(View.GONE);
-                    mContainer.setVisibility(View.VISIBLE);
+                    mLogin.setVisibility(View.VISIBLE);
                 }
             });
         }
@@ -108,7 +106,6 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordIcon = findViewById(R.id.login_password_visibility_icon);
         mPasswordIcon.setOnClickListener(mPasswordIconClickListener);
 
-        mContainer = findViewById(R.id.login_container);
         mProgressBar = findViewById(R.id.login_progress_bar);
 
         mLogin = findViewById(R.id.login_button);

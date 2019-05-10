@@ -1,7 +1,7 @@
 package com.android.voyce.data.repository;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.android.voyce.data.model.User;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -32,7 +32,11 @@ public class SearchResultsRepository {
         if (queryString != null) {
             String queryFormatted = queryString.toLowerCase().trim();
 
-            Query query = mDb.collection("users").orderBy("name").startAt(queryFormatted).endAt(queryFormatted + '\uf8ff');
+            Query query = mDb.collection("users")
+                    .orderBy("name")
+                    .whereEqualTo("type", 1)
+                    .startAt(queryFormatted)
+                    .endAt(queryFormatted + '\uf8ff');
 
             mIsLoading.setValue(true);
             query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {

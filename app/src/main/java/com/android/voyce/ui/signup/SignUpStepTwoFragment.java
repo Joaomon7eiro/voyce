@@ -2,14 +2,14 @@ package com.android.voyce.ui.signup;
 
 
 import android.app.DatePickerDialog;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -66,39 +66,16 @@ public class SignUpStepTwoFragment extends Fragment {
     private List<State> mStatesList = new ArrayList<>();
 
     private boolean mIsCitySelected = false;
+    private boolean mIsValidDate = false;
+
     private AutoCompleteTextView mCityAutoComplete;
     private EditText mState;
-    private TextView mDateOfBirth;
+    private EditText mDateOfBirth;
 
     private RadioGroup mRadioGroup;
     private SignUpViewModel mViewModel;
 
     private Button mSignUp;
-
-    private DatePickerFragment mDatePickerFragment;
-
-    private DatePickerDialog.OnDateSetListener mOnDateSetListener = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-            if (view.isShown()) {
-                mDateOfBirth.setText(dayOfMonth + "/" + month + "/" + year);
-                checkIsValidForm();
-            }
-        }
-    };
-
-    private View.OnClickListener mDatePickerClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (mDatePickerFragment != null) {
-                mDatePickerFragment.dismiss();
-            }
-            mDatePickerFragment = new DatePickerFragment();
-            mDatePickerFragment.setCallBack(mOnDateSetListener);
-            mDatePickerFragment.show(getFragmentManager(), "datepicker");
-
-        }
-    };
 
     private View.OnClickListener mSignUpClickListener = new View.OnClickListener() {
         @Override
@@ -115,7 +92,7 @@ public class SignUpStepTwoFragment extends Fragment {
 
                         User user = new User();
                         user.setId(mAuth.getCurrentUser().getUid());
-                        user.setName(mName);
+                        user.setName(mName.toLowerCase());
                         user.setEmail(mEmail);
                         user.setGender(genderInt);
                         user.setCity(mCityAutoComplete.getText().toString().trim());
@@ -231,7 +208,29 @@ public class SignUpStepTwoFragment extends Fragment {
         mState = view.findViewById(R.id.sign_up_state);
 
         mDateOfBirth = view.findViewById(R.id.sign_up_date_of_birth);
-        mDateOfBirth.setOnClickListener(mDatePickerClickListener);
+        mDateOfBirth.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (mDateOfBirth.getText().toString().length() == 10) {
+                    mIsValidDate = true;
+                    mDateOfBirth.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorGreen)));
+                } else {
+                    mDateOfBirth.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorRed)));
+                    mIsValidDate = false;
+                }
+                checkIsValidForm();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         mSignUp = view.findViewById(R.id.sign_up_login_button);
         mSignUp.setOnClickListener(mSignUpClickListener);
@@ -312,7 +311,7 @@ public class SignUpStepTwoFragment extends Fragment {
     }
 
     private void checkIsValidForm() {
-        if (mIsCitySelected && !mDateOfBirth.getText().toString().isEmpty()) {
+        if (mIsCitySelected && mIsValidDate) {
             mSignUp.setBackground(getResources().getDrawable(R.drawable.transparent_bg_bordered));
             mSignUp.setTextColor(getResources().getColor(android.R.color.white));
             mSignUp.setClickable(true);

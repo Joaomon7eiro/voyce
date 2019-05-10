@@ -1,8 +1,8 @@
 package com.android.voyce.data.model;
 
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.annotation.NonNull;
 
 @Entity
 public class Post {
@@ -16,8 +16,6 @@ public class Post {
     private String user_name;
     private String user_id;
     private String current_user_id;
-    private long last_update_timestamp;
-
     private long timestamp;
 
     public Post() {
@@ -87,13 +85,5 @@ public class Post {
 
     public void setCurrent_user_id(String current_user_id) {
         this.current_user_id = current_user_id;
-    }
-
-    public long getLast_update_timestamp() {
-        return last_update_timestamp;
-    }
-
-    public void setLast_update_timestamp(long last_update_timestamp) {
-        this.last_update_timestamp = last_update_timestamp;
     }
 }

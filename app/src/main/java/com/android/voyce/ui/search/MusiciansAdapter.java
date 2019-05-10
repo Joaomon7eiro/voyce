@@ -1,7 +1,7 @@
 package com.android.voyce.ui.search;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,9 +57,9 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
         int number = Integer.parseInt(numberText);
         String numberString;
         if (Math.abs(number / 1000000) >= 1) {
-            numberString = String.valueOf(number / 1000000) + "M";
+            numberString = number / 1000000 + "M";
         } else if (Math.abs(number / 1000) >= 1) {
-            numberString = String.valueOf(number / 1000) + "K";
+            numberString = number / 1000 + "K";
         } else {
             numberString = String.valueOf(number);
         }

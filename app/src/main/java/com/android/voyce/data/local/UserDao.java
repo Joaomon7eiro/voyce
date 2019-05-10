@@ -1,16 +1,16 @@
 package com.android.voyce.data.local;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.Query;
+import androidx.lifecycle.LiveData;
+import androidx.room.Dao;
+import androidx.room.Insert;
+import androidx.room.Query;
 
 import com.android.voyce.data.model.User;
 
 
 import java.util.List;
 
-import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
+import static androidx.room.OnConflictStrategy.REPLACE;
 
 @Dao
 public interface UserDao {
@@ -34,9 +34,6 @@ public interface UserDao {
 
     @Query("DELETE from user WHERE id != :id")
     void deleteUsers(String id);
-
-    @Query("SELECT COUNT(*) FROM user WHERE id != :id AND :timestamp - last_update_timestamp > :refreshDelay")
-    int getUpdatedUsersCount(long timestamp, long refreshDelay, String id);
 
     @Query("SELECT COUNT(*) FROM user")
     int getUsersCount();

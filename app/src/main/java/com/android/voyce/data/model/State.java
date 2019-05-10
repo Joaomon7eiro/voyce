@@ -1,6 +1,6 @@
 package com.android.voyce.data.model;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class State {
 

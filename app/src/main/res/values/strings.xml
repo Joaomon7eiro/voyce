@@ -84,4 +84,5 @@
     <string name="publish">PUBLICAR</string>
     <string name="no_feed_text">Nenhuma publicação disponível. Siga seus artistas favoritos para ver suas últimas publicações</string>
     <string name="type_post_text_hint">Digite o texto da sua publicação</string>
+    <string name="cancel_plan">Cancelar Plano</string>
 </resources>

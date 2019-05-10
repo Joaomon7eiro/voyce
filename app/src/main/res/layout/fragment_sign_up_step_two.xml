@@ -7,7 +7,7 @@
     android:background="@color/colorPrimaryVeryDark"
     tools:context=".ui.signup.SignUpStepOneFragment">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/sign_up_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="8dp"
             android:focusable="false"
             android:hint="@string/state_hint"
             android:inputType="textCapCharacters"
@@ -69,15 +69,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <TextView
+        <com.santalu.maskedittext.MaskEditText
             android:id="@+id/sign_up_date_of_birth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="19dp"
+            android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
+            android:inputType="date"
             android:hint="@string/date_of_birth_hint"
-            android:textColor="@color/colorGray"
+            app:met_mask="##/##/####"
+            android:textColor="@android:color/white"
             android:textColorHint="@color/colorGray"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -85,16 +87,6 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <View
-            android:id="@+id/date_border"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginStart="19dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginEnd="19dp"
-            android:background="@android:color/darker_gray"
-            app:layout_constraintTop_toBottomOf="@+id/sign_up_date_of_birth" />
 
         <TextView
             android:id="@+id/gender_label"
@@ -106,7 +98,7 @@
             android:textColor="@color/colorGray"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/date_border" />
+            app:layout_constraintTop_toBottomOf="@+id/sign_up_date_of_birth" />
 
         <RadioGroup
             android:id="@+id/gender_container"
@@ -161,7 +153,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/gender_container" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ProgressBar
         android:id="@+id/sign_up_progress_bar"

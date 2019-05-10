@@ -1,6 +1,6 @@
 package com.android.voyce.ui.newpost;
 
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModel;
 
 import com.android.voyce.data.model.Post;
 import com.android.voyce.data.repository.NewPostRepository;

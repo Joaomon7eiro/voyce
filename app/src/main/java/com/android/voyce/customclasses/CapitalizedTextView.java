@@ -1,9 +1,9 @@
-package com.android.voyce;
+package com.android.voyce.customclasses;
 
 import android.content.Context;
 import android.util.AttributeSet;
 
-public class CapitalizedTextView extends android.support.v7.widget.AppCompatTextView {
+public class CapitalizedTextView extends androidx.appcompat.widget.AppCompatTextView {
 
     public CapitalizedTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
