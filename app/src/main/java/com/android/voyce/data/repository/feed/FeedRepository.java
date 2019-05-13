@@ -1,10 +1,13 @@
-package com.android.voyce.data.repository;
+package com.android.voyce.data.repository.feed;
 
 import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.paging.DataSource;
+import androidx.paging.LivePagedListBuilder;
+import androidx.paging.PagedList;
 
 import com.android.voyce.data.local.AppDatabase;
 import com.android.voyce.data.local.UserPostDao;
@@ -15,18 +18,16 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-import javax.annotation.Nullable;
 
 public class FeedRepository {
     private static FeedRepository sInstance;
@@ -45,14 +46,24 @@ public class FeedRepository {
 
     public static FeedRepository getInstance(Application application) {
         if (sInstance == null) {
-            sInstance = new FeedRepository(AppDatabase.getInstance(application).userPostDao(), AppExecutors.getInstance().getDiskIO());
+            sInstance = new FeedRepository(
+                    AppDatabase.getInstance(application).userPostDao(),
+                    AppExecutors.getInstance().getDiskIO());
         }
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
         return sInstance;
     }
 
-    public LiveData<List<Post>> getPosts() {
-        return mUserPostDao.queryPosts(mCurrentUser.getUid());
+    public LiveData<PagedList<Post>> getPosts() {
+        PagedList.Config config = new PagedList.Config.Builder()
+                .setPageSize(10)
+                .setInitialLoadSizeHint(15)
+                .setPrefetchDistance(0)
+                .build();
+
+        DataSource.Factory factory = mUserPostDao.getPosts(mCurrentUser.getUid());
+        RepoBoundaryCallback boundaryCallback = new RepoBoundaryCallback(mDb, mUserPostDao, mExecutor, mCurrentUser.getUid());
+        return new LivePagedListBuilder<>(factory, config).setBoundaryCallback(boundaryCallback).build();
     }
 
     public void refreshData(final long refreshDelay, final boolean isFirstRefresh) {
@@ -62,22 +73,24 @@ public class FeedRepository {
             mLastRefreshTime = currentTimeInMillis;
             mIsLoading.setValue(true);
             final List<String> followingIds = new ArrayList<>();
-
             CollectionReference reference = mDb.collection("user_following")
                     .document(mCurrentUser.getUid()).collection("users");
 
-            reference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            reference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                 @Override
-                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                     if (queryDocumentSnapshots != null) {
+                        followingIds.clear();
                         for (QueryDocumentSnapshot snapshot : queryDocumentSnapshots) {
                             followingIds.add(snapshot.getId());
                         }
                         getFollowingUsersPosts(followingIds);
                     }
-                    if (e != null) {
-                        mIsLoading.setValue(true);
-                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    mIsLoading.setValue(false);
                 }
             });
         }
@@ -85,9 +98,14 @@ public class FeedRepository {
     }
 
     private void getFollowingUsersPosts(List<String> followingIds) {
+        final int length = followingIds.size();
+        if (length == 0) {
+            mIsLoading.setValue(false);
+            return;
+        }
         final List<Post> posts = new ArrayList<>();
         mResultsCount = 0;
-        final int length = followingIds.size();
+
         for (String id : followingIds) {
             mDb.collection("user_posts")
                     .document(id).collection("posts")
@@ -125,7 +143,11 @@ public class FeedRepository {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                mUserPostDao.insertPosts(posts);
+                try {
+                    mUserPostDao.insertPosts(posts);
+                } catch (ConcurrentModificationException e) {
+                    e.printStackTrace();
+                }
                 mIsLoading.postValue(false);
             }
         });

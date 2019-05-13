@@ -200,6 +200,7 @@ public class MusicianDetailsRepository {
             mIsFollowing.setValue(false);
             mBolIsFollowing = false;
         }
+
         final DocumentReference reference = mUsersCollectionReference.document(mUserFollowingMusician.getId());
         CollectionReference followersReference = mFollowersCollectionReference.document(mUserFollowingMusician.getId()).collection("users");
         followersReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {

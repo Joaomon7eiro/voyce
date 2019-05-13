@@ -44,6 +44,7 @@
             android:paddingEnd="16dp"
             android:background="@drawable/rounded_background"
             android:textStyle="bold"
+            android:layout_marginStart="8dp"
             android:textColor="@android:color/white"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="@+id/user_sponsoring_musician_image"

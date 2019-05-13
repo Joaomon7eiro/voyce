@@ -4,17 +4,17 @@ import android.app.Application;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.annotation.NonNull;
+import androidx.paging.PagedList;
 
 import com.android.voyce.data.model.Post;
-import com.android.voyce.data.repository.FeedRepository;
+import com.android.voyce.data.repository.feed.FeedRepository;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class FeedViewModel extends AndroidViewModel {
     private static final long REFRESH_DELAY = TimeUnit.MINUTES.toMillis(30);
     private FeedRepository mRepository;
-    private LiveData<List<Post>> mPostLiveData;
+    private LiveData<PagedList<Post>> mPostLiveData;
     private LiveData<Boolean> mIsLoading;
 
     public FeedViewModel(@NonNull Application application) {
@@ -24,15 +24,15 @@ public class FeedViewModel extends AndroidViewModel {
 
     public void init(Boolean firstTimeCreated) {
         if (firstTimeCreated != null) {
-            mRepository.refreshData(REFRESH_DELAY, true);
+            //mRepository.refreshData(REFRESH_DELAY, true);
         } else {
-            mRepository.refreshData(REFRESH_DELAY, false);
+            //mRepository.refreshData(REFRESH_DELAY, false);
         }
         mPostLiveData = mRepository.getPosts();
         mIsLoading = mRepository.getIsLoading();
     }
 
-    public LiveData<List<Post>> getPostLiveData() {
+    public LiveData<PagedList<Post>> getPostLiveData() {
         return mPostLiveData;
     }
 

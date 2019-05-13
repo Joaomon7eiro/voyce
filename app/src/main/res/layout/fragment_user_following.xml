@@ -1,45 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryVeryDark"
+    android:fitsSystemWindows="true"
     tools:context=".ui.userprofile.UserFollowingFragment">
 
-    <LinearLayout
-        android:id="@+id/following_container"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:clipToPadding="false"
-        android:paddingTop="?actionBarSize"
-        android:visibility="gone"
         android:layout_height="match_parent">
 
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_following"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:title="@string/following"
+            app:titleTextColor="@android:color/white" />
+
+        <LinearLayout
+            android:id="@+id/following_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:paddingTop="32dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar_following">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/all_musicians"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_user_following"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
         <TextView
+            android:id="@+id/no_following"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="@string/all_musicians"
+            android:layout_gravity="center"
+            android:layout_margin="16dp"
+            android:gravity="center"
+            android:text="@string/not_following_text"
             android:textColor="@android:color/white"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_user_following"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-    <TextView
-        android:id="@+id/no_following"
-        android:textSize="20sp"
-        android:layout_margin="16dp"
-        android:visibility="gone"
-        android:gravity="center"
-        android:textColor="@android:color/white"
-        android:text="@string/not_following_text"
-        android:layout_width="wrap_content"
-        android:layout_gravity="center"
-        android:layout_height="wrap_content" />
-
-</FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -4,8 +4,13 @@ package com.android.voyce.ui.userprofile;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,11 +44,26 @@ public class UserSettingsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user_settings, container, false);
 
+        Toolbar toolbar = view.findViewById(R.id.toolbar_settings);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+
+        toolbar.setNavigationIcon(R.drawable.ic_action_back);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getFragmentManager()
+                        .beginTransaction()
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .replace(R.id.fragments_container, new UserProfileFragment())
+                        .commit();
+            }
+        });
+
         TextView logout = view.findViewById(R.id.settings_logout);
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final FirebaseAuth auth =  FirebaseAuth.getInstance();
+                final FirebaseAuth auth = FirebaseAuth.getInstance();
                 String id = auth.getUid();
 
                 Map<String, Object> map = new HashMap<>();

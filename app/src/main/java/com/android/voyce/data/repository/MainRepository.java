@@ -5,7 +5,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.android.voyce.data.local.AppDatabase;
+import com.android.voyce.data.local.UserPostDao;
 import com.android.voyce.data.local.UserSponsoringDao;
+import com.android.voyce.data.model.Post;
 import com.android.voyce.data.model.UserFollowingMusician;
 import com.android.voyce.data.model.UserSponsoringProposal;
 import com.android.voyce.utils.AppExecutors;
@@ -44,6 +46,7 @@ public class MainRepository {
     private final UserProposalsDao mUserProposalsDao;
     private final UserFollowingMusicianDao mUserFollowingMusiciansDao;
     private final UserSponsoringDao mUserSponsoringDao;
+    private final UserPostDao mUserPostDao;
     private final FirebaseFirestore mDb = FirebaseFirestore.getInstance();
     private MutableLiveData<Boolean> mIsLoading = new MutableLiveData<>();
     private MutableLiveData<User> mUserLiveData = new MutableLiveData<>();
@@ -51,7 +54,8 @@ public class MainRepository {
     private MainRepository(Executor diskExecutor, UserDao userDao,
                            UserGoalDao userGoalDao, UserProposalsDao userProposalsDao,
                            UserFollowingMusicianDao userFollowingMusicianDao,
-                           UserSponsoringDao userSponsoringDao
+                           UserSponsoringDao userSponsoringDao,
+                           UserPostDao userPostDao
     ) {
         mUserDao = userDao;
         mUserGoalDao = userGoalDao;
@@ -59,6 +63,7 @@ public class MainRepository {
         mUserFollowingMusiciansDao = userFollowingMusicianDao;
         mDiskExecutor = diskExecutor;
         mUserSponsoringDao = userSponsoringDao;
+        mUserPostDao = userPostDao;
     }
 
     public static MainRepository getInstance(Application application) {
@@ -69,7 +74,8 @@ public class MainRepository {
                     AppDatabase.getInstance(application).userGoalDao(),
                     AppDatabase.getInstance(application).userProposalsDao(),
                     AppDatabase.getInstance(application).userFollowingMusicianDao(),
-                    AppDatabase.getInstance(application).userSponsoringDao()
+                    AppDatabase.getInstance(application).userSponsoringDao(),
+                    AppDatabase.getInstance(application).userPostDao()
             );
         }
         return sInstance;
@@ -88,6 +94,7 @@ public class MainRepository {
         CollectionReference followingReference = mDb.collection("user_following").document(mUserId).collection("users");
         CollectionReference followersReference = mDb.collection("user_followers").document(mUserId).collection("users");
         CollectionReference sponsoringReference = mDb.collection("user_sponsoring").document(mUserId).collection("sponsoring");
+        CollectionReference userFeedReference = mDb.collection("feed").document(mUserId).collection("posts");
 
         proposalsCollectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -198,6 +205,26 @@ public class MainRepository {
                     Map<String, Object> map = new HashMap<>();
                     map.put("followers", queryDocumentSnapshots.size());
                     userReference.update(map);
+                }
+            }
+        });
+
+        userFeedReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable final QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                if (queryDocumentSnapshots != null) {
+                    final List<Post> posts = new ArrayList<>();
+                    for (QueryDocumentSnapshot documentSnapshot: queryDocumentSnapshots) {
+                        Post post = documentSnapshot.toObject(Post.class);
+                        post.setId(documentSnapshot.getId());
+                        posts.add(post);
+                    }
+                    mDiskExecutor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            mUserPostDao.insertPosts(posts);
+                        }
+                    });
                 }
             }
         });

@@ -1,6 +1,8 @@
 package com.android.voyce.ui.userprofile;
 
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -49,6 +51,23 @@ public class UserFollowingFragment extends Fragment implements UserFollowingAdap
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user_following, container, false);
+
+        Toolbar toolbar = view.findViewById(R.id.toolbar_following);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+
+        toolbar.setNavigationIcon(R.drawable.ic_action_back);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getFragmentManager()
+                        .beginTransaction()
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .replace(R.id.fragments_container, new UserProfileFragment())
+                        .commit();
+            }
+        });
+
+
         mNoFollowing = view.findViewById(R.id.no_following);
         mContainer = view.findViewById(R.id.following_container);
 

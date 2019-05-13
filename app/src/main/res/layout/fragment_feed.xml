@@ -33,6 +33,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="16dp"
                         android:textSize="16sp"
+                        android:visibility="gone"
                         android:background="@drawable/transparent_bg_bordered"
                         android:text="@string/new_post" />
 

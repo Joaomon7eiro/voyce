@@ -1,44 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryVeryDark"
+    android:fitsSystemWindows="true"
     tools:context=".ui.userprofile.UserSponsorsFragment">
 
-    <LinearLayout
-        android:id="@+id/sponsoring_container"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:visibility="gone"
-        android:clipToPadding="false"
-        android:paddingTop="?actionBarSize"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_sponsors"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:title="@string/sponsoring"
+            app:titleTextColor="@android:color/white" />
+
+        <LinearLayout
+            android:id="@+id/sponsoring_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:paddingTop="32dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar_sponsors">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/all_plans"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_user_sponsoring"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
 
         <TextView
+            android:id="@+id/no_sponsoring"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="@string/sponsoring"
+            android:layout_gravity="center"
+            android:layout_margin="16dp"
+            android:gravity="center"
+            android:text="@string/no_sponsoring_text"
             android:textColor="@android:color/white"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_user_sponsoring"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/no_sponsoring"
-        android:textSize="20sp"
-        android:layout_margin="16dp"
-        android:visibility="gone"
-        android:gravity="center"
-        android:textColor="@android:color/white"
-        android:text="@string/no_sponsoring_text"
-        android:layout_width="wrap_content"
-        android:layout_gravity="center"
-        android:layout_height="wrap_content" />
-</FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

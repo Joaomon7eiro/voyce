@@ -1,9 +1,11 @@
 package com.android.voyce.data.repository;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.android.voyce.data.model.User;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -45,8 +47,14 @@ public class SearchResultsRepository {
                     if (queryDocumentSnapshots != null) {
                         List<User> usersList = queryDocumentSnapshots.toObjects(User.class);
                         mUsers.postValue(usersList);
-                        mIsLoading.setValue(false);
                     }
+                    mIsLoading.setValue(false);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    mIsLoading.setValue(false);
+                    e.printStackTrace();
                 }
             });
         } else {

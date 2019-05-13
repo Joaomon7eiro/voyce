@@ -1,7 +1,10 @@
 package com.android.voyce.ui.feed;
 
 import androidx.annotation.NonNull;
+import androidx.paging.PagedListAdapter;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,14 +16,14 @@ import com.android.voyce.R;
 import com.android.voyce.data.model.Post;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedAdapterViewHolder> {
+public class FeedAdapter extends PagedListAdapter<Post, FeedAdapter.FeedAdapterViewHolder> {
 
-    private List<Post> mPostList = new ArrayList<>();
+    protected FeedAdapter(@NonNull DiffUtil.ItemCallback<Post> diffCallback) {
+        super(diffCallback);
+    }
 
     @NonNull
     @Override
@@ -31,21 +34,15 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedAdapterVie
 
     @Override
     public void onBindViewHolder(@NonNull FeedAdapterViewHolder viewHolder, int i) {
-        Post post = mPostList.get(i);
-        Picasso.get().load(post.getUser_image()).into(viewHolder.mUserImage);
-        if (post.getImage() != null) {
-            viewHolder.mImage.setVisibility(View.VISIBLE);
-            Picasso.get().load(post.getImage()).into(viewHolder.mImage);
+        Post post = getItem(i);
+        if (post != null) {
+            viewHolder.bindTo(post);
+        } else {
+            // Null defines a placeholder item - PagedListAdapter automatically
+            // invalidates this row when the actual object is loaded from the
+            // database.
+            // viewHolder.clear();
         }
-        viewHolder.mText.setText(post.getText());
-        viewHolder.mUserName.setText(post.getUser_name());
-        viewHolder.mTime.setText(formatDate(post.getTimestamp()));
-    }
-
-    @Override
-    public int getItemCount() {
-        if (mPostList.size() == 0) return 0;
-        return mPostList.size();
     }
 
     class FeedAdapterViewHolder extends RecyclerView.ViewHolder {
@@ -64,15 +61,17 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.FeedAdapterVie
             mImage = itemView.findViewById(R.id.post_image);
             mTime = itemView.findViewById(R.id.post_time);
         }
-    }
 
-    public void setData(List<Post> posts) {
-        mPostList = posts;
-        notifyDataSetChanged();
-    }
-
-    public List<Post> getData() {
-        return mPostList;
+        public void bindTo(Post post) {
+            Picasso.get().load(post.getUser_image()).into(mUserImage);
+            if (post.getImage() != null) {
+                mImage.setVisibility(View.VISIBLE);
+                Picasso.get().load(post.getImage()).into(mImage);
+            }
+            mText.setText(post.getText());
+            mUserName.setText(post.getUser_name());
+            mTime.setText(formatDate(post.getTimestamp()));
+        }
     }
 
     private String formatDate(long timestamp) {

@@ -1,6 +1,9 @@
 package com.android.voyce.ui.userprofile;
 
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -43,6 +46,22 @@ public class UserSponsorsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user_sponsors, container, false);
+
+        Toolbar toolbar = view.findViewById(R.id.toolbar_sponsors);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+
+        toolbar.setNavigationIcon(R.drawable.ic_action_back);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getFragmentManager()
+                        .beginTransaction()
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                        .replace(R.id.fragments_container, new UserProfileFragment())
+                        .commit();
+            }
+        });
+
         mNoSponsoring = view.findViewById(R.id.no_sponsoring);
         mContainer = view.findViewById(R.id.sponsoring_container);
 

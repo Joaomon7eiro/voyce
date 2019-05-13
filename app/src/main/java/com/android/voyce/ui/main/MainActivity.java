@@ -2,16 +2,21 @@ package com.android.voyce.ui.main;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -96,8 +101,7 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
 
     private void openFragment(Fragment fragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out,
-                R.anim.fade_in, R.anim.fade_out);
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         transaction.replace(R.id.fragments_container, fragment);
         transaction.commit();
     }
@@ -106,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        verifyUser();
+        verifyUser(savedInstanceState);
 
         OneSignal.addSubscriptionObserver(this);
 
@@ -120,13 +124,10 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
 
         if (savedInstanceState != null) {
             mCurrentMenuId = savedInstanceState.getInt(Constants.KEY_CURRENT_MENU_ID);
-        } else {
-            Fragment fragment = FeedFragment.newInstance(true);
-            openFragment(fragment);
         }
     }
 
-    private void verifyUser() {
+    private void verifyUser(final Bundle savedInstanceState) {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         final FirebaseUser currentUser = auth.getCurrentUser();
 
@@ -146,7 +147,13 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
                     edit.putString(Constants.KEY_CURRENT_USER_CITY, user.getCity());
                     edit.putString(Constants.KEY_CURRENT_USER_STATE, user.getState());
                     edit.putInt(Constants.KEY_CURRENT_USER_TYPE, user.getType());
-                    edit.commit();
+                    edit.apply();
+
+                    if (savedInstanceState == null &&
+                            getSupportFragmentManager().getBackStackEntryCount() == 0) {
+                        Fragment fragment = FeedFragment.newInstance(true);
+                        openFragment(fragment);
+                    }
                 }
             });
             OneSignal.setSubscription(true);
@@ -165,10 +172,14 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
 
     @Override
     public void onBackPressed() {
-        if (mNavigation.getSelectedItemId() == R.id.navigation_search) {
+        if (mNavigation.getSelectedItemId() == R.id.navigation_feed) {
             super.onBackPressed();
         } else {
-            mNavigation.setSelectedItemId(R.id.navigation_search);
+            if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+                mNavigation.setSelectedItemId(R.id.navigation_feed);
+            } else {
+                getSupportFragmentManager().popBackStack();
+            }
         }
     }
 
