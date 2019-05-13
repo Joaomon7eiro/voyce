@@ -34,7 +34,6 @@ public class FeedRepository {
     private static FirebaseUser mCurrentUser;
     private MutableLiveData<Boolean> mIsLoading = new MutableLiveData<>();
     private long mLastRefreshTime = System.currentTimeMillis();
-    private int mResultsCount;
 
     public FeedRepository(UserPostDao userPostDao, Executor executor) {
         mUserPostDao = userPostDao;

@@ -206,6 +206,8 @@ public class MusicianDetailsRepository {
                 }
             });
 
+            removePostsOnFeed(mUserFollowingMusician.getId());
+
             mIsFollowing.setValue(false);
             mBolIsFollowing = false;
         }
@@ -220,6 +222,25 @@ public class MusicianDetailsRepository {
                     Map<String, Object> map = new HashMap<>();
                     map.put("followers", followersNumber);
                     reference.update(map);
+                }
+            }
+        });
+    }
+
+    private void removePostsOnFeed(final String id) {
+        final CollectionReference reference = mDb.collection("feed").document(mUserFollowingMusician.getFollower_id())
+                .collection("posts");
+
+        reference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot query) {
+                if (query != null && query.size() > 0) {
+                    List<Post> posts = query.toObjects(Post.class);
+                    for (Post post: posts) {
+                        if (post.getUser_id().equals(id)) {
+                            reference.document(post.getId()).delete();
+                        }
+                    }
                 }
             }
         });

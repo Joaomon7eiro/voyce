@@ -52,15 +52,12 @@ public class ProposalsAdapter extends RecyclerView.Adapter<ProposalsAdapter.Prop
 
     class ProposalAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        LinearLayout mProposalDescriptionContainer;
-
         TextView mName;
         ImageView mImage;
         TextView mPrice;
 
         private ProposalAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
-            mProposalDescriptionContainer = itemView.findViewById(R.id.proposal_description_container);
             mName = itemView.findViewById(R.id.proposal_name);
             mImage = itemView.findViewById(R.id.proposal_image);
             mPrice = itemView.findViewById(R.id.proposal_price);

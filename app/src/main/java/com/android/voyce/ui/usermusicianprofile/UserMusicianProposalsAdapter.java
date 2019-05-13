@@ -22,13 +22,11 @@ public class UserMusicianProposalsAdapter extends RecyclerView.Adapter<UserMusic
     class UserMusicianProposalAdapterViewHolder extends RecyclerView.ViewHolder {
         TextView mName;
         TextView mPrice;
-        TextView mDescription;
 
         public UserMusicianProposalAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
             mName = itemView.findViewById(R.id.proposal_name);
             mPrice = itemView.findViewById(R.id.proposal_price);
-            mDescription = itemView.findViewById(R.id.proposal_description);
         }
     }
 
@@ -64,7 +62,6 @@ public class UserMusicianProposalsAdapter extends RecyclerView.Adapter<UserMusic
 
         viewHolder.mPrice.setText(String.valueOf(proposal.getPrice()));
         viewHolder.mName.setText(proposal.getName());
-        viewHolder.mDescription.setText(proposal.getDescription());
     }
 
     @Override

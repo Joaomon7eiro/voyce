@@ -219,7 +219,7 @@ public class MainRepository {
                         mDiskExecutor.execute(new Runnable() {
                             @Override
                             public void run() {
-                                mUserPostDao.insertPosts(posts);
+                                mUserPostDao.updateData(posts, mUserId);
                             }
                         });
                     }
