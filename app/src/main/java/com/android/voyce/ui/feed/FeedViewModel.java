@@ -24,10 +24,11 @@ public class FeedViewModel extends AndroidViewModel {
 
     public void init(Boolean firstTimeCreated) {
         if (firstTimeCreated != null) {
-            //mRepository.refreshData(REFRESH_DELAY, true);
+            mRepository.refreshData(REFRESH_DELAY, true);
         } else {
-            //mRepository.refreshData(REFRESH_DELAY, false);
+            mRepository.refreshData(REFRESH_DELAY, false);
         }
+
         mPostLiveData = mRepository.getPosts();
         mIsLoading = mRepository.getIsLoading();
     }

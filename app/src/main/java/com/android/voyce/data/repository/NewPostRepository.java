@@ -8,8 +8,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
+
 
 public class NewPostRepository {
     private static NewPostRepository sInstance;

@@ -34,7 +34,4 @@ public interface UserDao {
 
     @Query("DELETE from user WHERE id != :id")
     void deleteUsers(String id);
-
-    @Query("SELECT COUNT(*) FROM user")
-    int getUsersCount();
 }

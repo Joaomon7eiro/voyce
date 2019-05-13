@@ -1,6 +1,7 @@
 package com.android.voyce.data.repository;
 
 import android.app.Application;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -211,24 +212,20 @@ public class MainRepository {
 
         userFeedReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onEvent(@Nullable final QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                if (queryDocumentSnapshots != null) {
-                    final List<Post> posts = new ArrayList<>();
-                    for (QueryDocumentSnapshot documentSnapshot: queryDocumentSnapshots) {
-                        Post post = documentSnapshot.toObject(Post.class);
-                        post.setId(documentSnapshot.getId());
-                        posts.add(post);
+            public void onEvent(@Nullable final QuerySnapshot results, @Nullable FirebaseFirestoreException e) {
+                if (results != null) {
+                    final List<Post> posts = results.toObjects(Post.class);
+                    if (posts.size() > 0) {
+                        mDiskExecutor.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                mUserPostDao.insertPosts(posts);
+                            }
+                        });
                     }
-                    mDiskExecutor.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            mUserPostDao.insertPosts(posts);
-                        }
-                    });
                 }
             }
         });
-
     }
 
     private Goal hashToGoalObject(Object hashMap) {

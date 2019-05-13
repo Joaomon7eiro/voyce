@@ -1,12 +1,15 @@
 package com.android.voyce.data.repository;
 
 import android.app.Application;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.android.voyce.data.local.AppDatabase;
+import com.android.voyce.data.local.UserPostDao;
 import com.android.voyce.data.local.UserSponsoringDao;
 import com.android.voyce.data.model.Goal;
+import com.android.voyce.data.model.Post;
 import com.android.voyce.data.model.UserSponsoringProposal;
 import com.android.voyce.utils.AppExecutors;
 import com.android.voyce.data.local.UserFollowingMusicianDao;
@@ -18,6 +21,8 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -27,11 +32,13 @@ import com.onesignal.OneSignal;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
-
+import java.util.concurrent.TimeUnit;
 
 
 public class MusicianDetailsRepository {
@@ -167,6 +174,8 @@ public class MusicianDetailsRepository {
                 }
             });
 
+            addPostsOnFeed();
+
             try {
                 JSONObject notificationContent = new JSONObject("{'contents': {'en': '" + name + " começou a te seguir' }," +
                         "'include_player_ids': ['" + signalId + "'], " +
@@ -214,6 +223,40 @@ public class MusicianDetailsRepository {
                 }
             }
         });
+    }
+
+    private void addPostsOnFeed() {
+        long nowTimestamp = new Timestamp(System.currentTimeMillis()).getTime();
+        long twoDaysInMillis = TimeUnit.DAYS.toMillis(3);
+        long dayAgoTimestamp = nowTimestamp - twoDaysInMillis;
+
+        final List<Post> posts = new ArrayList<>();
+
+        mDb.collection("user_posts")
+                .document(mUserFollowingMusician.getId()).collection("posts")
+                .whereGreaterThan("timestamp", dayAgoTimestamp)
+                .orderBy("timestamp", Query.Direction.ASCENDING)
+                .get()
+                .addOnSuccessListener(
+                        new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                if (queryDocumentSnapshots != null
+                                        && queryDocumentSnapshots.size() > 0) {
+                                    for (QueryDocumentSnapshot snapshot : queryDocumentSnapshots) {
+                                        Post post = snapshot.toObject(Post.class);
+                                        post.setId(snapshot.getId());
+                                        post.setCurrent_user_id(mUserFollowingMusician.getFollower_id());
+                                        posts.add(post);
+                                    }
+                                }
+                                for (Post post : posts) {
+                                    mDb.collection("feed").document(mUserFollowingMusician.getFollower_id())
+                                            .collection("posts").document(post.getId()).set(post);
+                                }
+                            }
+                        });
+
     }
 
     public LiveData<Boolean> getIsFollowing() {

@@ -17,13 +17,10 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -57,12 +54,10 @@ public class FeedRepository {
     public LiveData<PagedList<Post>> getPosts() {
         PagedList.Config config = new PagedList.Config.Builder()
                 .setPageSize(10)
-                .setInitialLoadSizeHint(15)
-                .setPrefetchDistance(0)
                 .build();
 
         DataSource.Factory factory = mUserPostDao.getPosts(mCurrentUser.getUid());
-        RepoBoundaryCallback boundaryCallback = new RepoBoundaryCallback(mDb, mUserPostDao, mExecutor, mCurrentUser.getUid());
+        FeedBoundaryCallback boundaryCallback = new FeedBoundaryCallback(mDb, mUserPostDao, mExecutor, mCurrentUser.getUid());
         return new LivePagedListBuilder<>(factory, config).setBoundaryCallback(boundaryCallback).build();
     }
 
@@ -71,20 +66,19 @@ public class FeedRepository {
 
         if (currentTimeInMillis - mLastRefreshTime > refreshDelay || isFirstRefresh) {
             mLastRefreshTime = currentTimeInMillis;
-            mIsLoading.setValue(true);
-            final List<String> followingIds = new ArrayList<>();
-            CollectionReference reference = mDb.collection("user_following")
-                    .document(mCurrentUser.getUid()).collection("users");
 
-            reference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            mIsLoading.setValue(true);
+            Query query = mDb.collection("feed")
+                    .document(mCurrentUser.getUid())
+                    .collection("posts")
+                    .orderBy("timestamp", Query.Direction.DESCENDING)
+                    .limit(10);
+
+            query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                 @Override
-                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                    if (queryDocumentSnapshots != null) {
-                        followingIds.clear();
-                        for (QueryDocumentSnapshot snapshot : queryDocumentSnapshots) {
-                            followingIds.add(snapshot.getId());
-                        }
-                        getFollowingUsersPosts(followingIds);
+                public void onSuccess(QuerySnapshot results) {
+                    if (results != null) {
+                        insertPosts(results.toObjects(Post.class));
                     }
                 }
             }).addOnFailureListener(new OnFailureListener() {
@@ -97,54 +91,12 @@ public class FeedRepository {
 
     }
 
-    private void getFollowingUsersPosts(List<String> followingIds) {
-        final int length = followingIds.size();
-        if (length == 0) {
-            mIsLoading.setValue(false);
-            return;
-        }
-        final List<Post> posts = new ArrayList<>();
-        mResultsCount = 0;
-
-        for (String id : followingIds) {
-            mDb.collection("user_posts")
-                    .document(id).collection("posts")
-                    .orderBy("timestamp", Query.Direction.DESCENDING)
-                    .limit(3)
-                    .get()
-                    .addOnSuccessListener(
-                            new OnSuccessListener<QuerySnapshot>() {
-                                @Override
-                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                    mResultsCount += 1;
-                                    if (queryDocumentSnapshots != null
-                                            && queryDocumentSnapshots.size() > 0) {
-                                        for (QueryDocumentSnapshot snapshot : queryDocumentSnapshots) {
-                                            Post post = snapshot.toObject(Post.class);
-                                            post.setId(snapshot.getId());
-                                            post.setCurrent_user_id(mCurrentUser.getUid());
-                                            posts.add(post);
-                                        }
-                                    }
-                                    if (mResultsCount == length) {
-                                        insertResults(posts);
-                                    }
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    mIsLoading.setValue(false);
-                }
-            });
-        }
-    }
-
-    private void insertResults(final List<Post> posts) {
+    private void insertPosts(final List<Post> posts) {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
                 try {
-                    mUserPostDao.insertPosts(posts);
+                    mUserPostDao.updateData(posts, mCurrentUser.getUid());
                 } catch (ConcurrentModificationException e) {
                     e.printStackTrace();
                 }

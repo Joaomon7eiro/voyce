@@ -41,7 +41,7 @@ public class FeedAdapter extends PagedListAdapter<Post, FeedAdapter.FeedAdapterV
             // Null defines a placeholder item - PagedListAdapter automatically
             // invalidates this row when the actual object is loaded from the
             // database.
-            // viewHolder.clear();
+            viewHolder.bindPlaceholder();
         }
     }
 
@@ -71,6 +71,13 @@ public class FeedAdapter extends PagedListAdapter<Post, FeedAdapter.FeedAdapterV
             mText.setText(post.getText());
             mUserName.setText(post.getUser_name());
             mTime.setText(formatDate(post.getTimestamp()));
+        }
+
+        public void bindPlaceholder() {
+            Picasso.get().load(R.drawable.profile_placeholder).into(mUserImage);
+            mText.setText("");
+            mUserName.setText("");
+            mTime.setText("");
         }
     }
 
