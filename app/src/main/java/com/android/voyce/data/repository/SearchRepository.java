@@ -69,11 +69,11 @@ public class SearchRepository {
     }
 
     public LiveData<List<User>> getCityMusicians() {
-        return mUserDao.getUsersByCity(mCurrentUser.getUid(), mUserCity, mUserState.toUpperCase());
+        return mUserDao.getUsersByCity(mCurrentUser.getUid(), mUserCity, mUserState.toLowerCase());
     }
 
     public LiveData<List<User>> getStateMusicians() {
-        return mUserDao.getUsersByState(mCurrentUser.getUid(), mUserState.toUpperCase());
+        return mUserDao.getUsersByState(mCurrentUser.getUid(), mUserState.toLowerCase());
     }
 
     private void refreshUsers(final long refresh) {
@@ -92,11 +92,11 @@ public class SearchRepository {
 
             final Query queryCity = mDb.collection("users")
                     .whereEqualTo("type", 1)
-                    .whereEqualTo("city", mUserCity).limit(10);
+                    .whereEqualTo("city", mUserCity.toLowerCase()).limit(10);
 
             final Query queryState = mDb.collection("users")
                     .whereEqualTo("type", 1)
-                    .whereEqualTo("state", mUserState.toUpperCase()).limit(10);
+                    .whereEqualTo("state", mUserState.toLowerCase()).limit(10);
 
             mExecutor.execute(new Runnable() {
                 @Override

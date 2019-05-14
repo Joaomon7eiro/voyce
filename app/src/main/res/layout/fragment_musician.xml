@@ -27,14 +27,15 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
+            <ImageButton
                 android:id="@+id/musician_back_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:padding="8dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="40dp"
+                android:background="@drawable/ic_action_back"
                 android:contentDescription="@string/back_button"
-                android:src="@drawable/ic_action_back"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -280,7 +281,8 @@
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_musician_proposals"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
+                        android:layout_centerHorizontal="true"
                         android:layout_height="match_parent"
                         android:layout_below="@id/label_proposals"
                         android:layout_margin="2dp" />

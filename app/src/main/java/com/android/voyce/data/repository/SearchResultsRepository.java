@@ -34,18 +34,32 @@ public class SearchResultsRepository {
         if (queryString != null) {
             String queryFormatted = queryString.toLowerCase().trim();
 
-            Query query = mDb.collection("users")
+            Query queryName = mDb.collection("users")
                     .orderBy("name")
                     .whereEqualTo("type", 1)
                     .startAt(queryFormatted)
                     .endAt(queryFormatted + '\uf8ff');
 
+            final Query queryCity = mDb.collection("users")
+                    .orderBy("city")
+                    .whereEqualTo("type", 1)
+                    .startAt(queryFormatted)
+                    .endAt(queryFormatted + '\uf8ff');
+
+            Query queryState = mDb.collection("users")
+                    .orderBy("state")
+                    .whereEqualTo("type", 1)
+                    .startAt(queryFormatted)
+                    .endAt(queryFormatted + '\uf8ff');
+
+
             mIsLoading.setValue(true);
-            query.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            mUsers.postValue(null);
+            queryName.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                 @Override
-                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                    if (queryDocumentSnapshots != null) {
-                        List<User> usersList = queryDocumentSnapshots.toObjects(User.class);
+                public void onSuccess(QuerySnapshot results) {
+                    if (results != null && results.size() > 0) {
+                        List<User> usersList = results.toObjects(User.class);
                         mUsers.postValue(usersList);
                     }
                     mIsLoading.setValue(false);
@@ -57,6 +71,41 @@ public class SearchResultsRepository {
                     e.printStackTrace();
                 }
             });
+
+            queryCity.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                @Override
+                public void onSuccess(QuerySnapshot results) {
+                    if (results != null && results.size() > 0) {
+                        List<User> usersList = results.toObjects(User.class);
+                        mUsers.postValue(usersList);
+                    }
+                    mIsLoading.setValue(false);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    mIsLoading.setValue(false);
+                    e.printStackTrace();
+                }
+            });
+
+            queryState.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                @Override
+                public void onSuccess(QuerySnapshot results) {
+                    if (results != null && results.size() > 0) {
+                        List<User> usersList = results.toObjects(User.class);
+                        mUsers.postValue(usersList);
+                    }
+                    mIsLoading.setValue(false);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    mIsLoading.setValue(false);
+                    e.printStackTrace();
+                }
+            });
+
         } else {
             mIsLoading.setValue(false);
         }

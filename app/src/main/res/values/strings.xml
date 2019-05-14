@@ -86,4 +86,6 @@
     <string name="type_post_text_hint">Digite o texto da sua publicação</string>
     <string name="cancel_plan">Cancelar Plano</string>
     <string name="all_plans">Todos os Planos</string>
+    <string name="query_text_hint">Artistas, Cidade ou Estado</string>
+    <string name="no_search_results">Nenhum resultado encontrado</string>
 </resources>

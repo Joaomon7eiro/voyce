@@ -95,8 +95,8 @@ public class SignUpStepTwoFragment extends Fragment {
                         user.setName(mName.toLowerCase());
                         user.setEmail(mEmail);
                         user.setGender(genderInt);
-                        user.setCity(mCityAutoComplete.getText().toString().trim());
-                        user.setState(mState.getText().toString().trim());
+                        user.setCity(mCityAutoComplete.getText().toString().toLowerCase());
+                        user.setState(mState.getText().toString().toLowerCase());
 
                         mViewModel.registerUser(user);
 

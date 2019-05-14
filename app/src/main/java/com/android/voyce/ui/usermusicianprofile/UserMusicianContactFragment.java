@@ -3,6 +3,8 @@ package com.android.voyce.ui.usermusicianprofile;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+
+import android.graphics.Color;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -50,6 +52,10 @@ public class UserMusicianContactFragment extends Fragment {
         mFacebookUrl = view.findViewById(R.id.user_facebook_url);
         mInstagramUrl = view.findViewById(R.id.user_instagram_url);
         mTwitterUrl = view.findViewById(R.id.user_twitter_url);
+
+        mFacebookUrl.setLinkTextColor(Color.WHITE);
+        mInstagramUrl.setLinkTextColor(Color.WHITE);
+        mTwitterUrl.setLinkTextColor(Color.WHITE);
 
         return view;
     }

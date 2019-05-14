@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -234,7 +235,7 @@ public class MusicianFragment extends Fragment implements ProposalsAdapter.OnLis
         mImage = view.findViewById(R.id.musician_profile_image);
         mBackgroundImage = view.findViewById(R.id.musician_background);
 
-        ImageView backButton = view.findViewById(R.id.musician_back_button);
+        ImageButton backButton = view.findViewById(R.id.musician_back_button);
         backButton.setOnClickListener(mBackOnClickListener);
 
         mFollowButton = view.findViewById(R.id.follow_button);

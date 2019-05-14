@@ -215,14 +215,12 @@ public class MainRepository {
             public void onEvent(@Nullable final QuerySnapshot results, @Nullable FirebaseFirestoreException e) {
                 if (results != null) {
                     final List<Post> posts = results.toObjects(Post.class);
-                    if (posts.size() > 0) {
-                        mDiskExecutor.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                mUserPostDao.updateData(posts, mUserId);
-                            }
-                        });
-                    }
+                    mDiskExecutor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            mUserPostDao.updateData(posts, mUserId);
+                        }
+                    });
                 }
             }
         });

@@ -13,7 +13,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:contentDescription="@string/phone_icon"
-        android:src="@drawable/ic_action_social_media" />
+        android:src="@drawable/ic_action_phone" />
 
     <TextView
         android:id="@+id/user_phone_number"
@@ -22,17 +22,18 @@
         android:layout_margin="8dp"
         android:layout_toEndOf="@id/phone_icon"
         android:textColor="@android:color/white"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/instagram_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_below="@id/phone_icon"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:contentDescription="@string/instagram_icon"
-        android:src="@drawable/ic_action_social_media" />
+        android:src="@drawable/instagram_logo" />
 
     <TextView
         android:id="@+id/user_instagram_url"
@@ -43,17 +44,18 @@
         android:layout_toEndOf="@id/instagram_icon"
         android:text="@string/instagram"
         android:textColor="@android:color/white"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/facebook_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_below="@id/instagram_icon"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:contentDescription="@string/facebook_icon"
-        android:src="@drawable/ic_action_social_media" />
+        android:src="@drawable/facebook_logo" />
 
     <TextView
         android:id="@+id/user_facebook_url"
@@ -64,17 +66,18 @@
         android:layout_toEndOf="@id/facebook_icon"
         android:text="@string/facebook"
         android:textColor="@android:color/white"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/twitter_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_below="@id/facebook_icon"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:contentDescription="@string/twitter_icon"
-        android:src="@drawable/ic_action_social_media" />
+        android:src="@drawable/twitter_logo" />
 
     <TextView
         android:id="@+id/user_twitter_url"
@@ -85,7 +88,8 @@
         android:layout_toEndOf="@id/twitter_icon"
         android:text="@string/twitter"
         android:textColor="@android:color/white"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
 </RelativeLayout>
 

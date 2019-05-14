@@ -16,7 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -39,6 +39,7 @@ public class SearchResultsFragment extends Fragment implements MusiciansAdapter.
     private MusiciansAdapter mAdapter;
     private SearchResultsViewModel mViewModel;
     private TextView mResultsLabel;
+    private TextView mNoResults;
 
     public SearchResultsFragment() {
         // Required empty public constructor
@@ -63,14 +64,14 @@ public class SearchResultsFragment extends Fragment implements MusiciansAdapter.
         mViewModel.getUserList().observe(this, new Observer<List<User>>() {
             @Override
             public void onChanged(@Nullable List<User> users) {
-                if (users != null) {
+                if (users != null && users.size() > 0) {
+                    mNoResults.setVisibility(View.GONE);
+                    mResultsLabel.setVisibility(View.VISIBLE);
+                    mAdapter.setData(users);
+                } else {
+                    mResultsLabel.setVisibility(View.GONE);
                     mAdapter.setData(null);
-                    if (users.size() > 0) {
-                        mResultsLabel.setVisibility(View.VISIBLE);
-                        mAdapter.setData(users);
-                    } else {
-                        mResultsLabel.setVisibility(View.GONE);
-                    }
+                    mNoResults.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -99,7 +100,9 @@ public class SearchResultsFragment extends Fragment implements MusiciansAdapter.
         EditText editText = searchView.findViewById(R.id.search_src_text);
         editText.setTextColor(Color.WHITE);
 
-        ImageView back = view.findViewById(R.id.search_back_button);
+        mNoResults = view.findViewById(R.id.no_search_results);
+
+        ImageButton back = view.findViewById(R.id.search_back_button);
         back.setOnClickListener(mBackOnClickListener);
 
         mProgressBar = view.findViewById(R.id.search_results_progress);

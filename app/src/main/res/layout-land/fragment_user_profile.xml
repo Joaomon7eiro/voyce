@@ -5,16 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryVeryDark"
+    android:fitsSystemWindows="true"
     tools:context=".ui.userprofile.UserProfileFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/user_profile_image"
-            android:layout_width="230dp"
-            android:layout_height="230dp"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -24,13 +26,14 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/followers_circle"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
             android:layout_marginStart="24dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="100dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/user_profile_image"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
@@ -47,8 +50,8 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/sponsoring_circle"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
             android:layout_marginStart="24dp"
             app:layout_constraintBottom_toTopOf="@+id/followers_circle"
             app:layout_constraintStart_toStartOf="parent"
@@ -68,8 +71,8 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/playlists_circle"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
             android:layout_marginEnd="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -89,10 +92,10 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/settings_circle"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="100dp"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="24dp"
             android:layout_marginEnd="24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/user_profile_image"
@@ -101,7 +104,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="40dp"
+            android:layout_marginBottom="24dp"
             android:text="@string/settings"
             android:textColor="@android:color/white"
             android:textSize="18sp"
@@ -113,3 +116,4 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </HorizontalScrollView>
+

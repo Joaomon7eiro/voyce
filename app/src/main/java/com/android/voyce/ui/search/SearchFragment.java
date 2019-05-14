@@ -100,9 +100,10 @@ public class SearchFragment extends Fragment implements
                         mVoyceLabel.setVisibility(View.VISIBLE);
                     }
                 } else {
-                    mVoyceLabel.setVisibility(View.GONE);
+                    if (mMusiciansAdapter.getItemCount() < 1) {
+                        mVoyceLabel.setVisibility(View.GONE);
+                    }
                 }
-
             }
         });
 
@@ -115,7 +116,9 @@ public class SearchFragment extends Fragment implements
                         mLocalLabel.setVisibility(View.VISIBLE);
                     }
                 } else {
-                    mLocalLabel.setVisibility(View.GONE);
+                    if (mCityMusiciansAdapter.getItemCount() < 1) {
+                        mLocalLabel.setVisibility(View.GONE);
+                    }
                 }
             }
         });
@@ -129,7 +132,9 @@ public class SearchFragment extends Fragment implements
                         mRegionLabel.setVisibility(View.VISIBLE);
                     }
                 } else {
-                    mRegionLabel.setVisibility(View.GONE);
+                    if (mStateMusiciansAdapter.getItemCount() < 1) {
+                        mRegionLabel.setVisibility(View.GONE);
+                    }
                 }
             }
         });

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorPrimaryVeryDark"
     android:fitsSystemWindows="true">
 
@@ -17,8 +17,8 @@
             android:id="@+id/search_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:closeIcon="@drawable/ic_action_exit"
-            android:background="@drawable/transparent_bg_bordered" />
+            android:background="@drawable/transparent_bg_bordered"
+            app:closeIcon="@drawable/ic_action_exit" />
 
 
         <androidx.core.widget.NestedScrollView
@@ -27,31 +27,32 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:orientation="vertical"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/search_back_button"
-                    android:layout_width="wrap_content"
-                    android:contentDescription="@string/back_button"
-                    android:layout_height="wrap_content"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
                     android:layout_margin="16dp"
-                    android:src="@drawable/ic_action_back" />
+                    android:background="@drawable/ic_action_back"
+                    android:contentDescription="@string/back_button" />
 
                 <TextView
                     android:id="@+id/results_label"
-                    android:text="@string/results"
-                    android:layout_margin="16dp"
                     android:layout_width="wrap_content"
-                    android:visibility="gone"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:text="@string/results"
                     android:textColor="@android:color/white"
-                    android:layout_height="wrap_content" />
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/search_results_rv"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_height="wrap_content" />
 
             </LinearLayout>
@@ -63,7 +64,20 @@
     <ProgressBar
         android:id="@+id/search_results_progress"
         android:layout_width="wrap_content"
-        android:layout_gravity="center"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/no_search_results"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:text="@string/no_search_results"
+        android:layout_gravity="center" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
