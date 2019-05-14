@@ -1,7 +1,9 @@
 package com.android.voyce.ui.signup;
 
 
+import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Rect;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -11,8 +13,10 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Patterns;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -140,6 +144,39 @@ public class SignUpStepOneFragment extends Fragment {
         }
     };
 
+    private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                if (mNameEditText.isFocused()) {
+                    Rect outRect = new Rect();
+                    mNameEditText.getGlobalVisibleRect(outRect);
+                    if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                        mNameEditText.clearFocus();
+                        hideKeyboard(view);
+                    }
+                }
+                if (mEmailEditText.isFocused()) {
+                    Rect outRect = new Rect();
+                    mEmailEditText.getGlobalVisibleRect(outRect);
+                    if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                        mEmailEditText.clearFocus();
+                        hideKeyboard(view);
+                    }
+                }
+                if (mPasswordEditText.isFocused()) {
+                    Rect outRect = new Rect();
+                    mPasswordEditText.getGlobalVisibleRect(outRect);
+                    if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                        mPasswordEditText.clearFocus();
+                        hideKeyboard(view);
+                    }
+                }
+            }
+            return false;
+        }
+    };
+
     public SignUpStepOneFragment() {
         // Required empty public constructor
     }
@@ -149,6 +186,8 @@ public class SignUpStepOneFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_sign_up_step_one, container, false);
+
+        view.setOnTouchListener(mTouchListener);
 
         mNameEditText = view.findViewById(R.id.sign_up_name_et);
         mEmailEditText = view.findViewById(R.id.sign_up_email_et);
@@ -178,5 +217,10 @@ public class SignUpStepOneFragment extends Fragment {
             mSignUpNext.setTextColor(getResources().getColor(android.R.color.darker_gray));
             mSignUpNext.setClickable(false);
         }
+    }
+
+    private void hideKeyboard(View view) {
+        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

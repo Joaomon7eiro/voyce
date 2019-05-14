@@ -1,13 +1,20 @@
 package com.android.voyce.ui;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -91,6 +98,32 @@ public class LoginActivity extends AppCompatActivity {
         }
     };
 
+    View.OnTouchListener mTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                if (mEmail.isFocused()) {
+                    Rect outRect = new Rect();
+                    mEmail.getGlobalVisibleRect(outRect);
+                    if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                        mEmail.clearFocus();
+                        hideKeyboard(view);
+                    }
+                }
+                if (mPassword.isFocused()) {
+                    Rect outRect = new Rect();
+                    mPassword.getGlobalVisibleRect(outRect);
+                    if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                        mPassword.clearFocus();
+                        hideKeyboard(view);
+                    }
+                }
+            }
+            return false;
+        }
+    };
+
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +134,10 @@ public class LoginActivity extends AppCompatActivity {
 
         mEmail = findViewById(R.id.login_email_et);
         mEmail.addTextChangedListener(loginFormTextWatcher);
+
+        ConstraintLayout container = findViewById(R.id.login_container);
+        container.setOnTouchListener(mTouchListener);
+
         mPassword = findViewById(R.id.login_password_et);
         mPassword.addTextChangedListener(loginFormTextWatcher);
 
@@ -122,6 +159,11 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void hideKeyboard(View view) {
+        InputMethodManager imm = (InputMethodManager)this.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     private void checkValidForm() {

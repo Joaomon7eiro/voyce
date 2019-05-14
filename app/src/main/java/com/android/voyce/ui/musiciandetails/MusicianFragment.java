@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.android.voyce.utils.StringUtils;
 import com.google.android.material.tabs.TabLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.PagerSnapHelper;
@@ -148,7 +150,10 @@ public class MusicianFragment extends Fragment implements ProposalsAdapter.OnLis
                     mFollowers.setText(String.valueOf(user.getFollowers()));
                     mSponsors.setText(String.valueOf(user.getSponsors()));
                     mListeners.setText(String.valueOf(user.getListeners()));
-                    mLocation.setText(getString(R.string.user_location, user.getCity(), user.getState()));
+                    mLocation.setText(getString(R.string.user_location,
+                            StringUtils.capitalize(user.getCity()),
+                            user.getState().toUpperCase()
+                    ));
                     mSignalId = user.getSignal_id();
                 }
             }

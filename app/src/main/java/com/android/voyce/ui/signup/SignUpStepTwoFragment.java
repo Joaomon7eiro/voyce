@@ -2,19 +2,27 @@ package com.android.voyce.ui.signup;
 
 
 import android.app.DatePickerDialog;
+
 import androidx.lifecycle.ViewModelProviders;
+
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Rect;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -45,8 +53,15 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -133,12 +148,70 @@ public class SignUpStepTwoFragment extends Fragment {
         }
     };
 
+    private TextWatcher mDateTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (mDateOfBirth.getText().toString().length() == 10) {
+                mIsValidDate = validateDate(mDateOfBirth.getText().toString());
+                if (mIsValidDate) {
+                    mDateOfBirth.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorGreen)));
+                } else {
+                    mDateOfBirth.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorRed)));
+                }
+            } else {
+                mDateOfBirth.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorRed)));
+                mIsValidDate = false;
+            }
+            checkIsValidForm();
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+
+    private Boolean validateDate(String dateText) {
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        try {
+            format.setLenient(false);
+            Date date = format.parse(dateText);
+
+            Calendar calendarDate = new GregorianCalendar();
+            calendarDate.setTime(date);
+            int year = calendarDate.get(Calendar.YEAR);
+            int month = calendarDate.get(Calendar.MONTH);
+            int day = calendarDate.get(Calendar.DAY_OF_MONTH);
+
+            Calendar calendarToday = new GregorianCalendar();
+            calendarToday.setTime(new Timestamp(System.currentTimeMillis()));
+            int yearToday = calendarToday.get(Calendar.YEAR);
+            int monthToday = calendarToday.get(Calendar.MONTH);
+            int dayToday = calendarToday.get(Calendar.DAY_OF_MONTH);
+
+            if (yearToday - year > 14) {
+                return true;
+            } else if (yearToday - year == 14) {
+                return monthToday - month > 0 || (monthToday - month == 0 && dayToday - day >= 0);
+            } else {
+                return false;
+            }
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+
     private AdapterView.OnItemClickListener mCityClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             City city = (City) parent.getAdapter().getItem(position);
 
-            for (State state: mStatesList) {
+            for (State state : mStatesList) {
                 if (state.getId().equals(city.getStateId())) {
                     mState.setText(state.getInitials());
                     mIsCitySelected = true;
@@ -148,6 +221,31 @@ public class SignUpStepTwoFragment extends Fragment {
                     break;
                 }
             }
+        }
+    };
+
+    private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                if (mDateOfBirth.isFocused()) {
+                    Rect outRect = new Rect();
+                    mDateOfBirth.getGlobalVisibleRect(outRect);
+                    if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                        mDateOfBirth.clearFocus();
+                        hideKeyboard(view);
+                    }
+                }
+                if (mCityAutoComplete.isFocused()) {
+                    Rect outRect = new Rect();
+                    mCityAutoComplete.getGlobalVisibleRect(outRect);
+                    if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                        mCityAutoComplete.clearFocus();
+                        hideKeyboard(view);
+                    }
+                }
+            }
+            return false;
         }
     };
 
@@ -195,6 +293,8 @@ public class SignUpStepTwoFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_sign_up_step_two, container, false);
 
+        view.setOnTouchListener(mTouchListener);
+
         mContainer = view.findViewById(R.id.sign_up_container);
         mProgressBar = view.findViewById(R.id.sign_up_progress_bar);
 
@@ -208,29 +308,7 @@ public class SignUpStepTwoFragment extends Fragment {
         mState = view.findViewById(R.id.sign_up_state);
 
         mDateOfBirth = view.findViewById(R.id.sign_up_date_of_birth);
-        mDateOfBirth.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (mDateOfBirth.getText().toString().length() == 10) {
-                    mIsValidDate = true;
-                    mDateOfBirth.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorGreen)));
-                } else {
-                    mDateOfBirth.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorRed)));
-                    mIsValidDate = false;
-                }
-                checkIsValidForm();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
+        mDateOfBirth.addTextChangedListener(mDateTextWatcher);
 
         mSignUp = view.findViewById(R.id.sign_up_login_button);
         mSignUp.setOnClickListener(mSignUpClickListener);
@@ -320,5 +398,10 @@ public class SignUpStepTwoFragment extends Fragment {
             mSignUp.setTextColor(getResources().getColor(android.R.color.darker_gray));
             mSignUp.setClickable(false);
         }
+    }
+
+    private void hideKeyboard(View view) {
+        InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

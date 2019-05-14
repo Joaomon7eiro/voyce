@@ -1,6 +1,7 @@
 package com.android.voyce.ui.feed;
 
 
+import androidx.core.widget.NestedScrollView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -38,6 +39,7 @@ import java.util.concurrent.TimeUnit;
 public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private RecyclerView mRecyclerView;
+    private NestedScrollView mContainer;
     private FeedAdapter mAdapter;
     private FeedViewModel mViewModel;
     private ProgressBar mProgressBar;
@@ -45,6 +47,8 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private TextView mNoFeed;
     private Boolean mFirstTimeCreated;
     private int mUserType;
+
+    private LinearLayoutManager mLayoutManager;
 
     private DiffUtil.ItemCallback<Post> mDiffCallback = new DiffUtil.ItemCallback<Post>() {
         @Override
@@ -94,6 +98,8 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_feed, container, false);
 
+        mContainer = view.findViewById(R.id.feed_scroll);
+
         mRecyclerView = view.findViewById(R.id.feed_rv);
         mNoFeed = view.findViewById(R.id.no_feed);
         mProgressBar = view.findViewById(R.id.feed_progress_bar);
@@ -116,9 +122,9 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             });
         }
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        mLayoutManager = new LinearLayoutManager(getContext());
 
-        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setNestedScrollingEnabled(false);
 
@@ -161,5 +167,9 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onRefresh() {
         mViewModel.refreshData(TimeUnit.MINUTES.toMillis(1));
         mRefresh.setRefreshing(false);
+    }
+
+    public void scrollToStart() {
+        mContainer.smoothScrollTo(0, 0);
     }
 }

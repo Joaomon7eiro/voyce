@@ -60,13 +60,21 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
 
             // if is the same tab and its visibility is true then just return
             if (mCurrentMenuId == menuId && mFrameLayout.getVisibility() != View.GONE) {
+                if (menuId == R.id.navigation_feed) {
+                    FeedFragment fragment = (FeedFragment) getSupportFragmentManager().findFragmentByTag("feed");
+                    if (fragment != null) {
+                        fragment.scrollToStart();
+                    }
+                }
                 return true;
             }
 
             mCurrentMenuId = menuId;
             Fragment fragment;
+            String tag = "";
             switch (menuId) {
                 case R.id.navigation_feed:
+                    tag = "feed";
                     fragment = new FeedFragment();
                     break;
                 case R.id.navigation_search:
@@ -84,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
                 default:
                     return false;
             }
-            openFragment(fragment);
+            openFragment(fragment, tag);
             return true;
         }
     };
@@ -99,10 +107,10 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
         }
     }
 
-    private void openFragment(Fragment fragment) {
+    private void openFragment(Fragment fragment, String tag) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        transaction.replace(R.id.fragments_container, fragment);
+        transaction.replace(R.id.fragments_container, fragment, tag);
         transaction.commit();
     }
 
@@ -152,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
                     if (savedInstanceState == null &&
                             getSupportFragmentManager().getBackStackEntryCount() == 0) {
                         Fragment fragment = FeedFragment.newInstance(true);
-                        openFragment(fragment);
+                        openFragment(fragment, "feed");
                     }
                 }
             });

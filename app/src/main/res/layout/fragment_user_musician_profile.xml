@@ -2,8 +2,8 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:clipToPadding="true"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:clipToPadding="true">
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/container_user_musician"
@@ -20,8 +20,8 @@
                 android:id="@+id/user_musician_background"
                 android:layout_width="match_parent"
                 android:layout_height="255dp"
-                android:contentDescription="@string/profile_photo_background"
                 android:background="@drawable/gradient_user_musician_background"
+                android:contentDescription="@string/profile_photo_background"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -47,7 +47,7 @@
                 app:layout_constraintStart_toStartOf="@+id/user_musician_profile_image"
                 app:layout_constraintTop_toBottomOf="@+id/user_musician_profile_image" />
 
-            <com.android.voyce.customclasses.CapitalizedTextView
+            <TextView
                 android:id="@+id/user_musician_location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -216,16 +216,16 @@
 
                     <TextView
                         android:id="@+id/no_goal"
-                        android:text="@string/create_goal_advice"
-                        android:textStyle="bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
                         android:paddingTop="16dp"
                         android:paddingBottom="16dp"
-                        android:textSize="24sp"
+                        android:text="@string/create_goal_advice"
                         android:textColor="@android:color/white"
-                        android:layout_width="wrap_content"
-                        android:layout_gravity="center"
-                        android:visibility="gone"
-                        android:layout_height="wrap_content" />
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
 
                 </FrameLayout>
 
@@ -276,9 +276,10 @@
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/rv_user_musician_proposals"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_below="@id/label_proposals"
+                            android:layout_centerHorizontal="true"
                             android:layout_margin="2dp" />
 
                     </RelativeLayout>
@@ -342,13 +343,13 @@
     <TextView
         android:id="@+id/became_musician_button"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_margin="32dp"
+        android:gravity="center"
         android:text="@string/voyce_create_musician_profile_hint"
         android:textColor="@android:color/white"
         android:textSize="20sp"
-        android:gravity="center"
-        android:layout_gravity="center"
-        android:visibility="gone"
-        android:layout_height="wrap_content" />
+        android:visibility="gone" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -16,6 +16,7 @@ import com.android.voyce.data.local.UserFollowingMusicianDao;
 import com.android.voyce.data.model.Proposal;
 import com.android.voyce.data.model.User;
 import com.android.voyce.data.model.UserFollowingMusician;
+import com.android.voyce.utils.StringUtils;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -177,7 +178,7 @@ public class MusicianDetailsRepository {
             addPostsOnFeed();
 
             try {
-                JSONObject notificationContent = new JSONObject("{'contents': {'en': '" + name + " começou a te seguir' }," +
+                JSONObject notificationContent = new JSONObject("{'contents': {'en': '" + StringUtils.capitalize(name) + " começou a te seguir' }," +
                         "'include_player_ids': ['" + signalId + "'], " +
                         "'headings': {'en': 'Novo Seguidor'}}");
 
@@ -236,7 +237,7 @@ public class MusicianDetailsRepository {
             public void onSuccess(QuerySnapshot query) {
                 if (query != null && query.size() > 0) {
                     List<Post> posts = query.toObjects(Post.class);
-                    for (Post post: posts) {
+                    for (Post post : posts) {
                         if (post.getUser_id().equals(id)) {
                             reference.document(post.getId()).delete();
                         }
@@ -341,7 +342,9 @@ public class MusicianDetailsRepository {
             });
 
             try {
-                JSONObject notificationContent = new JSONObject("{'contents': {'en': '" + userName + " assinou seu plano: " + proposal.getName() + "' }," +
+                JSONObject notificationContent = new JSONObject("{'contents': {'en': '"
+                        + StringUtils.capitalize(userName) + " assinou seu plano: "
+                        + StringUtils.capitalize(proposal.getName()) + "' }," +
                         "'include_player_ids': ['" + signalId + "'], " +
                         "'headings': {'en': 'Novo Patrocinador'}}");
 
