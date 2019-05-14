@@ -89,4 +89,7 @@
     <string name="query_text_hint">Artistas, Cidade ou Estado</string>
     <string name="no_search_results">Nenhum resultado encontrado</string>
     <string name="news">Novidades</string>
+    <string name="profile_image">Foto do Perfil</string>
+    <string name="profile_edit">Editar Perfil</string>
+    <string name="save">Salvar</string>
 </resources>

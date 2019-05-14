@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.android.voyce.ui.userprofile.UserEditFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.fragment.app.Fragment;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
     private BottomNavigationView mNavigation;
     private MainViewModel mViewModel;
     private Fragment mFragment;
+    private static final int RC_PHOTO_PICKER = 2;
 
     private int mCurrentMenuId = R.id.navigation_feed;
 
@@ -55,10 +57,12 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
             int menuId = item.getItemId();
 
             // if its not the tab main fragment then pop the seconds fragment
+            boolean mFragPopped = false;
+
             if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                 getSupportFragmentManager().popBackStack();
+                mFragPopped = true;
             }
-
             // if is the same tab and its visibility is true then just return
             if (mCurrentMenuId == menuId && mFrameLayout.getVisibility() != View.GONE) {
                 if (menuId == R.id.navigation_feed) {
@@ -68,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
                     }
                 } else if (menuId == R.id.navigation_search) {
                     SearchFragment fragment = (SearchFragment) getSupportFragmentManager().findFragmentByTag("search");
-                    if (fragment != null) {
+                    if (fragment != null && !mFragPopped) {
                         fragment.openSearchResults();
                     }
                 }
@@ -142,6 +146,27 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(Constants.KEY_CURRENT_MENU_ID, mCurrentMenuId);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_PHOTO_PICKER) {
+            if (data != null) {
+                if (mCurrentMenuId == R.id.navigation_profile) {
+                    UserEditFragment fragment = (UserEditFragment) getSupportFragmentManager().findFragmentByTag("edit");
+                    if (fragment != null) {
+                        fragment.setImageUri(data.getData());
+                    }
+                }
+            }
+        }
+    }
+
     private void verifyUser(final Bundle savedInstanceState) {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         final FirebaseUser currentUser = auth.getCurrentUser();
@@ -153,7 +178,6 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
                 @Override
                 public void onChanged(@Nullable User user) {
                     if (!user.getId().equals(currentUser.getUid())) return;
-
                     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     SharedPreferences.Editor edit = sharedPreferences.edit();
                     edit.putString(Constants.KEY_CURRENT_USER_ID, currentUser.getUid());
@@ -178,11 +202,6 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
         }
     }
 
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(Constants.KEY_CURRENT_MENU_ID, mCurrentMenuId);
-    }
 
     @Override
     public void onBackPressed() {

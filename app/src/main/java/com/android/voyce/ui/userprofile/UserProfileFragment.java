@@ -54,6 +54,16 @@ public class UserProfileFragment extends Fragment {
         ImageView playlists = view.findViewById(R.id.playlists_circle);
         ImageView settings = view.findViewById(R.id.settings_circle);
 
+        mImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.addToBackStack(null);
+                transaction.replace(R.id.fragments_container, new UserEditFragment(), "edit");
+                transaction.commit();
+            }
+        });
+
         followers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
