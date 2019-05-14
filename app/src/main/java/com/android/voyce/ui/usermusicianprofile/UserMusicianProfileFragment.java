@@ -7,11 +7,13 @@ import androidx.lifecycle.ViewModelProviders;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.android.voyce.utils.StringUtils;
 import com.google.android.material.tabs.TabLayout;
+
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.SnapHelper;
@@ -19,6 +21,7 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -161,7 +164,9 @@ public class UserMusicianProfileFragment extends Fragment {
                                 StringUtils.capitalize(user.getCity()),
                                 user.getState().toUpperCase()
                         ));
-                        Picasso.get().load(user.getImage()).into(mImage);
+                        if (user.getImage() != null) {
+                            Picasso.get().load(user.getImage()).placeholder(R.drawable.profile_placeholder).into(mImage);
+                        }
                     }
                 }
             });

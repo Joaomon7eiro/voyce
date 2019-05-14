@@ -88,4 +88,5 @@
     <string name="all_plans">Todos os Planos</string>
     <string name="query_text_hint">Artistas, Cidade ou Estado</string>
     <string name="no_search_results">Nenhum resultado encontrado</string>
+    <string name="news">Novidades</string>
 </resources>

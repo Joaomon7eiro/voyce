@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
     private FrameLayout mFrameLayout;
     private BottomNavigationView mNavigation;
     private MainViewModel mViewModel;
+    private Fragment mFragment;
 
     private int mCurrentMenuId = R.id.navigation_feed;
 
@@ -65,6 +66,11 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
                     if (fragment != null) {
                         fragment.scrollToStart();
                     }
+                } else if (menuId == R.id.navigation_search) {
+                    SearchFragment fragment = (SearchFragment) getSupportFragmentManager().findFragmentByTag("search");
+                    if (fragment != null) {
+                        fragment.openSearchResults();
+                    }
                 }
                 return true;
             }
@@ -78,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
                     fragment = new FeedFragment();
                     break;
                 case R.id.navigation_search:
+                    tag = "search";
                     setLayoutVisibility(true);
                     fragment = new SearchFragment();
                     break;
@@ -157,10 +164,9 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
                     edit.putInt(Constants.KEY_CURRENT_USER_TYPE, user.getType());
                     edit.apply();
 
-                    if (savedInstanceState == null &&
-                            getSupportFragmentManager().getBackStackEntryCount() == 0) {
-                        Fragment fragment = FeedFragment.newInstance(true);
-                        openFragment(fragment, "feed");
+                    if (savedInstanceState == null && mFragment == null) {
+                        mFragment = FeedFragment.newInstance(true);
+                        openFragment(mFragment, "feed");
                     }
                 }
             });

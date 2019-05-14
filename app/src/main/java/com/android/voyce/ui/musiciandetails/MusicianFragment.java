@@ -146,7 +146,9 @@ public class MusicianFragment extends Fragment implements ProposalsAdapter.OnLis
             public void onChanged(@Nullable User user) {
                 if (user != null) {
                     mName.setText(user.getName());
-                    Picasso.get().load(user.getImage()).into(mImage);
+                    if (user.getImage() != null) {
+                        Picasso.get().load(user.getImage()).placeholder(R.drawable.profile_placeholder).into(mImage);
+                    }
                     mFollowers.setText(String.valueOf(user.getFollowers()));
                     mSponsors.setText(String.valueOf(user.getSponsors()));
                     mListeners.setText(String.valueOf(user.getListeners()));

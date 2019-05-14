@@ -57,6 +57,13 @@ public class SearchFragment extends Fragment implements
 
     private static final long REFRESH_TIME = 60000;
 
+    private View.OnClickListener mSearchClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            openSearchResults();
+        }
+    };
+
     public SearchFragment() {
     }
 
@@ -188,15 +195,7 @@ public class SearchFragment extends Fragment implements
         });
 
         RelativeLayout searchContainer = view.findViewById(R.id.search_container);
-        searchContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragments_container, new SearchResultsFragment());
-                transaction.addToBackStack(null);
-                transaction.commit();
-            }
-        });
+        searchContainer.setOnClickListener(mSearchClickListener);
 
         mRefreshLayout = view.findViewById(R.id.swipe_refresh);
         mRefreshLayout.setOnRefreshListener(this);
@@ -269,5 +268,12 @@ public class SearchFragment extends Fragment implements
     public void onRefresh() {
         mViewModel.refreshData(REFRESH_TIME);
         mRefreshLayout.setRefreshing(false);
+    }
+
+    public void openSearchResults() {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragments_container, new SearchResultsFragment());
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }
