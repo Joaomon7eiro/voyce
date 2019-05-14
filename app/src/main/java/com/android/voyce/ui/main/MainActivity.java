@@ -109,12 +109,12 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(R.style.AppTheme_NoActionBar);
+        setContentView(R.layout.activity_main);
 
         verifyUser(savedInstanceState);
 
         OneSignal.addSubscriptionObserver(this);
-
-        setContentView(R.layout.activity_main);
 
         mNavigation = findViewById(R.id.navigation);
         mNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(Constants.KEY_CURRENT_MENU_ID, mCurrentMenuId);
     }
