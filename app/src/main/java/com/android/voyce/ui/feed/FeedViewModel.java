@@ -28,7 +28,6 @@ public class FeedViewModel extends AndroidViewModel {
         } else {
             mRepository.refreshData(REFRESH_DELAY, false);
         }
-
         mPostLiveData = mRepository.getPosts();
         mIsLoading = mRepository.getIsLoading();
     }

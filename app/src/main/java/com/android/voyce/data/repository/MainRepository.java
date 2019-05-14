@@ -215,6 +215,10 @@ public class MainRepository {
             public void onEvent(@Nullable final QuerySnapshot results, @Nullable FirebaseFirestoreException e) {
                 if (results != null) {
                     final List<Post> posts = results.toObjects(Post.class);
+
+                    for (Post post: posts) {
+                        post.setCurrent_user_id(mUserId);
+                    }
                     mDiskExecutor.execute(new Runnable() {
                         @Override
                         public void run() {

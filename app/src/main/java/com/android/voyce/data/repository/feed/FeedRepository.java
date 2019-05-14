@@ -53,6 +53,9 @@ public class FeedRepository {
     public LiveData<PagedList<Post>> getPosts() {
         PagedList.Config config = new PagedList.Config.Builder()
                 .setPageSize(10)
+                .setInitialLoadSizeHint(20)
+                .setPrefetchDistance(40)
+                .setEnablePlaceholders(true)
                 .build();
 
         DataSource.Factory factory = mUserPostDao.getPosts(mCurrentUser.getUid());
@@ -87,10 +90,12 @@ public class FeedRepository {
                 }
             });
         }
-
     }
 
     private void insertPosts(final List<Post> posts) {
+        for (Post post: posts) {
+            post.setCurrent_user_id(mCurrentUser.getUid());
+        }
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
