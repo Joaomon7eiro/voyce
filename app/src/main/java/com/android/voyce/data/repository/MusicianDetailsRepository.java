@@ -377,6 +377,11 @@ public class MusicianDetailsRepository {
                     .collection("users")
                     .document(mUserFollowingMusician.getFollower_id()).delete();
 
+            mSponsorsCollectionReference
+                    .document(mUserFollowingMusician.getId())
+                    .collection("users")
+                    .document(mUserFollowingMusician.getFollower_id()).delete();
+
             mDiskExecutor.execute(new Runnable() {
                 @Override
                 public void run() {
