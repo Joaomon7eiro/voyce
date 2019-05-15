@@ -12,9 +12,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.android.voyce.common.ListItemClickListener;
+import com.android.voyce.data.model.Post;
 import com.android.voyce.utils.StringUtils;
+import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
+import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.google.android.material.tabs.TabLayout;
 import androidx.fragment.app.Fragment;
+import androidx.paging.PagedList;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.SnapHelper;
 import androidx.viewpager.widget.ViewPager;
@@ -23,6 +27,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import de.hdodenhof.circleimageview.CircleImageView;
+
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +47,8 @@ import com.android.voyce.data.model.UserFollowingMusician;
 import com.android.voyce.ui.main.MainActivity;
 import com.android.voyce.utils.ConnectivityHelper;
 import com.android.voyce.utils.Constants;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -67,6 +76,8 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
 
     private String mUserId;
     private String mUserName;
+    private String mUserImage;
+
     private String mSignalId;
     private TextView mFollowers;
     private TextView mSponsors;
@@ -110,7 +121,6 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
         }
     };
 
-
     public MusicianFragment() {
     }
 
@@ -143,6 +153,7 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         mUserId = sharedPreferences.getString(Constants.KEY_CURRENT_USER_ID, null);
         mUserName = sharedPreferences.getString(Constants.KEY_CURRENT_USER_NAME, null);
+        mUserImage = sharedPreferences.getString(Constants.KEY_CURRENT_USER_IMAGE, null);
 
         mTabsTitle = new String[]{"Info", "Contato"};
     }
@@ -156,6 +167,8 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
         userFollowingMusician.setImage(mMusicianImage);
         userFollowingMusician.setName(mMusicianName);
         userFollowingMusician.setFollower_id(mUserId);
+        userFollowingMusician.setFollower_name(mUserName);
+        userFollowingMusician.setFollower_image(mUserImage);
 
         mViewModel = ViewModelProviders.of(this).get(MusicianViewModel.class);
         mViewModel.init(userFollowingMusician);
@@ -299,6 +312,8 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
 
+        setupFeedRecyclerView(view);
+
         return view;
     }
 
@@ -352,5 +367,80 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
             builder.setView(view);
             builder.show();
         }
+    }
+
+    private void setupFeedRecyclerView(View view) {
+        Query baseQuery = FirebaseFirestore.getInstance()
+                .collection("user_posts")
+                .document(mMusicianId)
+                .collection("posts")
+                .orderBy("timestamp", Query.Direction.DESCENDING);
+
+
+        PagedList.Config config = new PagedList.Config.Builder()
+                .setEnablePlaceholders(false)
+                .setPrefetchDistance(5)
+                .setPageSize(10)
+                .build();
+
+        FirestorePagingOptions<Post> options = new FirestorePagingOptions.Builder<Post>()
+                .setLifecycleOwner(this)
+                .setQuery(baseQuery, config, Post.class)
+                .build();
+
+        FirestorePagingAdapter<Post, ViewHolder> adapter =
+                new FirestorePagingAdapter<Post, ViewHolder>(options) {
+                    @Override
+                    protected void onBindViewHolder(@NonNull ViewHolder viewHolder, int i, @NonNull Post post) {
+                        viewHolder.bindTo(post);
+                    }
+
+                    @NonNull
+                    @Override
+                    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                        View viewHolder = LayoutInflater.from(getContext()).inflate(R.layout.feed_list_item, parent, false);
+                        return new ViewHolder(viewHolder);
+                    }
+                };
+
+        RecyclerView feedRecyclerView = view.findViewById(R.id.musician_feed_rv);
+        feedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        feedRecyclerView.setAdapter(adapter);
+        feedRecyclerView.setNestedScrollingEnabled(false);
+    }
+
+    private class ViewHolder extends RecyclerView.ViewHolder {
+
+        CircleImageView mUserImage;
+        ImageView mImage;
+        TextView mUserName;
+        TextView mText;
+        TextView mTime;
+
+        private ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            mUserImage = itemView.findViewById(R.id.post_user_image);
+            mUserName = itemView.findViewById(R.id.post_user_name);
+            mText = itemView.findViewById(R.id.post_text);
+            mImage = itemView.findViewById(R.id.post_image);
+            mTime = itemView.findViewById(R.id.post_time);
+        }
+
+        private void bindTo(Post post) {
+            Picasso.get().load(post.getUser_image()).fit().into(mUserImage);
+            if (post.getImage() != null) {
+                mImage.setVisibility(View.VISIBLE);
+                Picasso.get().load(post.getImage()).into(mImage);
+            }
+            mText.setText(post.getText());
+            mUserName.setText(post.getUser_name());
+            mTime.setText(formatDate(post.getTimestamp()));
+        }
+
+        private String formatDate(long timestamp) {
+            return (String) DateUtils.getRelativeTimeSpanString(timestamp,
+                    System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS);
+        }
+
     }
 }

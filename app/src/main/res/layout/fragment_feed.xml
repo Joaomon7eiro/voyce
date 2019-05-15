@@ -2,7 +2,9 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:background="@color/colorPrimaryVeryDark"
+    android:layout_height="match_parent"
+    tools:context=".ui.feed.FeedFragment">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/feed_refresh"
@@ -17,10 +19,8 @@
                 android:id="@+id/feed_scroll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorPrimaryVeryDark"
                 android:clipToPadding="false"
-                android:paddingTop="32dp"
-                tools:context=".ui.feed.FeedFragment">
+                android:paddingTop="32dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"

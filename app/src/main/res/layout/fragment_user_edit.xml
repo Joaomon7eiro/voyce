@@ -55,13 +55,11 @@
                 android:src="@drawable/ic_action_close"
                 android:visibility="gone" />
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/edit_image"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:adjustViewBounds="true"
-                android:maxHeight="400dp"
+                android:layout_width="230dp"
+                android:layout_height="230dp"
+                android:layout_gravity="center"
                 android:scaleType="centerCrop"
                 android:visibility="gone" />
 

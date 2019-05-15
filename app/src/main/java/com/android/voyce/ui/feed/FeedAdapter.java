@@ -25,8 +25,8 @@ public class FeedAdapter extends PagedListAdapter<Post, FeedAdapter.FeedAdapterV
 
     private ListItemClickListener mOnListItemClickListener;
 
-    protected FeedAdapter(@NonNull DiffUtil.ItemCallback<Post> diffCallback,
-                          ListItemClickListener listItemClickListener) {
+    public FeedAdapter(@NonNull DiffUtil.ItemCallback<Post> diffCallback,
+                       ListItemClickListener listItemClickListener) {
         super(diffCallback);
         mOnListItemClickListener = listItemClickListener;
     }

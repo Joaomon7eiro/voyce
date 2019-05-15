@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.android.voyce.data.local.AppDatabase;
-import com.android.voyce.data.local.UserPostDao;
 import com.android.voyce.data.local.UserSponsoringDao;
 import com.android.voyce.data.model.Goal;
 import com.android.voyce.data.model.Post;
@@ -50,6 +49,7 @@ public class MusicianDetailsRepository {
     private CollectionReference mFollowingCollectionReference = mDb.collection("user_following");
     private CollectionReference mFollowersCollectionReference = mDb.collection("user_followers");
     private CollectionReference mSponsoringCollectionReference = mDb.collection("user_sponsoring");
+    private CollectionReference mSponsorsCollectionReference = mDb.collection("user_sponsors");
     private CollectionReference mProposalUsersCollectionReference = mDb.collection("proposal_users");
 
     private final Executor mDiskExecutor;
@@ -162,6 +162,8 @@ public class MusicianDetailsRepository {
 
             Map<String, Object> hashMapUser = new HashMap<>();
             hashMapUser.put("id", mUserFollowingMusician.getFollower_id());
+            hashMapUser.put("name", mUserFollowingMusician.getFollower_name());
+            hashMapUser.put("image", mUserFollowingMusician.getFollower_image());
 
             mFollowersCollectionReference
                     .document(mUserFollowingMusician.getId())
@@ -321,9 +323,16 @@ public class MusicianDetailsRepository {
 
             Map<String, Object> hashMapProposalUser = new HashMap<>();
             hashMapProposalUser.put("id", mUserFollowingMusician.getFollower_id());
+            hashMapProposalUser.put("name", mUserFollowingMusician.getFollower_name());
+            hashMapProposalUser.put("image", mUserFollowingMusician.getFollower_image());
 
             mProposalUsersCollectionReference
                     .document(proposal.getId())
+                    .collection("users")
+                    .document(mUserFollowingMusician.getFollower_id()).set(hashMapProposalUser);
+
+            mSponsorsCollectionReference
+                    .document(mUserFollowingMusician.getId())
                     .collection("users")
                     .document(mUserFollowingMusician.getFollower_id()).set(hashMapProposalUser);
 

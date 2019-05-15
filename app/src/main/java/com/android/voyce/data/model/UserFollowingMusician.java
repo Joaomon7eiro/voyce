@@ -11,6 +11,8 @@ public class UserFollowingMusician {
     @NonNull
     private String id;
     private String follower_id;
+    private String follower_name;
+    private String follower_image;
     private String name;
     private String image;
 
@@ -49,5 +51,21 @@ public class UserFollowingMusician {
 
     public void setFollower_id(String follower_id) {
         this.follower_id = follower_id;
+    }
+
+    public String getFollower_name() {
+        return follower_name;
+    }
+
+    public void setFollower_name(String follower_name) {
+        this.follower_name = follower_name;
+    }
+
+    public String getFollower_image() {
+        return follower_image;
+    }
+
+    public void setFollower_image(String follower_image) {
+        this.follower_image = follower_image;
     }
 }

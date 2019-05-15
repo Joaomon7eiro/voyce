@@ -4,6 +4,8 @@ package com.android.voyce.ui.usermusicianprofile;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -11,20 +13,30 @@ import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.android.voyce.data.model.Post;
+import com.android.voyce.data.model.UserFollowingMusician;
+import com.android.voyce.ui.newpost.NewPostActivity;
+import com.android.voyce.ui.userprofile.UserFollowingAdapter;
 import com.android.voyce.utils.StringUtils;
+import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
+import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.fragment.app.Fragment;
+import androidx.paging.PagedList;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.SnapHelper;
 import androidx.viewpager.widget.ViewPager;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import de.hdodenhof.circleimageview.CircleImageView;
 
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -36,6 +48,8 @@ import com.android.voyce.data.model.Goal;
 import com.android.voyce.data.model.Proposal;
 import com.android.voyce.data.model.User;
 import com.android.voyce.utils.Constants;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.squareup.picasso.Picasso;
 
 
@@ -69,6 +83,7 @@ public class UserMusicianProfileFragment extends Fragment {
     private TextView mNoProposals;
     private TextView mBecameMusician;
     private int mUserType;
+    private UserMusicianProfileViewModel mViewModel;
 
     public UserMusicianProfileFragment() {
         // Required empty public constructor
@@ -92,10 +107,36 @@ public class UserMusicianProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View view = inflater.inflate(R.layout.fragment_user_musician_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_user_musician_profile, container, false);
 
         mContainer = view.findViewById(R.id.container_user_musician);
         mBecameMusician = view.findViewById(R.id.became_musician_button);
+
+        TextView followersLabel = view.findViewById(R.id.followers_label);
+        followersLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final UserFollowingAdapter adapter = new UserFollowingAdapter(null);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                View dialogView = LayoutInflater
+                        .from(getContext())
+                        .inflate(R.layout.followers_sponsors_listeners_dialog,
+                                null,
+                                false);
+                RecyclerView listRecyclerView = dialogView.findViewById(R.id.followers_sponsors_listeners_rv);
+                listRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                listRecyclerView.setAdapter(adapter);
+                listRecyclerView.setHasFixedSize(true);
+                builder.setView(dialogView);
+                builder.show();
+                mViewModel.getFollowers().observe(getViewLifecycleOwner(), new Observer<List<UserFollowingMusician>>() {
+                    @Override
+                    public void onChanged(List<UserFollowingMusician> userFollowingMusicians) {
+                        adapter.setData(userFollowingMusicians);
+                    }
+                });
+            }
+        });
 
         if (mUserType == 0) {
             mContainer.setVisibility(View.GONE);
@@ -123,6 +164,15 @@ public class UserMusicianProfileFragment extends Fragment {
         mImage = view.findViewById(R.id.user_musician_profile_image);
         mBackgroundImage = view.findViewById(R.id.user_musician_background);
 
+        Button newPost = view.findViewById(R.id.new_post);
+        newPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), NewPostActivity.class);
+                startActivity(intent);
+            }
+        });
+
         String[] tabsTitle = new String[]{"Info", "Contato"};
         UserMusicianProfileFragmentPagerAdapter pagerAdapter =
                 new UserMusicianProfileFragmentPagerAdapter(getChildFragmentManager(), tabsTitle);
@@ -142,6 +192,8 @@ public class UserMusicianProfileFragment extends Fragment {
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
 
+        setupFeedRecyclerView(view);
+
         return view;
     }
 
@@ -149,10 +201,10 @@ public class UserMusicianProfileFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (mUserType != 0) {
-            UserMusicianProfileViewModel viewModel = ViewModelProviders.of(this).get(UserMusicianProfileViewModel.class);
-            viewModel.init(mUserId);
+            mViewModel = ViewModelProviders.of(this).get(UserMusicianProfileViewModel.class);
+            mViewModel.init(mUserId);
 
-            viewModel.getUserLiveData().observe(this, new Observer<User>() {
+            mViewModel.getUserLiveData().observe(this, new Observer<User>() {
                 @Override
                 public void onChanged(@Nullable User user) {
                     if (user != null) {
@@ -172,7 +224,7 @@ public class UserMusicianProfileFragment extends Fragment {
                 }
             });
 
-            viewModel.getGoalLiveData().observe(this, new Observer<Goal>() {
+            mViewModel.getGoalLiveData().observe(this, new Observer<Goal>() {
                 @Override
                 public void onChanged(@Nullable Goal goal) {
                     if (goal != null) {
@@ -191,7 +243,7 @@ public class UserMusicianProfileFragment extends Fragment {
                 }
             });
 
-            viewModel.getProposals().observe(this, new Observer<List<Proposal>>() {
+            mViewModel.getProposals().observe(this, new Observer<List<Proposal>>() {
                 @Override
                 public void onChanged(@Nullable List<Proposal> proposals) {
                     if (proposals != null && proposals.size() >= 1) {
@@ -206,6 +258,81 @@ public class UserMusicianProfileFragment extends Fragment {
                 }
             });
         }
+    }
+
+    private void setupFeedRecyclerView(View view) {
+        Query baseQuery = FirebaseFirestore.getInstance()
+                .collection("user_posts")
+                .document(mUserId)
+                .collection("posts")
+                .orderBy("timestamp", Query.Direction.DESCENDING);
+
+
+        PagedList.Config config = new PagedList.Config.Builder()
+                .setEnablePlaceholders(false)
+                .setPrefetchDistance(5)
+                .setPageSize(10)
+                .build();
+
+        FirestorePagingOptions<Post> options = new FirestorePagingOptions.Builder<Post>()
+                .setLifecycleOwner(this)
+                .setQuery(baseQuery, config, Post.class)
+                .build();
+
+        FirestorePagingAdapter<Post, ViewHolder> adapter =
+                new FirestorePagingAdapter<Post, ViewHolder>(options) {
+                    @Override
+                    protected void onBindViewHolder(@NonNull ViewHolder viewHolder, int i, @NonNull Post post) {
+                        viewHolder.bindTo(post);
+                    }
+
+                    @NonNull
+                    @Override
+                    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                        View viewHolder = LayoutInflater.from(getContext()).inflate(R.layout.feed_list_item, parent, false);
+                        return new ViewHolder(viewHolder);
+                    }
+                };
+
+        RecyclerView feedRecyclerView = view.findViewById(R.id.user_musician_feed_rv);
+        feedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        feedRecyclerView.setAdapter(adapter);
+        feedRecyclerView.setNestedScrollingEnabled(false);
+    }
+
+    private class ViewHolder extends RecyclerView.ViewHolder {
+
+        CircleImageView mUserImage;
+        ImageView mImage;
+        TextView mUserName;
+        TextView mText;
+        TextView mTime;
+
+        private ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            mUserImage = itemView.findViewById(R.id.post_user_image);
+            mUserName = itemView.findViewById(R.id.post_user_name);
+            mText = itemView.findViewById(R.id.post_text);
+            mImage = itemView.findViewById(R.id.post_image);
+            mTime = itemView.findViewById(R.id.post_time);
+        }
+
+        private void bindTo(Post post) {
+            Picasso.get().load(post.getUser_image()).fit().into(mUserImage);
+            if (post.getImage() != null) {
+                mImage.setVisibility(View.VISIBLE);
+                Picasso.get().load(post.getImage()).into(mImage);
+            }
+            mText.setText(post.getText());
+            mUserName.setText(post.getUser_name());
+            mTime.setText(formatDate(post.getTimestamp()));
+        }
+
+        private String formatDate(long timestamp) {
+            return (String) DateUtils.getRelativeTimeSpanString(timestamp,
+                    System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS);
+        }
+
     }
 
 }
