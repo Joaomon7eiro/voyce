@@ -24,6 +24,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="40dp"
+            android:background="@drawable/rounded_background"
+            android:backgroundTint="@color/colorLightTransparent"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="@string/profile_edit"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/user_profile_image"
+            app:layout_constraintEnd_toEndOf="@+id/user_profile_image"
+            app:layout_constraintStart_toStartOf="@+id/user_profile_image" />
+
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/followers_circle"
             android:layout_width="140dp"
