@@ -17,13 +17,21 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar_edit"
+            <com.google.android.material.appbar.AppBarLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
-                app:title="@string/profile_edit"
-                app:titleTextColor="@android:color/white" />
+                android:theme="@style/AppTheme.NoActionBar.AppBarOverlay">
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="?attr/colorPrimary"
+                    app:popupTheme="@style/AppTheme.NoActionBar.PopupOverlay"
+                    app:title="@string/profile_edit"
+                    app:titleTextColor="@android:color/white" />
+
+            </com.google.android.material.appbar.AppBarLayout>
 
             <TextView
                 android:id="@+id/edit_profile_image"
@@ -63,9 +71,9 @@
 
     <ProgressBar
         android:id="@+id/edit_progress_bar"
-        android:visibility="gone"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_height="wrap_content" />
+        android:visibility="gone" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
