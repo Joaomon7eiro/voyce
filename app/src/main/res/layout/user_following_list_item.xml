@@ -10,7 +10,7 @@
         android:layout_width="80dp"
         android:layout_height="80dp" />
 
-    <com.android.voyce.customclasses.CapitalizedTextView
+    <com.android.voyce.common.customclasses.CapitalizedTextView
         android:id="@+id/user_following_musician_name"
         android:layout_width="wrap_content"
         android:paddingStart="16dp"

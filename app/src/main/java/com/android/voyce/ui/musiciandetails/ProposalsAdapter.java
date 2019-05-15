@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.voyce.R;
+import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.Proposal;
 
 import java.util.ArrayList;
@@ -18,9 +19,9 @@ import java.util.List;
 public class ProposalsAdapter extends RecyclerView.Adapter<ProposalsAdapter.ProposalAdapterViewHolder> {
 
     private List<Proposal> mProposals = new ArrayList<>();
-    private OnListItemClickListener mOnClickListener;
+    private ListItemClickListener mOnClickListener;
 
-    public ProposalsAdapter(OnListItemClickListener listener) {
+    public ProposalsAdapter(ListItemClickListener listener) {
         mOnClickListener = listener;
     }
 
@@ -44,10 +45,6 @@ public class ProposalsAdapter extends RecyclerView.Adapter<ProposalsAdapter.Prop
     public int getItemCount() {
         if (mProposals == null) return 0;
         return mProposals.size();
-    }
-
-    public interface OnListItemClickListener {
-        void onListItemClick(int index);
     }
 
     class ProposalAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

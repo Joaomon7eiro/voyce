@@ -1,4 +1,4 @@
-package com.android.voyce.customclasses;
+package com.android.voyce.common.customclasses;
 
 import android.content.Context;
 import androidx.annotation.NonNull;

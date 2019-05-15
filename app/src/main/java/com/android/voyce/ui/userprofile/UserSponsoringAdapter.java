@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.voyce.R;
+import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.UserSponsoringProposal;
 import com.squareup.picasso.Picasso;
 
@@ -19,7 +20,13 @@ public class UserSponsoringAdapter extends RecyclerView.Adapter<UserSponsoringAd
 
     private List<UserSponsoringProposal> mProposals = new ArrayList<>();
 
-    class UserSponsoringAdapterViewHolder extends RecyclerView.ViewHolder {
+    private ListItemClickListener mOnListItemClickListener;
+
+    public UserSponsoringAdapter(ListItemClickListener listItemClickListener) {
+        mOnListItemClickListener = listItemClickListener;
+    }
+
+    class UserSponsoringAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView mMusicianImage;
         TextView mMusicianName;
         TextView mProposalName;
@@ -29,6 +36,12 @@ public class UserSponsoringAdapter extends RecyclerView.Adapter<UserSponsoringAd
             mMusicianImage = itemView.findViewById(R.id.user_sponsoring_musician_image);
             mMusicianName = itemView.findViewById(R.id.user_sponsoring_musician_name);
             mProposalName = itemView.findViewById(R.id.user_sponsoring_proposal_name);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            mOnListItemClickListener.onListItemClick(getAdapterPosition());
         }
     }
     @NonNull
@@ -48,6 +61,7 @@ public class UserSponsoringAdapter extends RecyclerView.Adapter<UserSponsoringAd
         viewHolder.mProposalName.setText(userSponsoringProposal.getName());
     }
 
+
     @Override
     public int getItemCount() {
         if (mProposals == null) return 0;
@@ -57,5 +71,9 @@ public class UserSponsoringAdapter extends RecyclerView.Adapter<UserSponsoringAd
     public void setData(List<UserSponsoringProposal> proposals) {
         mProposals = proposals;
         notifyDataSetChanged();
+    }
+
+    public List<UserSponsoringProposal> getData() {
+        return mProposals;
     }
 }

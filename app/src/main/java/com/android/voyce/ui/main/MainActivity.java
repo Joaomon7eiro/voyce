@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
                 return true;
             }
 
-            mCurrentMenuId = menuId;
             Fragment fragment;
             String tag = "";
             switch (menuId) {
@@ -104,6 +103,9 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
                     return false;
             }
             openFragment(fragment, tag);
+
+            mCurrentMenuId = menuId;
+
             return true;
         }
     };

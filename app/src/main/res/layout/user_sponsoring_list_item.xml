@@ -34,7 +34,7 @@
             app:layout_constraintStart_toStartOf="@+id/imageView2"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.android.voyce.customclasses.CapitalizedTextView
+        <com.android.voyce.common.customclasses.CapitalizedTextView
             android:id="@+id/user_sponsoring_musician_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

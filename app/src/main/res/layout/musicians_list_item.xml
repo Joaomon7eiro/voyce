@@ -24,7 +24,7 @@
         android:layout_height="match_parent"
         android:background="@drawable/musician_card_gradient">
 
-        <com.android.voyce.customclasses.CapitalizedTextView
+        <com.android.voyce.common.customclasses.CapitalizedTextView
             android:id="@+id/musician_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

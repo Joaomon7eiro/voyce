@@ -6,10 +6,12 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.utils.StringUtils;
 import com.google.android.material.tabs.TabLayout;
 import androidx.fragment.app.Fragment;
@@ -46,7 +48,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MusicianFragment extends Fragment implements ProposalsAdapter.OnListItemClickListener {
+public class MusicianFragment extends Fragment implements ListItemClickListener {
 
     private Button mFollowButton;
 
@@ -64,6 +66,7 @@ public class MusicianFragment extends Fragment implements ProposalsAdapter.OnLis
     private TextView mName;
 
     private String mUserId;
+    private String mUserName;
     private String mSignalId;
     private TextView mFollowers;
     private TextView mSponsors;
@@ -72,6 +75,7 @@ public class MusicianFragment extends Fragment implements ProposalsAdapter.OnLis
     private TextView mGoalValue;
     private TextView mGoalDescription;
     private ImageView mBackgroundImage;
+
     private ProgressBar mGoalProgress;
 
     private ProposalsAdapter mAdapter;
@@ -79,6 +83,18 @@ public class MusicianFragment extends Fragment implements ProposalsAdapter.OnLis
 
     private CardView mGoalContainer;
     private CardView mProposalsContainer;
+
+    private boolean mScrollToPlans = false;
+    private Handler mScrollHandler;
+    private static final int SCROLL_DELAY = 600;
+    private Runnable mScrollRunnable = new Runnable() {
+        @Override
+        public void run() {
+            int scrollTo = mProposalsContainer.getTop();
+            mContainer.smoothScrollTo(0, scrollTo);
+            mScrollHandler.removeCallbacks(mScrollRunnable);
+        }
+    };
 
     private View.OnClickListener mBackOnClickListener = new View.OnClickListener() {
         @Override
@@ -93,18 +109,19 @@ public class MusicianFragment extends Fragment implements ProposalsAdapter.OnLis
             }
         }
     };
-    private String mUserName;
+
 
     public MusicianFragment() {
     }
 
-    public static MusicianFragment newInstance(String id, String name, String image) {
+    public static MusicianFragment newInstance(String id, String name, String image, boolean scrollToPlans) {
         MusicianFragment fragment = new MusicianFragment();
 
         Bundle args = new Bundle();
         args.putString(Constants.KEY_MUSICIAN_ID, id);
         args.putString(Constants.KEY_MUSICIAN_NAME, name);
         args.putString(Constants.KEY_MUSICIAN_IMAGE, image);
+        args.putBoolean("scroll", scrollToPlans);
 
         fragment.setArguments(args);
         return fragment;
@@ -120,6 +137,7 @@ public class MusicianFragment extends Fragment implements ProposalsAdapter.OnLis
             mMusicianId = args.getString(Constants.KEY_MUSICIAN_ID);
             mMusicianName = args.getString(Constants.KEY_MUSICIAN_NAME);
             mMusicianImage = args.getString(Constants.KEY_MUSICIAN_IMAGE);
+            mScrollToPlans = args.getBoolean("scroll");
         }
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -147,7 +165,8 @@ public class MusicianFragment extends Fragment implements ProposalsAdapter.OnLis
                 if (user != null) {
                     mName.setText(user.getName());
                     if (user.getImage() != null) {
-                        Picasso.get().load(user.getImage()).placeholder(R.drawable.profile_placeholder).into(mImage);
+                        Picasso.get().load(user.getImage())
+                                .placeholder(R.drawable.profile_placeholder).fit().into(mImage);
                     }
                     mFollowers.setText(String.valueOf(user.getFollowers()));
                     mSponsors.setText(String.valueOf(user.getSponsors()));
@@ -200,6 +219,10 @@ public class MusicianFragment extends Fragment implements ProposalsAdapter.OnLis
                     } else {
                         mProgressBar.setVisibility(View.GONE);
                         mContainer.setVisibility(View.VISIBLE);
+                        if (mScrollToPlans) {
+                            mScrollHandler = new Handler();
+                            mScrollHandler.postDelayed(mScrollRunnable, SCROLL_DELAY);
+                        }
                     }
                 }
             }

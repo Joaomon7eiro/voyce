@@ -2,6 +2,7 @@ package com.android.voyce.ui.feed;
 
 
 import androidx.core.widget.NestedScrollView;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -27,7 +28,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.voyce.R;
+import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.Post;
+import com.android.voyce.ui.musiciandetails.MusicianFragment;
 import com.android.voyce.ui.newpost.NewPostActivity;
 import com.android.voyce.utils.Constants;
 
@@ -36,7 +39,9 @@ import java.util.concurrent.TimeUnit;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class FeedFragment extends Fragment
+        implements SwipeRefreshLayout.OnRefreshListener,
+        ListItemClickListener {
 
     private RecyclerView mRecyclerView;
     private NestedScrollView mContainer;
@@ -47,8 +52,6 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     private TextView mNoFeed;
     private Boolean mFirstTimeCreated;
     private int mUserType;
-
-    private LinearLayoutManager mLayoutManager;
 
     private DiffUtil.ItemCallback<Post> mDiffCallback = new DiffUtil.ItemCallback<Post>() {
         @Override
@@ -108,7 +111,7 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         mRefresh.setOnRefreshListener(this);
         mRefresh.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
 
-        mAdapter = new FeedAdapter(mDiffCallback);
+        mAdapter = new FeedAdapter(mDiffCallback, this);
 
         if (mUserType != 0) {
             Button newPost = view.findViewById(R.id.new_post);
@@ -122,9 +125,9 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
             });
         }
 
-        mLayoutManager = new LinearLayoutManager(getContext());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
 
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setNestedScrollingEnabled(false);
 
@@ -171,5 +174,20 @@ public class FeedFragment extends Fragment implements SwipeRefreshLayout.OnRefre
 
     public void scrollToStart() {
         mContainer.smoothScrollTo(0, 0);
+    }
+
+    @Override
+    public void onListItemClick(int index) {
+        Post post = mAdapter.getItem(index);
+        if (post != null) {
+            getFragmentManager()
+                    .beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .replace(R.id.fragments_container,
+                            MusicianFragment.newInstance(post.getUser_id(),
+                            post.getUser_name(), post.getUser_image(), false))
+                    .addToBackStack(null).commit();
+        }
+
     }
 }

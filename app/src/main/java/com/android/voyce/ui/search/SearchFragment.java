@@ -37,7 +37,7 @@ import iammert.com.view.scalinglib.ScalingLayout;
  * A simple {@link Fragment} subclass.
  */
 public class SearchFragment extends Fragment implements
-        MusiciansAdapter.ListItemClickListener,
+        MusiciansAdapter.RecyclerViewItemClickListener,
         SwipeRefreshLayout.OnRefreshListener {
 
     private MusiciansAdapter mMusiciansAdapter;
@@ -248,7 +248,7 @@ public class SearchFragment extends Fragment implements
             }
             if (musician != null) {
                 MusicianFragment musicianFragment = MusicianFragment.newInstance(musician.getId(),
-                        musician.getName(), musician.getImage());
+                        musician.getName(), musician.getImage(), false);
 
                 if (getFragmentManager() != null) {
                     FragmentTransaction transaction = getFragmentManager().beginTransaction();

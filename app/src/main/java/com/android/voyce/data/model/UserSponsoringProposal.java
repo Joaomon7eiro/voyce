@@ -13,10 +13,11 @@ public class UserSponsoringProposal {
     private String id;
     private String sponsor_id;
     private String name;
+    private String user_id;
     private String user_name;
+    private String user_image;
     private double price;
     private String image;
-    private String user_image;
 
     @NonNull
     public String getId() {
@@ -25,6 +26,14 @@ public class UserSponsoringProposal {
 
     public void setId(@NonNull String id) {
         this.id = id;
+    }
+
+    public String getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
     }
 
     public String getSponsor_id() {

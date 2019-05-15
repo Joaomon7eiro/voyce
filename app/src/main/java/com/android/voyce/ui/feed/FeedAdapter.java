@@ -1,6 +1,7 @@
 package com.android.voyce.ui.feed;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.voyce.R;
+import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.Post;
 import com.squareup.picasso.Picasso;
 
@@ -21,8 +23,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FeedAdapter extends PagedListAdapter<Post, FeedAdapter.FeedAdapterViewHolder> {
 
-    protected FeedAdapter(@NonNull DiffUtil.ItemCallback<Post> diffCallback) {
+    private ListItemClickListener mOnListItemClickListener;
+
+    protected FeedAdapter(@NonNull DiffUtil.ItemCallback<Post> diffCallback,
+                          ListItemClickListener listItemClickListener) {
         super(diffCallback);
+        mOnListItemClickListener = listItemClickListener;
     }
 
     @NonNull
@@ -45,7 +51,7 @@ public class FeedAdapter extends PagedListAdapter<Post, FeedAdapter.FeedAdapterV
         }
     }
 
-    class FeedAdapterViewHolder extends RecyclerView.ViewHolder {
+    class FeedAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         CircleImageView mUserImage;
         ImageView mImage;
@@ -60,10 +66,12 @@ public class FeedAdapter extends PagedListAdapter<Post, FeedAdapter.FeedAdapterV
             mText = itemView.findViewById(R.id.post_text);
             mImage = itemView.findViewById(R.id.post_image);
             mTime = itemView.findViewById(R.id.post_time);
+            mUserImage.setOnClickListener(this);
+            mUserName.setOnClickListener(this);
         }
 
         public void bindTo(Post post) {
-            Picasso.get().load(post.getUser_image()).into(mUserImage);
+            Picasso.get().load(post.getUser_image()).fit().into(mUserImage);
             if (post.getImage() != null) {
                 mImage.setVisibility(View.VISIBLE);
                 Picasso.get().load(post.getImage()).into(mImage);
@@ -79,10 +87,21 @@ public class FeedAdapter extends PagedListAdapter<Post, FeedAdapter.FeedAdapterV
             mUserName.setText("");
             mTime.setText("");
         }
+
+        @Override
+        public void onClick(View v) {
+            mOnListItemClickListener.onListItemClick(getAdapterPosition());
+        }
     }
 
     private String formatDate(long timestamp) {
         return (String) DateUtils.getRelativeTimeSpanString(timestamp,
                 System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS);
+    }
+
+    @Nullable
+    @Override
+    public Post getItem(int position) {
+        return super.getItem(position);
     }
 }

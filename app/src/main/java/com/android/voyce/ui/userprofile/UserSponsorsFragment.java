@@ -19,14 +19,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.voyce.R;
+import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.UserSponsoringProposal;
+import com.android.voyce.ui.musiciandetails.MusicianFragment;
 
 import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserSponsorsFragment extends Fragment {
+public class UserSponsorsFragment extends Fragment implements ListItemClickListener {
 
     private TextView mNoSponsoring;
     private LinearLayout mContainer;
@@ -70,7 +72,7 @@ public class UserSponsorsFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
 
-        mAdapter = new UserSponsoringAdapter();
+        mAdapter = new UserSponsoringAdapter(this);
         recyclerView.setAdapter(mAdapter);
 
         return view;
@@ -83,17 +85,30 @@ public class UserSponsorsFragment extends Fragment {
         viewModel.init();
         viewModel.getUserSponsoringProposals().observe(this, new Observer<List<UserSponsoringProposal>>() {
             @Override
-            public void onChanged(@Nullable List<UserSponsoringProposal> userFollowingMusicians) {
-                if (userFollowingMusicians != null && userFollowingMusicians.size() < 1) {
-                    mContainer.setVisibility(View.GONE);
-                    mNoSponsoring.setVisibility(View.VISIBLE);
-                } else {
+            public void onChanged(@Nullable List<UserSponsoringProposal> userSponsoringProposals) {
+                if (userSponsoringProposals != null && userSponsoringProposals.size() > 0) {
                     mNoSponsoring.setVisibility(View.GONE);
                     mContainer.setVisibility(View.VISIBLE);
-                    mAdapter.setData(userFollowingMusicians);
+                    mAdapter.setData(userSponsoringProposals);
+                } else {
+                    mContainer.setVisibility(View.GONE);
+                    mNoSponsoring.setVisibility(View.VISIBLE);
                 }
             }
         });
     }
 
+    @Override
+    public void onListItemClick(int index) {
+        UserSponsoringProposal proposal = mAdapter.getData().get(index);
+        if (proposal != null) {
+            getFragmentManager()
+                    .beginTransaction()
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                    .replace(R.id.fragments_container,
+                            MusicianFragment.newInstance(proposal.getUser_id(),
+                                    proposal.getUser_name(), proposal.getUser_image(), true))
+                    .addToBackStack(null).commit();
+        }
+    }
 }

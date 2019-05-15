@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.voyce.R;
+import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.UserFollowingMusician;
 import com.squareup.picasso.Picasso;
 
@@ -54,10 +55,6 @@ public class UserFollowingAdapter extends RecyclerView.Adapter<UserFollowingAdap
         UserFollowingMusician userFollowingMusician = mMusicians.get(i);
         Picasso.get().load(userFollowingMusician.getImage()).into(viewHolder.mMusicianImage);
         viewHolder.mMusicianName.setText(userFollowingMusician.getName());
-    }
-
-    public interface ListItemClickListener {
-        void onListItemClick(int index);
     }
 
     @Override

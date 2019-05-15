@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.voyce.R;
+import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.UserFollowingMusician;
 import com.android.voyce.ui.main.MainActivity;
 import com.android.voyce.ui.musiciandetails.MusicianFragment;
@@ -31,7 +32,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserFollowingFragment extends Fragment implements UserFollowingAdapter.ListItemClickListener {
+public class UserFollowingFragment extends Fragment implements ListItemClickListener {
 
     private UserFollowingAdapter mAdapter;
     private TextView mNoFollowing;
@@ -88,7 +89,7 @@ public class UserFollowingFragment extends Fragment implements UserFollowingAdap
                 UserFollowingMusician user = mAdapter.getData().get(index);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.fragments_container, MusicianFragment.newInstance(
-                        user.getId(), user.getName(), user.getImage()));
+                        user.getId(), user.getName(), user.getImage(), false));
                 transaction.addToBackStack(null);
                 transaction.commit();
             }

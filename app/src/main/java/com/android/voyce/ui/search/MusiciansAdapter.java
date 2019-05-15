@@ -17,11 +17,11 @@ import java.util.List;
 
 public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.MusiciansAdapterViewHolder> {
 
-    private final ListItemClickListener mOnClickListener;
+    private final RecyclerViewItemClickListener mOnClickListener;
     private List<User> mMusiciansData = new ArrayList<>();
     private String mAdapterName;
 
-    public MusiciansAdapter(ListItemClickListener listItemClickListener, String adapterName) {
+    public MusiciansAdapter(RecyclerViewItemClickListener listItemClickListener, String adapterName) {
         mOnClickListener = listItemClickListener;
         mAdapterName = adapterName;
     }
@@ -89,7 +89,7 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
         }
     }
 
-    public interface ListItemClickListener {
+    public interface RecyclerViewItemClickListener {
         void onListItemClick(int index, String adapterName);
     }
 

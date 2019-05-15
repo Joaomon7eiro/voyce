@@ -308,8 +308,9 @@ public class MusicianDetailsRepository {
     public void handleSponsor(String signalId, String userName, final Proposal proposal) {
         if (!mBolIsSponsoring) {
             Map<String, Object> hashMapSponsoring = new HashMap<>();
-            hashMapSponsoring.put("user_image", mUserFollowingMusician.getImage());
+            hashMapSponsoring.put("user_id", mUserFollowingMusician.getId());
             hashMapSponsoring.put("user_name", mUserFollowingMusician.getName());
+            hashMapSponsoring.put("user_image", mUserFollowingMusician.getImage());
             hashMapSponsoring.put("price", proposal.getPrice());
             hashMapSponsoring.put("name", proposal.getName());
 
@@ -334,8 +335,9 @@ public class MusicianDetailsRepository {
                     userSponsoringProposal.setName(proposal.getName());
                     userSponsoringProposal.setPrice(proposal.getPrice());
                     userSponsoringProposal.setSponsor_id(mUserFollowingMusician.getFollower_id());
-                    userSponsoringProposal.setUser_image(mUserFollowingMusician.getImage());
+                    userSponsoringProposal.setUser_id(mUserFollowingMusician.getId());
                     userSponsoringProposal.setUser_name(mUserFollowingMusician.getName());
+                    userSponsoringProposal.setUser_image(mUserFollowingMusician.getImage());
 
                     mUserSponsoringDao.insertUserSponsoringProposal(userSponsoringProposal);
                 }

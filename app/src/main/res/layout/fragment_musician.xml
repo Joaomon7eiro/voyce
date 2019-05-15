@@ -48,7 +48,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.android.voyce.customclasses.CapitalizedTextView
+            <com.android.voyce.common.customclasses.CapitalizedTextView
                 android:id="@+id/musician_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -317,7 +317,7 @@
                         app:tabSelectedTextColor="@color/colorAccent"
                         app:tabTextAppearance="@style/TabLayoutTextAppearance" />
 
-                    <com.android.voyce.customclasses.WrapContentViewPager
+                    <com.android.voyce.common.customclasses.WrapContentViewPager
                         android:id="@+id/musician_view_pager"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />

@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SearchResultsFragment extends Fragment implements MusiciansAdapter.ListItemClickListener {
+public class SearchResultsFragment extends Fragment implements MusiciansAdapter.RecyclerViewItemClickListener {
 
 
     private ProgressBar mProgressBar;
@@ -138,7 +138,7 @@ public class SearchResultsFragment extends Fragment implements MusiciansAdapter.
         if (ConnectivityHelper.isConnected(getContext())) {
             User musician = mAdapter.getData().get(index);
             MusicianFragment musicianFragment = MusicianFragment.newInstance(musician.getId(),
-                    musician.getName(), musician.getImage());
+                    musician.getName(), musician.getImage(), false);
 
             if (getFragmentManager() != null) {
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();

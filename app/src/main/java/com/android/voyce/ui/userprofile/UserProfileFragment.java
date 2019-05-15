@@ -100,7 +100,7 @@ public class UserProfileFragment extends Fragment {
                 view.scrollTo(mImage.getLeft() / 2, 0);
             }
         });
-        Picasso.get().load(mUserImage).placeholder(R.drawable.profile_placeholder).into(mImage);
+        Picasso.get().load(mUserImage).placeholder(R.drawable.profile_placeholder).fit().into(mImage);
         Picasso.get().load(R.drawable.followers).placeholder(R.drawable.followers).fit().into(followers);
         Picasso.get().load(R.drawable.sponsoring).placeholder(R.drawable.sponsoring).fit().into(sponsoring);
         Picasso.get().load(R.drawable.settings).placeholder(R.drawable.settings).fit().into(settings);
