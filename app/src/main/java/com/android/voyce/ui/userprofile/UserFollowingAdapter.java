@@ -53,7 +53,7 @@ public class UserFollowingAdapter extends RecyclerView.Adapter<UserFollowingAdap
     @Override
     public void onBindViewHolder(@NonNull UserFollowingAdapterViewHolder viewHolder, int i) {
         UserFollowingMusician userFollowingMusician = mMusicians.get(i);
-        Picasso.get().load(userFollowingMusician.getImage()).into(viewHolder.mMusicianImage);
+        Picasso.get().load(userFollowingMusician.getImage()).placeholder(R.drawable.profile_placeholder).into(viewHolder.mMusicianImage);
         viewHolder.mMusicianName.setText(userFollowingMusician.getName());
     }
 

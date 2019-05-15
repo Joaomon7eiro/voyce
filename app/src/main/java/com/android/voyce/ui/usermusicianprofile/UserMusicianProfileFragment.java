@@ -138,6 +138,32 @@ public class UserMusicianProfileFragment extends Fragment {
             }
         });
 
+        TextView sponsorsLabel = view.findViewById(R.id.sponsors_label);
+        sponsorsLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final UserFollowingAdapter adapter = new UserFollowingAdapter(null);
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                View dialogView = LayoutInflater
+                        .from(getContext())
+                        .inflate(R.layout.followers_sponsors_listeners_dialog,
+                                null,
+                                false);
+                RecyclerView listRecyclerView = dialogView.findViewById(R.id.followers_sponsors_listeners_rv);
+                listRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                listRecyclerView.setAdapter(adapter);
+                listRecyclerView.setHasFixedSize(true);
+                builder.setView(dialogView);
+                builder.show();
+                mViewModel.getSponsors().observe(getViewLifecycleOwner(), new Observer<List<UserFollowingMusician>>() {
+                    @Override
+                    public void onChanged(List<UserFollowingMusician> userFollowingMusicians) {
+                        adapter.setData(userFollowingMusicians);
+                    }
+                });
+            }
+        });
+
         if (mUserType == 0) {
             mContainer.setVisibility(View.GONE);
             mBecameMusician.setVisibility(View.VISIBLE);

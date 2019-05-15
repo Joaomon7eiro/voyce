@@ -19,6 +19,7 @@ public class UserMusicianProfileViewModel extends AndroidViewModel {
     private LiveData<Goal> mGoalLiveData;
     private LiveData<List<Proposal>> mProposals;
     private LiveData<List<UserFollowingMusician>> mFollowersLiveData;
+    private LiveData<List<UserFollowingMusician>> mSponsorsLiveData;
     private UserMusicianRepository mRepository;
 
     public UserMusicianProfileViewModel(@NonNull Application application) {
@@ -35,6 +36,7 @@ public class UserMusicianProfileViewModel extends AndroidViewModel {
         mGoalLiveData = mRepository.getGoalValue();
         mProposals = mRepository.getProposals();
         mFollowersLiveData = mRepository.getFollowers();
+        mSponsorsLiveData = mRepository.getSponsors();
     }
 
     @NonNull
@@ -52,5 +54,9 @@ public class UserMusicianProfileViewModel extends AndroidViewModel {
 
     public LiveData<List<UserFollowingMusician>> getFollowers() {
         return mFollowersLiveData;
+    }
+
+    public LiveData<List<UserFollowingMusician>> getSponsors() {
+        return mSponsorsLiveData;
     }
 }

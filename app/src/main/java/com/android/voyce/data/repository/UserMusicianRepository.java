@@ -74,4 +74,22 @@ public class UserMusicianRepository {
 
         return liveData;
     }
+
+    public LiveData<List<UserFollowingMusician>> getSponsors() {
+        CollectionReference reference = FirebaseFirestore.getInstance()
+                .collection("user_sponsors")
+                .document(mUserId)
+                .collection("users");
+
+        final MutableLiveData<List<UserFollowingMusician>> liveData = new MutableLiveData<>();
+
+        reference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                liveData.postValue(queryDocumentSnapshots.toObjects(UserFollowingMusician.class));
+            }
+        });
+
+        return liveData;
+    }
 }

@@ -387,6 +387,20 @@ public class MusicianDetailsRepository {
             mIsSponsoring.setValue(false);
             mBolIsSponsoring = false;
         }
+
+        final DocumentReference reference = mUsersCollectionReference.document(mUserFollowingMusician.getId());
+        CollectionReference followersReference = mSponsorsCollectionReference.document(mUserFollowingMusician.getId()).collection("users");
+        followersReference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                if (queryDocumentSnapshots != null) {
+                    final long sponsorsNumber = queryDocumentSnapshots.size();
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("sponsors", sponsorsNumber);
+                    reference.update(map);
+                }
+            }
+        });
     }
 
     public LiveData<Boolean> getProposalLoading() {

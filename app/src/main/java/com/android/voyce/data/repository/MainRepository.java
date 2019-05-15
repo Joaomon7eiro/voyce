@@ -94,6 +94,7 @@ public class MainRepository {
         CollectionReference proposalsCollectionReference = userReference.collection("proposals");
         CollectionReference followingReference = mDb.collection("user_following").document(mUserId).collection("users");
         CollectionReference followersReference = mDb.collection("user_followers").document(mUserId).collection("users");
+        CollectionReference sponsorsReference = mDb.collection("user_sponsors").document(mUserId).collection("users");
         CollectionReference sponsoringReference = mDb.collection("user_sponsoring").document(mUserId).collection("sponsoring");
         CollectionReference userFeedReference = mDb.collection("feed").document(mUserId).collection("posts");
 
@@ -205,6 +206,17 @@ public class MainRepository {
                 if (queryDocumentSnapshots != null) {
                     Map<String, Object> map = new HashMap<>();
                     map.put("followers", queryDocumentSnapshots.size());
+                    userReference.update(map);
+                }
+            }
+        });
+
+        sponsorsReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                if (queryDocumentSnapshots != null) {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("sponsors", queryDocumentSnapshots.size());
                     userReference.update(map);
                 }
             }
