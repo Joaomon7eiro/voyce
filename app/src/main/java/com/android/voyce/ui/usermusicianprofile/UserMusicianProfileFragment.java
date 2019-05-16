@@ -244,7 +244,7 @@ public class UserMusicianProfileFragment extends Fragment {
                         ));
                         if (user.getImage() != null) {
                             Picasso.get().load(user.getImage())
-                                    .placeholder(R.drawable.profile_placeholder).fit().into(mImage);
+                                    .placeholder(R.drawable.profile_placeholder).into(mImage);
                         }
                     }
                 }

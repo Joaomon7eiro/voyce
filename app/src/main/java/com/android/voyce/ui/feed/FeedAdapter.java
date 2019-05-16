@@ -71,7 +71,7 @@ public class FeedAdapter extends PagedListAdapter<Post, FeedAdapter.FeedAdapterV
         }
 
         public void bindTo(Post post) {
-            Picasso.get().load(post.getUser_image()).fit().into(mUserImage);
+            Picasso.get().load(post.getUser_image()).into(mUserImage);
             if (post.getImage() != null) {
                 mImage.setVisibility(View.VISIBLE);
                 Picasso.get().load(post.getImage()).into(mImage);

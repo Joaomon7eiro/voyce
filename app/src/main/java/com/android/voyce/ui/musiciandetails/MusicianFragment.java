@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 
 import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.Post;
+import com.android.voyce.ui.usermusicianprofile.UserMusicianProfileFragment;
 import com.android.voyce.utils.StringUtils;
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
@@ -179,7 +180,7 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
                     mName.setText(user.getName());
                     if (user.getImage() != null) {
                         Picasso.get().load(user.getImage())
-                                .placeholder(R.drawable.profile_placeholder).fit().into(mImage);
+                                .placeholder(R.drawable.profile_placeholder).into(mImage);
                     }
                     mFollowers.setText(String.valueOf(user.getFollowers()));
                     mSponsors.setText(String.valueOf(user.getSponsors()));
@@ -262,6 +263,14 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_musician, container, false);
+
+        if (mUserId.equals(mMusicianId)) {
+            getFragmentManager().popBackStack();
+            getFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragments_container, new UserMusicianProfileFragment())
+                    .commit();
+        }
 
         mContainer = view.findViewById(R.id.container_musician);
 
