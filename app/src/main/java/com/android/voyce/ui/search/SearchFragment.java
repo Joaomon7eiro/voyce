@@ -48,7 +48,6 @@ public class SearchFragment extends Fragment implements
     private MusiciansAdapter mCityMusiciansAdapter;
     private MusiciansAdapter mStateMusiciansAdapter;
 
-    private ProgressBar mProgressBar;
     private SwipeRefreshLayout mRefreshLayout;
     private SearchViewModel mViewModel;
 
@@ -155,9 +154,9 @@ public class SearchFragment extends Fragment implements
             @Override
             public void onChanged(@Nullable Boolean isLoading) {
                 if (isLoading != null && isLoading) {
-                    mProgressBar.setVisibility(View.VISIBLE);
+                    mRefreshLayout.setRefreshing(true);
                 } else {
-                    mProgressBar.setVisibility(View.GONE);
+                    mRefreshLayout.setRefreshing(false);
                 }
             }
         });
@@ -168,8 +167,6 @@ public class SearchFragment extends Fragment implements
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mRootView = inflater.inflate(R.layout.fragment_search, container, false);
-
-        mProgressBar = mRootView.findViewById(R.id.search_progress_bar);
 
         mVoyceLabel = mRootView.findViewById(R.id.on_voyce_label);
         mLocalLabel = mRootView.findViewById(R.id.local_artists_label);
@@ -270,7 +267,6 @@ public class SearchFragment extends Fragment implements
     @Override
     public void onRefresh() {
         mViewModel.refreshData(REFRESH_TIME);
-        mRefreshLayout.setRefreshing(false);
     }
 
     public void openSearchResults() {

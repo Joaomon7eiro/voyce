@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
     private FrameLayout mFrameLayout;
     private BottomNavigationView mNavigation;
     private MainViewModel mViewModel;
-    private boolean mHasFragment;
     private NavController mNavController;
     private static final int RC_PHOTO_PICKER = 2;
 
@@ -121,17 +120,8 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
 
         mNoInternetConnection = findViewById(R.id.no_connection_text);
         mFrameLayout = findViewById(R.id.main_content);
-
-        if (savedInstanceState != null) {
-            mHasFragment = savedInstanceState.getBoolean(KEY_HAS_FRAGMENT);
-        }
     }
 
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean("key_has_fragment", mHasFragment);
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

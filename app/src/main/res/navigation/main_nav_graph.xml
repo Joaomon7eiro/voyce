@@ -12,7 +12,11 @@
         tools:layout="@layout/fragment_feed" >
         <action
             android:id="@+id/action_navigation_feed_to_musicianFragment"
-            app:destination="@id/musicianFragment" />
+            app:destination="@id/musicianFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
 
     <fragment
@@ -22,10 +26,18 @@
         tools:layout="@layout/fragment_search" >
         <action
             android:id="@+id/action_navigation_search_to_musicianFragment"
-            app:destination="@id/musicianFragment" />
+            app:destination="@id/musicianFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_navigation_search_to_searchResultsFragment2"
-            app:destination="@id/searchResultsFragment" />
+            app:destination="@id/searchResultsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
 
     <fragment
@@ -35,16 +47,32 @@
         tools:layout="@layout/fragment_user_profile" >
         <action
             android:id="@+id/action_navigation_profile_to_userFollowingFragment"
-            app:destination="@id/userFollowingFragment" />
+            app:destination="@id/userFollowingFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_navigation_profile_to_userSponsorsFragment"
-            app:destination="@id/userSponsorsFragment" />
+            app:destination="@id/userSponsorsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_navigation_profile_to_userSettingsFragment"
-            app:destination="@id/userSettingsFragment" />
+            app:destination="@id/userSettingsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_navigation_profile_to_userEditFragment"
-            app:destination="@id/userEditFragment" />
+            app:destination="@id/userEditFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
 
     <fragment
@@ -67,12 +95,6 @@
         <argument
             android:name="scrollToPlans"
             app:argType="boolean" />
-        <action
-            android:id="@+id/action_musicianFragment_to_navigation_feed"
-            app:destination="@id/navigation_feed" />
-        <action
-            android:id="@+id/action_musicianFragment_to_searchResultsFragment"
-            app:destination="@id/searchResultsFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchResultsFragment"
@@ -81,13 +103,18 @@
         tools:layout="@layout/fragment_search_results" >
         <action
             android:id="@+id/action_searchResultsFragment_to_musicianFragment"
-            app:destination="@id/musicianFragment" />
-        <action
-            android:id="@+id/action_searchResultsFragment_to_navigation_search"
-            app:destination="@id/navigation_search" />
+            app:destination="@id/musicianFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_searchResultsFragment_to_navigation_musician"
-            app:destination="@id/navigation_musician" />
+            app:destination="@id/navigation_musician"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/userFollowingFragment"
@@ -96,7 +123,11 @@
         tools:layout="@layout/fragment_user_following" >
         <action
             android:id="@+id/action_userFollowingFragment_to_musicianFragment"
-            app:destination="@id/musicianFragment" />
+            app:destination="@id/musicianFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/userSponsorsFragment"
@@ -105,7 +136,11 @@
         tools:layout="@layout/fragment_user_sponsors" >
         <action
             android:id="@+id/action_userSponsorsFragment_to_musicianFragment"
-            app:destination="@id/musicianFragment" />
+            app:destination="@id/musicianFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/userSettingsFragment"

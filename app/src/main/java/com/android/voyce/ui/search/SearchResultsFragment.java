@@ -53,7 +53,7 @@ public class SearchResultsFragment extends Fragment implements MusiciansAdapter.
     private View.OnClickListener mBackOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Navigation.findNavController(mRootView).navigate(R.id.action_searchResultsFragment_to_navigation_search);
+            Navigation.findNavController(mRootView).popBackStack();
         }
     };
 

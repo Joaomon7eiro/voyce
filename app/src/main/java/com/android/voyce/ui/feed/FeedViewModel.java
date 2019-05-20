@@ -21,7 +21,7 @@ public class FeedViewModel extends AndroidViewModel {
     FeedViewModel(@NonNull Application application) {
         super(application);
         mRepository = FeedRepository.getInstance(application);
-        mRepository.refreshData(REFRESH_DELAY, true);
+        mRepository.refreshData(REFRESH_DELAY);
         mPostLiveData = mRepository.getPosts();
         mIsLoading = mRepository.getIsLoading();
     }
@@ -35,6 +35,6 @@ public class FeedViewModel extends AndroidViewModel {
     }
 
     public void refreshData(long refresh) {
-        mRepository.refreshData(refresh, false);
+        mRepository.refreshData(refresh);
     }
 }

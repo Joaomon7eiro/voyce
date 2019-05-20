@@ -32,6 +32,7 @@ public class FeedRepository {
     private final Executor mExecutor;
     private FirebaseFirestore mDb = FirebaseFirestore.getInstance();
     private static FirebaseUser mCurrentUser;
+    private static boolean mNewUser;
     private MutableLiveData<Boolean> mIsLoading = new MutableLiveData<>();
     private long mLastRefreshTime = System.currentTimeMillis();
 
@@ -46,7 +47,17 @@ public class FeedRepository {
                     AppDatabase.getInstance(application).userPostDao(),
                     AppExecutors.getInstance().getDiskIO());
         }
-        mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (mCurrentUser != null) {
+            if (!mCurrentUser.getUid().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
+                mNewUser = true;
+            } else {
+                mNewUser = false;
+            }
+        } else {
+            mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
+            mNewUser = true;
+        }
         return sInstance;
     }
 
@@ -63,10 +74,10 @@ public class FeedRepository {
         return new LivePagedListBuilder<>(factory, config).setBoundaryCallback(boundaryCallback).build();
     }
 
-    public void refreshData(final long refreshDelay, final boolean isFirstRefresh) {
+    public void refreshData(final long refreshDelay) {
         long currentTimeInMillis = System.currentTimeMillis();
 
-        if (currentTimeInMillis - mLastRefreshTime > refreshDelay || isFirstRefresh) {
+        if (currentTimeInMillis - mLastRefreshTime > refreshDelay || mNewUser) {
             mLastRefreshTime = currentTimeInMillis;
 
             mIsLoading.setValue(true);
@@ -89,6 +100,8 @@ public class FeedRepository {
                     mIsLoading.setValue(false);
                 }
             });
+        } else {
+            mIsLoading.setValue(false);
         }
     }
 

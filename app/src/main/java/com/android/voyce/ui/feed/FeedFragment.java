@@ -47,7 +47,6 @@ public class FeedFragment extends Fragment
     private NestedScrollView mContainer;
     private FeedAdapter mAdapter;
     private FeedViewModel mViewModel;
-    private ProgressBar mProgressBar;
     private SwipeRefreshLayout mRefresh;
     private TextView mNoFeed;
     private int mUserType;
@@ -97,7 +96,6 @@ public class FeedFragment extends Fragment
 
         mRecyclerView = mRootView.findViewById(R.id.feed_rv);
         mNoFeed = mRootView.findViewById(R.id.no_feed);
-        mProgressBar = mRootView.findViewById(R.id.feed_progress_bar);
 
         mRefresh = mRootView.findViewById(R.id.feed_refresh);
         mRefresh.setOnRefreshListener(this);
@@ -150,9 +148,9 @@ public class FeedFragment extends Fragment
             @Override
             public void onChanged(@Nullable Boolean isLoading) {
                 if (isLoading != null && isLoading) {
-                    mProgressBar.setVisibility(View.VISIBLE);
+                    mRefresh.setRefreshing(true);
                 } else {
-                    mProgressBar.setVisibility(View.GONE);
+                    mRefresh.setRefreshing(false);
                 }
             }
         });
@@ -161,7 +159,6 @@ public class FeedFragment extends Fragment
     @Override
     public void onRefresh() {
         mViewModel.refreshData(TimeUnit.MINUTES.toMillis(1));
-        mRefresh.setRefreshing(false);
     }
 
     public void scrollToStart() {

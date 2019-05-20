@@ -68,14 +68,6 @@
                 android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:visibility="gone" />
-
-            <ProgressBar
-                android:id="@+id/feed_progress_bar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:visibility="gone" />
-
         </FrameLayout>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

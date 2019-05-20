@@ -152,6 +152,8 @@ public class SearchRepository {
                     }
                 }
             });
+        } else {
+            mIsLoading.setValue(false);
         }
     }
 
