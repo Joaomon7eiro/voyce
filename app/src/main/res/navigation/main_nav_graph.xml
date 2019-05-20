@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav_graph"
+    app:startDestination="@id/navigation_feed">
+
+    <fragment
+        android:id="@+id/navigation_feed"
+        android:name="com.android.voyce.ui.feed.FeedFragment"
+        android:label="fragment_feed"
+        tools:layout="@layout/fragment_feed" >
+        <action
+            android:id="@+id/action_navigation_feed_to_musicianFragment"
+            app:destination="@id/musicianFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_search"
+        android:name="com.android.voyce.ui.search.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_navigation_search_to_musicianFragment"
+            app:destination="@id/musicianFragment" />
+        <action
+            android:id="@+id/action_navigation_search_to_searchResultsFragment2"
+            app:destination="@id/searchResultsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.android.voyce.ui.userprofile.UserProfileFragment"
+        android:label="fragment_user_profile"
+        tools:layout="@layout/fragment_user_profile" >
+        <action
+            android:id="@+id/action_navigation_profile_to_userFollowingFragment"
+            app:destination="@id/userFollowingFragment" />
+        <action
+            android:id="@+id/action_navigation_profile_to_userSponsorsFragment"
+            app:destination="@id/userSponsorsFragment" />
+        <action
+            android:id="@+id/action_navigation_profile_to_userSettingsFragment"
+            app:destination="@id/userSettingsFragment" />
+        <action
+            android:id="@+id/action_navigation_profile_to_userEditFragment"
+            app:destination="@id/userEditFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_musician"
+        android:name="com.android.voyce.ui.usermusicianprofile.UserMusicianProfileFragment"
+        android:label="fragment_user_musician_profile"
+        tools:layout="@layout/fragment_user_musician_profile" />
+    <fragment
+        android:id="@+id/musicianFragment"
+        android:name="com.android.voyce.ui.musiciandetails.MusicianFragment"
+        android:label="fragment_musician"
+        tools:layout="@layout/fragment_musician" >
+        <argument
+            android:name="id"
+            app:argType="string" />
+        <argument android:name="name"
+            app:argType="string" />
+        <argument android:name="image"
+            app:argType="string" />
+        <argument
+            android:name="scrollToPlans"
+            app:argType="boolean" />
+        <action
+            android:id="@+id/action_musicianFragment_to_navigation_feed"
+            app:destination="@id/navigation_feed" />
+        <action
+            android:id="@+id/action_musicianFragment_to_searchResultsFragment"
+            app:destination="@id/searchResultsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchResultsFragment"
+        android:name="com.android.voyce.ui.search.SearchResultsFragment"
+        android:label="fragment_search_results"
+        tools:layout="@layout/fragment_search_results" >
+        <action
+            android:id="@+id/action_searchResultsFragment_to_musicianFragment"
+            app:destination="@id/musicianFragment" />
+        <action
+            android:id="@+id/action_searchResultsFragment_to_navigation_search"
+            app:destination="@id/navigation_search" />
+        <action
+            android:id="@+id/action_searchResultsFragment_to_navigation_musician"
+            app:destination="@id/navigation_musician" />
+    </fragment>
+    <fragment
+        android:id="@+id/userFollowingFragment"
+        android:name="com.android.voyce.ui.userprofile.UserFollowingFragment"
+        android:label="fragment_user_following"
+        tools:layout="@layout/fragment_user_following" >
+        <action
+            android:id="@+id/action_userFollowingFragment_to_musicianFragment"
+            app:destination="@id/musicianFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/userSponsorsFragment"
+        android:name="com.android.voyce.ui.userprofile.UserSponsorsFragment"
+        android:label="fragment_user_sponsors"
+        tools:layout="@layout/fragment_user_sponsors" >
+        <action
+            android:id="@+id/action_userSponsorsFragment_to_musicianFragment"
+            app:destination="@id/musicianFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/userSettingsFragment"
+        android:name="com.android.voyce.ui.userprofile.UserSettingsFragment"
+        android:label="fragment_user_settings"
+        tools:layout="@layout/fragment_user_settings" />
+    <fragment
+        android:id="@+id/userEditFragment"
+        android:name="com.android.voyce.ui.userprofile.UserEditFragment"
+        android:label="fragment_user_edit"
+        tools:layout="@layout/fragment_user_edit" />
+</navigation>

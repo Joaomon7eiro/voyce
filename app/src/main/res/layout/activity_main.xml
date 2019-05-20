@@ -8,12 +8,13 @@
     android:orientation="vertical"
     tools:context=".ui.main.MainActivity">
 
-    <FrameLayout
-        android:id="@+id/fragments_container"
+    <fragment
+        android:id="@+id/main_content"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/navigation_border"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/main_nav_graph" />
 
     <TextView
         android:id="@+id/no_connection_text"

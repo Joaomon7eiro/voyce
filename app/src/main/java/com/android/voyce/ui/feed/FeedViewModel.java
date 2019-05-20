@@ -1,6 +1,7 @@
 package com.android.voyce.ui.feed;
 
 import android.app.Application;
+
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.annotation.NonNull;
@@ -17,17 +18,10 @@ public class FeedViewModel extends AndroidViewModel {
     private LiveData<PagedList<Post>> mPostLiveData;
     private LiveData<Boolean> mIsLoading;
 
-    public FeedViewModel(@NonNull Application application) {
+    FeedViewModel(@NonNull Application application) {
         super(application);
         mRepository = FeedRepository.getInstance(application);
-    }
-
-    public void init(Boolean firstTimeCreated) {
-        if (firstTimeCreated != null) {
-            mRepository.refreshData(REFRESH_DELAY, true);
-        } else {
-            mRepository.refreshData(REFRESH_DELAY, false);
-        }
+        mRepository.refreshData(REFRESH_DELAY, true);
         mPostLiveData = mRepository.getPosts();
         mIsLoading = mRepository.getIsLoading();
     }

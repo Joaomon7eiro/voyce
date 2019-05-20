@@ -10,6 +10,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -33,6 +34,7 @@ public class UserSponsorsFragment extends Fragment implements ListItemClickListe
     private TextView mNoSponsoring;
     private LinearLayout mContainer;
     private UserSponsoringAdapter mAdapter;
+    private View mRootView;
 
     public UserSponsorsFragment() {
         // Required empty public constructor
@@ -47,27 +49,23 @@ public class UserSponsorsFragment extends Fragment implements ListItemClickListe
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_user_sponsors, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_user_sponsors, container, false);
 
-        Toolbar toolbar = view.findViewById(R.id.toolbar_sponsors);
+        Toolbar toolbar = mRootView.findViewById(R.id.toolbar_sponsors);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
 
         toolbar.setNavigationIcon(R.drawable.ic_action_back);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFragmentManager()
-                        .beginTransaction()
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                        .replace(R.id.fragments_container, new UserProfileFragment())
-                        .commit();
+                Navigation.findNavController(mRootView).popBackStack();
             }
         });
 
-        mNoSponsoring = view.findViewById(R.id.no_sponsoring);
-        mContainer = view.findViewById(R.id.sponsoring_container);
+        mNoSponsoring = mRootView.findViewById(R.id.no_sponsoring);
+        mContainer = mRootView.findViewById(R.id.sponsoring_container);
 
-        RecyclerView recyclerView = view.findViewById(R.id.rv_user_sponsoring);
+        RecyclerView recyclerView = mRootView.findViewById(R.id.rv_user_sponsoring);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -75,7 +73,7 @@ public class UserSponsorsFragment extends Fragment implements ListItemClickListe
         mAdapter = new UserSponsoringAdapter(this);
         recyclerView.setAdapter(mAdapter);
 
-        return view;
+        return mRootView;
     }
 
     @Override
@@ -102,13 +100,12 @@ public class UserSponsorsFragment extends Fragment implements ListItemClickListe
     public void onListItemClick(int index) {
         UserSponsoringProposal proposal = mAdapter.getData().get(index);
         if (proposal != null) {
-            getFragmentManager()
-                    .beginTransaction()
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                    .replace(R.id.fragments_container,
-                            MusicianFragment.newInstance(proposal.getUser_id(),
-                                    proposal.getUser_name(), proposal.getUser_image(), true))
-                    .addToBackStack(null).commit();
+            UserSponsorsFragmentDirections.ActionUserSponsorsFragmentToMusicianFragment action =
+                    UserSponsorsFragmentDirections.actionUserSponsorsFragmentToMusicianFragment(
+                    proposal.getUser_id(),
+                    proposal.getUser_name(), proposal.getUser_image(), true);
+
+           Navigation.findNavController(mRootView).navigate(action);
         }
     }
 }

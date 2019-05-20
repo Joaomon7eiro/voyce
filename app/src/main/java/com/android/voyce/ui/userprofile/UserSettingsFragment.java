@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,24 +43,20 @@ public class UserSettingsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_user_settings, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_user_settings, container, false);
 
-        Toolbar toolbar = view.findViewById(R.id.toolbar_settings);
+        Toolbar toolbar = rootView.findViewById(R.id.toolbar_settings);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
         toolbar.setNavigationIcon(R.drawable.ic_action_back);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFragmentManager()
-                        .beginTransaction()
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                        .replace(R.id.fragments_container, new UserProfileFragment())
-                        .commit();
+                Navigation.findNavController(rootView).popBackStack();
             }
         });
 
-        TextView logout = view.findViewById(R.id.settings_logout);
+        TextView logout = rootView.findViewById(R.id.settings_logout);
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,7 +87,7 @@ public class UserSettingsFragment extends Fragment {
             }
         });
 
-        return view;
+        return rootView;
     }
 
 }

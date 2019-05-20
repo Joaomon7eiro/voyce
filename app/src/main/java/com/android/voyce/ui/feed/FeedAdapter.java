@@ -25,8 +25,8 @@ public class FeedAdapter extends PagedListAdapter<Post, FeedAdapter.FeedAdapterV
 
     private ListItemClickListener mOnListItemClickListener;
 
-    public FeedAdapter(@NonNull DiffUtil.ItemCallback<Post> diffCallback,
-                       ListItemClickListener listItemClickListener) {
+    FeedAdapter(@NonNull DiffUtil.ItemCallback<Post> diffCallback,
+                ListItemClickListener listItemClickListener) {
         super(diffCallback);
         mOnListItemClickListener = listItemClickListener;
     }
@@ -59,7 +59,7 @@ public class FeedAdapter extends PagedListAdapter<Post, FeedAdapter.FeedAdapterV
         TextView mText;
         TextView mTime;
 
-        public FeedAdapterViewHolder(@NonNull View itemView) {
+        FeedAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
             mUserImage = itemView.findViewById(R.id.post_user_image);
             mUserName = itemView.findViewById(R.id.post_user_name);
@@ -70,7 +70,7 @@ public class FeedAdapter extends PagedListAdapter<Post, FeedAdapter.FeedAdapterV
             mUserName.setOnClickListener(this);
         }
 
-        public void bindTo(Post post) {
+        void bindTo(Post post) {
             Picasso.get().load(post.getUser_image()).into(mUserImage);
             if (post.getImage() != null) {
                 mImage.setVisibility(View.VISIBLE);
@@ -81,7 +81,7 @@ public class FeedAdapter extends PagedListAdapter<Post, FeedAdapter.FeedAdapterV
             mTime.setText(formatDate(post.getTimestamp()));
         }
 
-        public void bindPlaceholder() {
+        void bindPlaceholder() {
             Picasso.get().load(R.drawable.profile_placeholder).into(mUserImage);
             mText.setText("");
             mUserName.setText("");

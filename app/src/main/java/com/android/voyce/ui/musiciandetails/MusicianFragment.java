@@ -2,12 +2,15 @@ package com.android.voyce.ui.musiciandetails;
 
 
 import android.app.AlertDialog;
+
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -18,7 +21,9 @@ import com.android.voyce.utils.StringUtils;
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 import com.google.android.material.tabs.TabLayout;
+
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.SnapHelper;
@@ -28,6 +33,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import android.text.format.DateUtils;
@@ -99,6 +105,9 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
     private boolean mScrollToPlans = false;
     private Handler mScrollHandler;
     private static final int SCROLL_DELAY = 600;
+
+    private View mRootView;
+
     private Runnable mScrollRunnable = new Runnable() {
         @Override
         public void run() {
@@ -111,13 +120,11 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
     private View.OnClickListener mBackOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if (getFragmentManager() != null && getFragmentManager().getBackStackEntryCount() > 0) {
-                if (ConnectivityHelper.isConnected(getContext())) {
-                    getFragmentManager().popBackStack();
-                } else {
-                    MainActivity activity = (MainActivity) getActivity();
-                    if (activity != null) activity.setLayoutVisibility(false);
-                }
+            if (ConnectivityHelper.isConnected(getContext())) {
+                Navigation.findNavController(mRootView).popBackStack();
+            } else {
+                MainActivity activity = (MainActivity) getActivity();
+                if (activity != null) activity.setLayoutVisibility(false);
             }
         }
     };
@@ -142,14 +149,11 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Bundle args = getArguments();
-
-        if (args != null) {
-            mMusicianId = args.getString(Constants.KEY_MUSICIAN_ID);
-            mMusicianName = args.getString(Constants.KEY_MUSICIAN_NAME);
-            mMusicianImage = args.getString(Constants.KEY_MUSICIAN_IMAGE);
-            mScrollToPlans = args.getBoolean("scroll");
-        }
+        MusicianFragmentArgs args = MusicianFragmentArgs.fromBundle(getArguments());
+        mMusicianId = args.getId();
+        mMusicianName = args.getName();
+        mMusicianImage = args.getImage();
+        mScrollToPlans = args.getScrollToPlans();
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         mUserId = sharedPreferences.getString(Constants.KEY_CURRENT_USER_ID, null);
@@ -262,35 +266,27 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_musician, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_musician, container, false);
 
-        if (mUserId.equals(mMusicianId)) {
-            getFragmentManager().popBackStack();
-            getFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragments_container, new UserMusicianProfileFragment())
-                    .commit();
-        }
+        mContainer = mRootView.findViewById(R.id.container_musician);
 
-        mContainer = view.findViewById(R.id.container_musician);
+        mGoalContainer = mRootView.findViewById(R.id.goal_card);
+        mProposalsContainer = mRootView.findViewById(R.id.proposal_card);
 
-        mGoalContainer = view.findViewById(R.id.goal_card);
-        mProposalsContainer = view.findViewById(R.id.proposal_card);
+        mSponsors = mRootView.findViewById(R.id.musician_sponsors_number);
+        mFollowers = mRootView.findViewById(R.id.musician_followers_number);
+        mListeners = mRootView.findViewById(R.id.musician_listeners_number);
+        mLocation = mRootView.findViewById(R.id.musician_location);
+        mGoalValue = mRootView.findViewById(R.id.musician_goal_value);
+        mGoalDescription = mRootView.findViewById(R.id.goal_description);
+        mGoalProgress = mRootView.findViewById(R.id.sb_goal_progress);
+        mImage = mRootView.findViewById(R.id.musician_profile_image);
+        mBackgroundImage = mRootView.findViewById(R.id.musician_background);
 
-        mSponsors = view.findViewById(R.id.musician_sponsors_number);
-        mFollowers = view.findViewById(R.id.musician_followers_number);
-        mListeners = view.findViewById(R.id.musician_listeners_number);
-        mLocation = view.findViewById(R.id.musician_location);
-        mGoalValue = view.findViewById(R.id.musician_goal_value);
-        mGoalDescription = view.findViewById(R.id.goal_description);
-        mGoalProgress = view.findViewById(R.id.sb_goal_progress);
-        mImage = view.findViewById(R.id.musician_profile_image);
-        mBackgroundImage = view.findViewById(R.id.musician_background);
-
-        ImageButton backButton = view.findViewById(R.id.musician_back_button);
+        ImageButton backButton = mRootView.findViewById(R.id.musician_back_button);
         backButton.setOnClickListener(mBackOnClickListener);
 
-        mFollowButton = view.findViewById(R.id.follow_button);
+        mFollowButton = mRootView.findViewById(R.id.follow_button);
         mFollowButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -298,19 +294,19 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
             }
         });
 
-        mProgressBar = view.findViewById(R.id.musician_progress_bar);
+        mProgressBar = mRootView.findViewById(R.id.musician_progress_bar);
 
-        ViewPager viewPager = view.findViewById(R.id.musician_view_pager);
-        TabLayout tabLayout = view.findViewById(R.id.musician_tab_layout);
+        ViewPager viewPager = mRootView.findViewById(R.id.musician_view_pager);
+        TabLayout tabLayout = mRootView.findViewById(R.id.musician_tab_layout);
 
-        mImage = view.findViewById(R.id.musician_profile_image);
-        mName = view.findViewById(R.id.musician_name);
+        mImage = mRootView.findViewById(R.id.musician_profile_image);
+        mName = mRootView.findViewById(R.id.musician_name);
 
         MusicianFragmentPagerAdapter mPagerAdapter = new MusicianFragmentPagerAdapter(getChildFragmentManager(), mTabsTitle);
         viewPager.setAdapter(mPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
-        RecyclerView recyclerView = view.findViewById(R.id.rv_musician_proposals);
+        RecyclerView recyclerView = mRootView.findViewById(R.id.rv_musician_proposals);
         mAdapter = new ProposalsAdapter(this);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -321,9 +317,9 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
 
-        setupFeedRecyclerView(view);
+        setupFeedRecyclerView(mRootView);
 
-        return view;
+        return mRootView;
     }
 
     @Override

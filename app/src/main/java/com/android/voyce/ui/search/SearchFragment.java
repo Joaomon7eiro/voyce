@@ -3,17 +3,21 @@ package com.android.voyce.ui.search;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.core.widget.NestedScrollView;
+import androidx.navigation.Navigation;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,6 +58,7 @@ public class SearchFragment extends Fragment implements
 
     private String mUserCity;
     private String mUserState;
+    private View mRootView;
 
     private static final long REFRESH_TIME = 60000;
 
@@ -162,17 +167,17 @@ public class SearchFragment extends Fragment implements
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_search, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_search, container, false);
 
-        mProgressBar = view.findViewById(R.id.search_progress_bar);
+        mProgressBar = mRootView.findViewById(R.id.search_progress_bar);
 
-        mVoyceLabel = view.findViewById(R.id.on_voyce_label);
-        mLocalLabel = view.findViewById(R.id.local_artists_label);
-        mRegionLabel = view.findViewById(R.id.region_artists_label);
+        mVoyceLabel = mRootView.findViewById(R.id.on_voyce_label);
+        mLocalLabel = mRootView.findViewById(R.id.local_artists_label);
+        mRegionLabel = mRootView.findViewById(R.id.region_artists_label);
 
-        final ScalingLayout scalingLayout = view.findViewById(R.id.scaling_layout);
+        final ScalingLayout scalingLayout = mRootView.findViewById(R.id.scaling_layout);
 
-        NestedScrollView scrollView = view.findViewById(R.id.search_scroll_container);
+        NestedScrollView scrollView = mRootView.findViewById(R.id.search_scroll_container);
         scrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             boolean isCollapsed = true;
 
@@ -194,10 +199,10 @@ public class SearchFragment extends Fragment implements
             }
         });
 
-        RelativeLayout searchContainer = view.findViewById(R.id.search_container);
+        RelativeLayout searchContainer = mRootView.findViewById(R.id.search_container);
         searchContainer.setOnClickListener(mSearchClickListener);
 
-        mRefreshLayout = view.findViewById(R.id.swipe_refresh);
+        mRefreshLayout = mRootView.findViewById(R.id.swipe_refresh);
         mRefreshLayout.setOnRefreshListener(this);
         mRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
 
@@ -209,25 +214,25 @@ public class SearchFragment extends Fragment implements
         mCityMusiciansAdapter = new MusiciansAdapter(this, Constants.ADAPTER_CITY);
         mStateMusiciansAdapter = new MusiciansAdapter(this, Constants.ADAPTER_STATE);
 
-        RecyclerView musiciansRv = view.findViewById(R.id.main_artists_rv);
+        RecyclerView musiciansRv = mRootView.findViewById(R.id.main_artists_rv);
         musiciansRv.setLayoutManager(layoutManager);
         musiciansRv.setNestedScrollingEnabled(false);
         musiciansRv.setHasFixedSize(true);
         musiciansRv.setAdapter(mMusiciansAdapter);
 
-        RecyclerView cityMusiciansRv = view.findViewById(R.id.local_artists_rv);
+        RecyclerView cityMusiciansRv = mRootView.findViewById(R.id.local_artists_rv);
         cityMusiciansRv.setLayoutManager(layoutManagerCity);
         cityMusiciansRv.setNestedScrollingEnabled(false);
         cityMusiciansRv.setHasFixedSize(true);
         cityMusiciansRv.setAdapter(mCityMusiciansAdapter);
 
-        RecyclerView stateMusiciansRv = view.findViewById(R.id.region_artists_rv);
+        RecyclerView stateMusiciansRv = mRootView.findViewById(R.id.region_artists_rv);
         stateMusiciansRv.setLayoutManager(layoutManagerState);
         stateMusiciansRv.setNestedScrollingEnabled(false);
         stateMusiciansRv.setHasFixedSize(true);
         stateMusiciansRv.setAdapter(mStateMusiciansAdapter);
 
-        return view;
+        return mRootView;
     }
 
     @Override
@@ -247,17 +252,15 @@ public class SearchFragment extends Fragment implements
                 default:
             }
             if (musician != null) {
-                MusicianFragment musicianFragment = MusicianFragment.newInstance(musician.getId(),
-                        musician.getName(), musician.getImage(), false);
+                SearchFragmentDirections.ActionNavigationSearchToMusicianFragment action =
+                        SearchFragmentDirections.actionNavigationSearchToMusicianFragment(
+                                musician.getId(),
+                                musician.getName(),
+                                musician.getImage(),
+                                false);
 
-                if (getFragmentManager() != null) {
-                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                    transaction.replace(R.id.fragments_container, musicianFragment);
-                    transaction.addToBackStack(null);
-                    transaction.commit();
-                }
+                Navigation.findNavController(mRootView).navigate(action);
             }
-
         } else {
             MainActivity activity = (MainActivity) getActivity();
             if (activity != null) activity.setLayoutVisibility(false);
@@ -271,9 +274,7 @@ public class SearchFragment extends Fragment implements
     }
 
     public void openSearchResults() {
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragments_container, new SearchResultsFragment());
-        transaction.addToBackStack(null);
-        transaction.commit();
+        Navigation.findNavController(mRootView)
+                .navigate(R.id.action_navigation_search_to_searchResultsFragment2);
     }
 }

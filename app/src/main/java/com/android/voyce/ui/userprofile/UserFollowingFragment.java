@@ -12,8 +12,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +39,7 @@ public class UserFollowingFragment extends Fragment implements ListItemClickList
     private UserFollowingAdapter mAdapter;
     private TextView mNoFollowing;
     private LinearLayout mContainer;
+    private View mRootView;
 
     public UserFollowingFragment() {
         // Required empty public constructor
@@ -51,47 +54,42 @@ public class UserFollowingFragment extends Fragment implements ListItemClickList
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_user_following, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_user_following, container, false);
 
-        Toolbar toolbar = view.findViewById(R.id.toolbar_following);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        Toolbar toolbar = mRootView.findViewById(R.id.toolbar_following);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
         toolbar.setNavigationIcon(R.drawable.ic_action_back);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFragmentManager()
-                        .beginTransaction()
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                        .replace(R.id.fragments_container, new UserProfileFragment())
-                        .commit();
+                Navigation.findNavController(mRootView).popBackStack();
             }
         });
 
+        mNoFollowing = mRootView.findViewById(R.id.no_following);
+        mContainer = mRootView.findViewById(R.id.following_container);
 
-        mNoFollowing = view.findViewById(R.id.no_following);
-        mContainer = view.findViewById(R.id.following_container);
-
-        RecyclerView recyclerView = view.findViewById(R.id.rv_user_following);
+        RecyclerView recyclerView = mRootView.findViewById(R.id.rv_user_following);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mAdapter = new UserFollowingAdapter(this);
 
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mAdapter);
-        return view;
+        return mRootView;
     }
 
     @Override
     public void onListItemClick(int index) {
         if (ConnectivityHelper.isConnected(getContext())) {
-            if (getFragmentManager() != null) {
-                UserFollowingMusician user = mAdapter.getData().get(index);
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragments_container, MusicianFragment.newInstance(
-                        user.getId(), user.getName(), user.getImage(), false));
-                transaction.addToBackStack(null);
-                transaction.commit();
+            UserFollowingMusician user = mAdapter.getData().get(index);
+            if (user != null) {
+                UserFollowingFragmentDirections.ActionUserFollowingFragmentToMusicianFragment action =
+                        UserFollowingFragmentDirections.actionUserFollowingFragmentToMusicianFragment(
+                                user.getId(), user.getName(), user.getImage(), false);
+
+                Navigation.findNavController(mRootView).navigate(action);
             }
         } else {
             MainActivity activity = (MainActivity) getActivity();

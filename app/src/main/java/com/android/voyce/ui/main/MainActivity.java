@@ -15,8 +15,11 @@ import com.android.voyce.ui.userprofile.UserEditFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 
 import android.util.Log;
 import android.view.MenuItem;
@@ -29,8 +32,6 @@ import com.android.voyce.data.model.User;
 import com.android.voyce.ui.feed.FeedFragment;
 import com.android.voyce.ui.LoginTesteActivity;
 import com.android.voyce.ui.search.SearchFragment;
-import com.android.voyce.ui.usermusicianprofile.UserMusicianProfileFragment;
-import com.android.voyce.ui.userprofile.UserProfileFragment;
 import com.android.voyce.utils.Constants;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -44,71 +45,54 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
     private FrameLayout mFrameLayout;
     private BottomNavigationView mNavigation;
     private MainViewModel mViewModel;
-    private Fragment mFragment;
+    private boolean mHasFragment;
+    private NavController mNavController;
     private static final int RC_PHOTO_PICKER = 2;
 
-    private int mCurrentMenuId = R.id.navigation_feed;
+    private static final String KEY_HAS_FRAGMENT = "key_has_fragment";
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+    private BottomNavigationView.OnNavigationItemReselectedListener mBottomNavItemReselectListener =
+            new BottomNavigationView.OnNavigationItemReselectedListener() {
+                @Override
+                public void onNavigationItemReselected(@NonNull MenuItem item) {
+                    NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                            .findFragmentById(R.id.main_content);
+                    if (navHostFragment != null) {
+                        Fragment fragment = navHostFragment.getChildFragmentManager()
+                                .getFragments()
+                                .get(0);
+                        int backStackCount = navHostFragment
+                                .getChildFragmentManager()
+                                .getBackStackEntryCount();
 
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            int menuId = item.getItemId();
+                        if (item.getItemId() == R.id.navigation_feed) {
+                            if (backStackCount > 0) {
+                                mNavController.popBackStack();
+                                return;
+                            }
+                        } else {
+                            if (backStackCount > 1) {
+                                mNavController.popBackStack();
+                                return;
+                            }
+                        }
 
-            // if its not the tab main fragment then pop the seconds fragment
-            boolean mFragPopped = false;
-
-            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-                getSupportFragmentManager().popBackStack();
-                mFragPopped = true;
-            }
-            // if is the same tab and its visibility is true then just return
-            if (mCurrentMenuId == menuId && mFrameLayout.getVisibility() != View.GONE) {
-                if (menuId == R.id.navigation_feed) {
-                    FeedFragment fragment = (FeedFragment) getSupportFragmentManager().findFragmentByTag("feed");
-                    if (fragment != null) {
-                        fragment.scrollToStart();
-                    }
-                } else if (menuId == R.id.navigation_search) {
-                    SearchFragment fragment = (SearchFragment) getSupportFragmentManager().findFragmentByTag("search");
-                    if (fragment != null && !mFragPopped) {
-                        fragment.openSearchResults();
+                        switch (item.getItemId()) {
+                            case R.id.navigation_feed:
+                                if (fragment instanceof FeedFragment) {
+                                    ((FeedFragment) fragment).scrollToStart();
+                                }
+                                break;
+                            case R.id.navigation_search:
+                                if (fragment instanceof SearchFragment) {
+                                    ((SearchFragment) fragment).openSearchResults();
+                                }
+                                break;
+                            default:
+                        }
                     }
                 }
-                return true;
-            }
-
-            Fragment fragment;
-            String tag = "";
-            switch (menuId) {
-                case R.id.navigation_feed:
-                    tag = "feed";
-                    fragment = new FeedFragment();
-                    break;
-                case R.id.navigation_search:
-                    tag = "search";
-                    setLayoutVisibility(true);
-                    fragment = new SearchFragment();
-                    break;
-                case R.id.navigation_profile:
-                    setLayoutVisibility(true);
-                    fragment = UserProfileFragment.newInstance();
-                    break;
-                case R.id.navigation_musician:
-                    setLayoutVisibility(true);
-                    fragment = UserMusicianProfileFragment.newInstance();
-                    break;
-                default:
-                    return false;
-            }
-            openFragment(fragment, tag);
-
-            mCurrentMenuId = menuId;
-
-            return true;
-        }
-    };
+            };
 
     public void setLayoutVisibility(boolean layoutVisibility) {
         if (layoutVisibility) {
@@ -120,38 +104,33 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
         }
     }
 
-    private void openFragment(Fragment fragment, String tag) {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        transaction.replace(R.id.fragments_container, fragment, tag);
-        transaction.commit();
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(R.style.AppTheme_NoActionBar);
         setContentView(R.layout.activity_main);
 
-        verifyUser(savedInstanceState);
+        verifyUser();
 
         OneSignal.addSubscriptionObserver(this);
 
         mNavigation = findViewById(R.id.navigation);
-        mNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        mNavController = Navigation.findNavController(this, R.id.main_content);
+
+        mNavigation.setOnNavigationItemReselectedListener(mBottomNavItemReselectListener);
 
         mNoInternetConnection = findViewById(R.id.no_connection_text);
-        mFrameLayout = findViewById(R.id.fragments_container);
+        mFrameLayout = findViewById(R.id.main_content);
 
         if (savedInstanceState != null) {
-            mCurrentMenuId = savedInstanceState.getInt(Constants.KEY_CURRENT_MENU_ID);
+            mHasFragment = savedInstanceState.getBoolean(KEY_HAS_FRAGMENT);
         }
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(Constants.KEY_CURRENT_MENU_ID, mCurrentMenuId);
+        outState.putBoolean("key_has_fragment", mHasFragment);
     }
 
     @Override
@@ -159,17 +138,20 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_PHOTO_PICKER) {
             if (data != null) {
-                if (mCurrentMenuId == R.id.navigation_profile) {
-                    UserEditFragment fragment = (UserEditFragment) getSupportFragmentManager().findFragmentByTag("edit");
-                    if (fragment != null) {
-                        fragment.setImageUri(data.getData());
-                    }
+                Fragment fragment = getSupportFragmentManager()
+                        .findFragmentById(R.id.main_content)
+                        .getChildFragmentManager()
+                        .getFragments()
+                        .get(0);
+
+                if (fragment instanceof UserEditFragment) {
+                    ((UserEditFragment) fragment).setImageUri(data.getData());
                 }
             }
         }
     }
 
-    private void verifyUser(final Bundle savedInstanceState) {
+    private void verifyUser() {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         final FirebaseUser currentUser = auth.getCurrentUser();
 
@@ -190,10 +172,7 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
                     edit.putInt(Constants.KEY_CURRENT_USER_TYPE, user.getType());
                     edit.apply();
 
-                    if (savedInstanceState == null && mFragment == null) {
-                        mFragment = FeedFragment.newInstance(true);
-                        openFragment(mFragment, "feed");
-                    }
+                    NavigationUI.setupWithNavController(mNavigation, mNavController);
                 }
             });
             OneSignal.setSubscription(true);
@@ -201,20 +180,6 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
             Intent intent = new Intent(this, LoginTesteActivity.class);
             startActivity(intent);
             finish();
-        }
-    }
-
-
-    @Override
-    public void onBackPressed() {
-        if (mNavigation.getSelectedItemId() == R.id.navigation_feed) {
-            super.onBackPressed();
-        } else {
-            if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
-                mNavigation.setSelectedItemId(R.id.navigation_feed);
-            } else {
-                getSupportFragmentManager().popBackStack();
-            }
         }
     }
 

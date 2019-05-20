@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -43,6 +44,7 @@ public class UserEditFragment extends Fragment {
     private StorageReference mProfileImagesStorage;
     private boolean mSaveEnabled = false;
     private ProgressBar mProgressBar;
+    private View mRootView;
 
     public UserEditFragment() {
         // Required empty public constructor
@@ -68,28 +70,24 @@ public class UserEditFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_user_edit, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_user_edit, container, false);
 
-        Toolbar toolbar = view.findViewById(R.id.toolbar_edit);
+        Toolbar toolbar = mRootView.findViewById(R.id.toolbar_edit);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
         toolbar.setNavigationIcon(R.drawable.ic_action_back);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFragmentManager()
-                        .beginTransaction()
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                        .replace(R.id.fragments_container, new UserProfileFragment())
-                        .commit();
+                Navigation.findNavController(mRootView).popBackStack();
             }
         });
 
-        mProgressBar = view.findViewById(R.id.edit_progress_bar);
+        mProgressBar = mRootView.findViewById(R.id.edit_progress_bar);
 
         mProfileImagesStorage = FirebaseStorage.getInstance().getReference().child("profile_images");
 
-        mCancelImageIcon = view.findViewById(R.id.edit_cancel_image);
+        mCancelImageIcon = mRootView.findViewById(R.id.edit_cancel_image);
         mCancelImageIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,9 +99,9 @@ public class UserEditFragment extends Fragment {
             }
         });
 
-        mEditImage = view.findViewById(R.id.edit_image);
+        mEditImage = mRootView.findViewById(R.id.edit_image);
 
-        TextView editImage = view.findViewById(R.id.edit_profile_image);
+        TextView editImage = mRootView.findViewById(R.id.edit_profile_image);
         editImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,7 +112,7 @@ public class UserEditFragment extends Fragment {
             }
         });
 
-        return view;
+        return mRootView;
     }
 
     @Override
@@ -168,11 +166,7 @@ public class UserEditFragment extends Fragment {
         task.addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                getFragmentManager()
-                        .beginTransaction()
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                        .replace(R.id.fragments_container, new UserProfileFragment())
-                        .commit();
+                Navigation.findNavController(mRootView).popBackStack();
             }
         });
     }
