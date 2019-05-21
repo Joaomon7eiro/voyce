@@ -7,6 +7,8 @@ import android.preference.PreferenceManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
@@ -16,6 +18,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.android.voyce.R;
+import com.android.voyce.databinding.FragmentUserMusicianProfileBinding;
+import com.android.voyce.databinding.FragmentUserProfileBinding;
 import com.android.voyce.utils.Constants;
 import com.squareup.picasso.Picasso;
 
@@ -26,7 +30,6 @@ public class UserProfileFragment extends Fragment {
 
 
     private String mUserImage;
-    private ImageView mImage;
 
     public UserProfileFragment() {
         // Required empty public constructor
@@ -48,57 +51,61 @@ public class UserProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View rootView = inflater.inflate(R.layout.fragment_user_profile, container, false);
+        final FragmentUserProfileBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_user_profile, container, false);
 
-        mImage = rootView.findViewById(R.id.user_profile_image);
-        ImageView followers = rootView.findViewById(R.id.followers_circle);
-        ImageView sponsoring = rootView.findViewById(R.id.sponsoring_circle);
-        ImageView playlists = rootView.findViewById(R.id.playlists_circle);
-        ImageView settings = rootView.findViewById(R.id.settings_circle);
-
-        mImage.setOnClickListener(new View.OnClickListener() {
+        binding.userProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Navigation.findNavController(rootView)
+                Navigation.findNavController(binding.getRoot())
                         .navigate(R.id.action_navigation_profile_to_userEditFragment);
             }
         });
 
-        followers.setOnClickListener(new View.OnClickListener() {
+        binding.followersCircle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Navigation.findNavController(rootView)
+                Navigation.findNavController(binding.getRoot())
                         .navigate(R.id.action_navigation_profile_to_userFollowingFragment);
             }
         });
 
-        sponsoring.setOnClickListener(new View.OnClickListener() {
+        binding.sponsoringCircle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Navigation.findNavController(rootView)
+                Navigation.findNavController(binding.getRoot())
                         .navigate(R.id.action_navigation_profile_to_userSponsorsFragment);
             }
         });
 
-        settings.setOnClickListener(new View.OnClickListener() {
+        binding.settingsCircle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Navigation.findNavController(rootView)
+                Navigation.findNavController(binding.getRoot())
                         .navigate(R.id.action_navigation_profile_to_userSettingsFragment);
             }
         });
 
-        rootView.post(new Runnable() {
+        binding.getRoot().post(new Runnable() {
             @Override
             public void run() {
-                rootView.scrollTo(mImage.getLeft() / 2, 0);
+                binding.getRoot().scrollTo(binding.userProfileImage.getLeft() / 2, 0);
             }
         });
-        Picasso.get().load(mUserImage).placeholder(R.drawable.profile_placeholder).into(mImage);
-        Picasso.get().load(R.drawable.followers).placeholder(R.drawable.followers).fit().into(followers);
-        Picasso.get().load(R.drawable.sponsoring).placeholder(R.drawable.sponsoring).fit().into(sponsoring);
-        Picasso.get().load(R.drawable.settings).placeholder(R.drawable.settings).fit().into(settings);
-        Picasso.get().load(R.drawable.playlists).placeholder(R.drawable.playlists).fit().into(playlists);
-        return rootView;
+        Picasso.get().load(mUserImage)
+                .placeholder(R.drawable.profile_placeholder).into(binding.userProfileImage);
+
+        Picasso.get().load(R.drawable.followers)
+                .placeholder(R.drawable.followers).fit().into(binding.followersCircle);
+
+        Picasso.get().load(R.drawable.sponsoring)
+                .placeholder(R.drawable.sponsoring).fit().into(binding.sponsoringCircle);
+
+        Picasso.get().load(R.drawable.settings)
+                .placeholder(R.drawable.settings).fit().into(binding.settingsCircle);
+
+        Picasso.get().load(R.drawable.playlists)
+                .placeholder(R.drawable.playlists).fit().into(binding.playlistsCircle);
+
+        return binding.getRoot();
     }
 }

@@ -40,15 +40,15 @@ public class UserMusicianProfileViewModel extends AndroidViewModel {
     }
 
     @NonNull
-    public LiveData<User> getUserLiveData() {
+    LiveData<User> getUserLiveData() {
         return mUserLiveData;
     }
 
-    public LiveData<Goal> getGoalLiveData() {
+    LiveData<Goal> getGoalLiveData() {
         return mGoalLiveData;
     }
 
-    public LiveData<List<Proposal>> getProposals() {
+    LiveData<List<Proposal>> getProposals() {
         return mProposals;
     }
 

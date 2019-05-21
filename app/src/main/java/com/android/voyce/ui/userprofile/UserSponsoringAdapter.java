@@ -1,6 +1,7 @@
 package com.android.voyce.ui.userprofile;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import com.android.voyce.R;
 import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.UserSponsoringProposal;
+import com.android.voyce.databinding.UserSponsoringListItemBinding;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -22,21 +24,41 @@ public class UserSponsoringAdapter extends RecyclerView.Adapter<UserSponsoringAd
 
     private ListItemClickListener mOnListItemClickListener;
 
-    public UserSponsoringAdapter(ListItemClickListener listItemClickListener) {
+    UserSponsoringAdapter(ListItemClickListener listItemClickListener) {
         mOnListItemClickListener = listItemClickListener;
     }
 
-    class UserSponsoringAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        ImageView mMusicianImage;
-        TextView mMusicianName;
-        TextView mProposalName;
+    @NonNull
+    @Override
+    public UserSponsoringAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        UserSponsoringListItemBinding binding =
+                DataBindingUtil.inflate(LayoutInflater.from(viewGroup.getContext()),
+                        R.layout.user_sponsoring_list_item,
+                        viewGroup,
+                        false);
+        return new UserSponsoringAdapterViewHolder(binding);
+    }
 
-        private UserSponsoringAdapterViewHolder(@NonNull View itemView) {
-            super(itemView);
-            mMusicianImage = itemView.findViewById(R.id.user_sponsoring_musician_image);
-            mMusicianName = itemView.findViewById(R.id.user_sponsoring_musician_name);
-            mProposalName = itemView.findViewById(R.id.user_sponsoring_proposal_name);
+    @Override
+    public void onBindViewHolder(@NonNull UserSponsoringAdapterViewHolder viewHolder, int i) {
+        UserSponsoringProposal userSponsoringProposal = mProposals.get(i);
+        if (userSponsoringProposal != null) {
+            viewHolder.bindTo(userSponsoringProposal);
+        }
+    }
+
+    class UserSponsoringAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private UserSponsoringListItemBinding mBinding;
+
+        private UserSponsoringAdapterViewHolder(@NonNull UserSponsoringListItemBinding binding) {
+            super(binding.getRoot());
+            mBinding = binding;
             itemView.setOnClickListener(this);
+        }
+
+        void bindTo(UserSponsoringProposal userSponsoringProposal) {
+            mBinding.setSponsoring(userSponsoringProposal);
+            mBinding.executePendingBindings();
         }
 
         @Override
@@ -44,23 +66,6 @@ public class UserSponsoringAdapter extends RecyclerView.Adapter<UserSponsoringAd
             mOnListItemClickListener.onListItemClick(getAdapterPosition());
         }
     }
-    @NonNull
-    @Override
-    public UserSponsoringAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(
-                R.layout.user_sponsoring_list_item, viewGroup, false);
-
-        return new UserSponsoringAdapterViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull UserSponsoringAdapterViewHolder viewHolder, int i) {
-        UserSponsoringProposal userSponsoringProposal = mProposals.get(i);
-        Picasso.get().load(userSponsoringProposal.getUser_image()).into(viewHolder.mMusicianImage);
-        viewHolder.mMusicianName.setText(userSponsoringProposal.getUser_name());
-        viewHolder.mProposalName.setText(userSponsoringProposal.getName());
-    }
-
 
     @Override
     public int getItemCount() {

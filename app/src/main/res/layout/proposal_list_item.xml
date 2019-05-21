@@ -1,69 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="300dp"
-    android:layout_height="wrap_content"
-    android:foreground="?android:selectableItemBackground"
-    app:cardBackgroundColor="@color/colorPrimary"
-    app:cardCornerRadius="10dp"
-    app:cardElevation="8dp"
-    app:cardUseCompatPadding="true">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="160dp">
+    <data>
+        <variable
+            name="proposal"
+            type="com.android.voyce.data.model.Proposal" />
+    </data>
 
-        <ImageView
-            android:id="@+id/proposal_image"
+    <androidx.cardview.widget.CardView
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:foreground="?android:selectableItemBackground"
+        app:cardBackgroundColor="@color/colorPrimary"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="8dp"
+        app:cardUseCompatPadding="true">
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="160dp"
-            android:contentDescription="@string/proposal_image"
-            android:scaleType="centerCrop"
-            android:src="@drawable/proposal_placeholder_image" />
-
-        <TextView
-            android:id="@+id/proposal_name"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/rounded_background"
-            android:gravity="center"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="32dp"
-            android:background="@drawable/proposal_price_rounded_background"
-            tools:ignore="RelativeOverlap">
+            android:layout_height="160dp">
 
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/dollar_icon"
-                android:src="@drawable/ic_action_sponsors" />
+                android:id="@+id/proposal_image"
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:contentDescription="@string/proposal_image"
+                android:scaleType="centerCrop"
+                android:src="@drawable/proposal_placeholder_image" />
 
             <TextView
-                android:id="@+id/proposal_price"
+                android:id="@+id/proposal_name"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="30dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/rounded_background"
                 android:gravity="center"
-                android:paddingEnd="8dp"
+                app:proposalName="@{proposal}"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:textColor="@android:color/white"
-                android:textSize="16sp"
-                tools:ignore="RtlSymmetry" />
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/proposal_price_rounded_background"
+                tools:ignore="RelativeOverlap">
 
-    </RelativeLayout>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/dollar_icon"
+                    android:src="@drawable/ic_action_sponsors" />
 
-</androidx.cardview.widget.CardView>
+                <TextView
+                    android:id="@+id/proposal_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    app:proposalPrice="@{proposal}"
+                    android:paddingEnd="8dp"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    tools:ignore="RtlSymmetry" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+</layout>

@@ -1,6 +1,8 @@
 package com.android.voyce.ui.search;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.widget.TextView;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.User;
+import com.android.voyce.databinding.MusiciansListItemBinding;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -21,7 +24,7 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
     private List<User> mMusiciansData = new ArrayList<>();
     private String mAdapterName;
 
-    public MusiciansAdapter(RecyclerViewItemClickListener listItemClickListener, String adapterName) {
+    MusiciansAdapter(RecyclerViewItemClickListener listItemClickListener, String adapterName) {
         mOnClickListener = listItemClickListener;
         mAdapterName = adapterName;
     }
@@ -29,22 +32,17 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
     @NonNull
     @Override
     public MusiciansAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.musicians_list_item,
+        MusiciansListItemBinding binding = DataBindingUtil.inflate(LayoutInflater.from(viewGroup.getContext()), R.layout.musicians_list_item,
                 viewGroup, false);
-        return new MusiciansAdapterViewHolder(view);
+        return new MusiciansAdapterViewHolder(binding);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MusiciansAdapterViewHolder musiciansAdapterViewHolder, int i) {
+    public void onBindViewHolder(@NonNull MusiciansAdapterViewHolder viewHolder, int i) {
         User musician = mMusiciansData.get(i);
-        musiciansAdapterViewHolder.mName.setText(musician.getName());
-        musiciansAdapterViewHolder.mListeners.setText(formatNumber(
-                String.valueOf(musician.getListeners())));
-        musiciansAdapterViewHolder.mFollowers.setText(formatNumber(
-                String.valueOf(musician.getFollowers())));
-        musiciansAdapterViewHolder.mSponsors.setText(formatNumber(
-                String.valueOf(musician.getSponsors())));
-        Picasso.get().load(musician.getImage()).into(musiciansAdapterViewHolder.mImage);
+        if (musician != null) {
+            viewHolder.bindTo(musician);
+        }
     }
 
     @Override
@@ -53,39 +51,25 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
         return mMusiciansData.size();
     }
 
-    private String formatNumber(String numberText) {
-        int number = Integer.parseInt(numberText);
-        String numberString;
-        if (Math.abs(number / 1000000) >= 1) {
-            numberString = number / 1000000 + "M";
-        } else if (Math.abs(number / 1000) >= 1) {
-            numberString = number / 1000 + "K";
-        } else {
-            numberString = String.valueOf(number);
-        }
-        return numberString;
-    }
 
     class MusiciansAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        ImageView mImage;
-        TextView mName;
-        TextView mListeners;
-        TextView mFollowers;
-        TextView mSponsors;
 
-        private MusiciansAdapterViewHolder(@NonNull View itemView) {
-            super(itemView);
-            mName = itemView.findViewById(R.id.musician_name);
-            mImage = itemView.findViewById(R.id.musician_image);
-            mListeners = itemView.findViewById(R.id.listeners);
-            mFollowers = itemView.findViewById(R.id.followers);
-            mSponsors = itemView.findViewById(R.id.sponsors);
+        private MusiciansListItemBinding mBinding;
+
+        private MusiciansAdapterViewHolder(@NonNull MusiciansListItemBinding binding) {
+            super(binding.getRoot());
+            mBinding = binding;
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
             mOnClickListener.onListItemClick(getAdapterPosition(), mAdapterName);
+        }
+
+        void bindTo(User musician) {
+            mBinding.setMusician(musician);
+            mBinding.executePendingBindings();
         }
     }
 

@@ -30,11 +30,11 @@ public class UserProfileViewModel extends AndroidViewModel {
         mUserSponsoringProposals = mRepository.getUserSponsoringProposals();
     }
 
-    public LiveData<List<UserFollowingMusician>> getUserFollowingMusicians() {
+    LiveData<List<UserFollowingMusician>> getUserFollowingMusicians() {
         return mUserFollowingMusicians;
     }
 
-    public LiveData<List<UserSponsoringProposal>> getUserSponsoringProposals() {
+    LiveData<List<UserSponsoringProposal>> getUserSponsoringProposals() {
         return mUserSponsoringProposals;
     }
 }

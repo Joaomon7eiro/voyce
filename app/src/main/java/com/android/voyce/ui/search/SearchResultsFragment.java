@@ -1,6 +1,8 @@
 package com.android.voyce.ui.search;
 
 
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -25,6 +27,7 @@ import android.widget.TextView;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.User;
+import com.android.voyce.databinding.FragmentSearchResultsBinding;
 import com.android.voyce.utils.ConnectivityHelper;
 import com.android.voyce.utils.Constants;
 import com.google.android.material.snackbar.Snackbar;
@@ -38,12 +41,9 @@ import java.util.List;
 public class SearchResultsFragment extends Fragment implements MusiciansAdapter.RecyclerViewItemClickListener {
 
 
-    private ProgressBar mProgressBar;
     private MusiciansAdapter mAdapter;
     private SearchResultsViewModel mViewModel;
-    private TextView mResultsLabel;
-    private TextView mNoResults;
-    private View mRootView;
+    private FragmentSearchResultsBinding mBinding;
 
     public SearchResultsFragment() {
         // Required empty public constructor
@@ -53,7 +53,7 @@ public class SearchResultsFragment extends Fragment implements MusiciansAdapter.
     private View.OnClickListener mBackOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Navigation.findNavController(mRootView).popBackStack();
+            Navigation.findNavController(mBinding.getRoot()).popBackStack();
         }
     };
 
@@ -67,13 +67,13 @@ public class SearchResultsFragment extends Fragment implements MusiciansAdapter.
             @Override
             public void onChanged(@Nullable List<User> users) {
                 if (users != null && users.size() > 0) {
-                    mNoResults.setVisibility(View.GONE);
-                    mResultsLabel.setVisibility(View.VISIBLE);
+                    mBinding.noSearchResults.setVisibility(View.GONE);
+                    mBinding.resultsLabel.setVisibility(View.VISIBLE);
                     mAdapter.setData(users);
                 } else {
-                    mResultsLabel.setVisibility(View.GONE);
+                    mBinding.resultsLabel.setVisibility(View.GONE);
                     mAdapter.setData(null);
-                    mNoResults.setVisibility(View.VISIBLE);
+                    mBinding.noSearchResults.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -82,9 +82,9 @@ public class SearchResultsFragment extends Fragment implements MusiciansAdapter.
             @Override
             public void onChanged(@Nullable Boolean isLoading) {
                 if (isLoading != null && isLoading) {
-                    mProgressBar.setVisibility(View.VISIBLE);
+                    mBinding.searchResultsProgress.setVisibility(View.VISIBLE);
                 } else {
-                    mProgressBar.setVisibility(View.GONE);
+                    mBinding.searchResultsProgress.setVisibility(View.GONE);
                 }
             }
         });
@@ -95,22 +95,15 @@ public class SearchResultsFragment extends Fragment implements MusiciansAdapter.
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        mRootView = inflater.inflate(R.layout.fragment_search_results, container, false);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_search_results, container, false);
 
-        SearchView searchView = mRootView.findViewById(R.id.search_view);
-        searchView.onActionViewExpanded();
-        EditText editText = searchView.findViewById(R.id.search_src_text);
+        mBinding.searchView.onActionViewExpanded();
+        EditText editText = mBinding.searchView.findViewById(R.id.search_src_text);
         editText.setTextColor(Color.WHITE);
 
-        mNoResults = mRootView.findViewById(R.id.no_search_results);
+        mBinding.searchBackButton.setOnClickListener(mBackOnClickListener);
 
-        ImageButton back = mRootView.findViewById(R.id.search_back_button);
-        back.setOnClickListener(mBackOnClickListener);
-
-        mProgressBar = mRootView.findViewById(R.id.search_results_progress);
-        mResultsLabel = mRootView.findViewById(R.id.results_label);
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        mBinding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 mViewModel.queryUsers(query);
@@ -126,13 +119,12 @@ public class SearchResultsFragment extends Fragment implements MusiciansAdapter.
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         mAdapter = new MusiciansAdapter(this, Constants.ADAPTER_GENERAL);
 
-        RecyclerView recyclerView = mRootView.findViewById(R.id.search_results_rv);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setAdapter(mAdapter);
+        mBinding.searchResultsRv.setLayoutManager(layoutManager);
+        mBinding.searchResultsRv.setHasFixedSize(true);
+        mBinding.searchResultsRv.setNestedScrollingEnabled(false);
+        mBinding.searchResultsRv.setAdapter(mAdapter);
 
-        return mRootView;
+        return mBinding.getRoot();
     }
 
     @Override
@@ -141,13 +133,13 @@ public class SearchResultsFragment extends Fragment implements MusiciansAdapter.
             User musician = mAdapter.getData().get(index);
 
             if (musician.getId().equals(FirebaseAuth.getInstance().getUid())) {
-                Navigation.findNavController(mRootView).navigate(R.id.action_searchResultsFragment_to_navigation_musician);
+                Navigation.findNavController(mBinding.getRoot()).navigate(R.id.action_searchResultsFragment_to_navigation_musician);
             } else {
                 SearchResultsFragmentDirections.ActionSearchResultsFragmentToMusicianFragment action =
                         SearchResultsFragmentDirections.actionSearchResultsFragmentToMusicianFragment(
                                 musician.getId(),
                                 musician.getName(), musician.getImage(), false);
-                Navigation.findNavController(mRootView).navigate(action);
+                Navigation.findNavController(mBinding.getRoot()).navigate(action);
             }
         } else {
             Snackbar.make(getView(), getContext().getResources().getString(R.string.verify_connection), Snackbar.LENGTH_LONG).show();

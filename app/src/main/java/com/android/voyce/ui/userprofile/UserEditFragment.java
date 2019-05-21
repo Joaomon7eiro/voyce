@@ -8,6 +8,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.Navigation;
@@ -23,6 +25,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.voyce.R;
+import com.android.voyce.databinding.FragmentUserEditBinding;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,13 +41,10 @@ import java.util.Map;
 
 public class UserEditFragment extends Fragment {
     private static final int RC_PHOTO_PICKER = 2;
-    private ImageView mEditImage;
-    private ImageView mCancelImageIcon;
     private Uri mSelectedImageUri;
     private StorageReference mProfileImagesStorage;
     private boolean mSaveEnabled = false;
-    private ProgressBar mProgressBar;
-    private View mRootView;
+    private FragmentUserEditBinding mBinding;
 
     public UserEditFragment() {
         // Required empty public constructor
@@ -52,8 +52,6 @@ public class UserEditFragment extends Fragment {
 
     public static UserEditFragment newInstance() {
         UserEditFragment fragment = new UserEditFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -61,48 +59,38 @@ public class UserEditFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        mRootView = inflater.inflate(R.layout.fragment_user_edit, container, false);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_user_edit, container, false);
 
-        Toolbar toolbar = mRootView.findViewById(R.id.toolbar_edit);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(mBinding.toolbarEdit);
 
-        toolbar.setNavigationIcon(R.drawable.ic_action_back);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        mBinding.toolbarEdit.setNavigationIcon(R.drawable.ic_action_back);
+        mBinding.toolbarEdit.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Navigation.findNavController(mRootView).popBackStack();
+                Navigation.findNavController(mBinding.getRoot()).popBackStack();
             }
         });
 
-        mProgressBar = mRootView.findViewById(R.id.edit_progress_bar);
-
         mProfileImagesStorage = FirebaseStorage.getInstance().getReference().child("profile_images");
 
-        mCancelImageIcon = mRootView.findViewById(R.id.edit_cancel_image);
-        mCancelImageIcon.setOnClickListener(new View.OnClickListener() {
+        mBinding.editCancelImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mSaveEnabled = false;
                 getActivity().invalidateOptionsMenu();
                 mSelectedImageUri = null;
-                mEditImage.setVisibility(View.GONE);
-                mCancelImageIcon.setVisibility(View.GONE);
+                mBinding.editImage.setVisibility(View.GONE);
+                mBinding.editCancelImage.setVisibility(View.GONE);
             }
         });
 
-        mEditImage = mRootView.findViewById(R.id.edit_image);
-
-        TextView editImage = mRootView.findViewById(R.id.edit_profile_image);
-        editImage.setOnClickListener(new View.OnClickListener() {
+        mBinding.editImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -112,7 +100,7 @@ public class UserEditFragment extends Fragment {
             }
         });
 
-        return mRootView;
+        return mBinding.getRoot();
     }
 
     @Override
@@ -136,7 +124,7 @@ public class UserEditFragment extends Fragment {
         if (item.getItemId() == R.id.save_edit_changes) {
             if (mSelectedImageUri != null) {
                 final StorageReference imageRef = mProfileImagesStorage.child(mSelectedImageUri.getLastPathSegment());
-                mProgressBar.setVisibility(View.VISIBLE);
+                mBinding.editProgressBar.setVisibility(View.VISIBLE);
                 imageRef.putFile(mSelectedImageUri)
                         .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
@@ -144,7 +132,7 @@ public class UserEditFragment extends Fragment {
                                 imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                     @Override
                                     public void onSuccess(Uri uri) {
-                                        mProgressBar.setVisibility(View.GONE);
+                                        mBinding.editProgressBar.setVisibility(View.GONE);
                                         if (uri != null) {
                                             saveChanges(uri.toString());
                                         }
@@ -166,7 +154,7 @@ public class UserEditFragment extends Fragment {
         task.addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Navigation.findNavController(mRootView).popBackStack();
+                Navigation.findNavController(mBinding.getRoot()).popBackStack();
             }
         });
     }
@@ -175,8 +163,8 @@ public class UserEditFragment extends Fragment {
         mSelectedImageUri = uri;
         mSaveEnabled = true;
         getActivity().invalidateOptionsMenu();
-        Picasso.get().load(mSelectedImageUri).into(mEditImage);
-        mEditImage.setVisibility(View.VISIBLE);
-        mCancelImageIcon.setVisibility(View.VISIBLE);
+        Picasso.get().load(mSelectedImageUri).into(mBinding.editImage);
+        mBinding.editImage.setVisibility(View.VISIBLE);
+        mBinding.editCancelImage.setVisibility(View.VISIBLE);
     }
 }

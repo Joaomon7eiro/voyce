@@ -1,16 +1,16 @@
 package com.android.voyce.ui.usermusicianprofile;
 
-import android.app.AlertDialog;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.android.voyce.R;
+import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.Proposal;
+import com.android.voyce.databinding.ProposalListItemBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,50 +18,49 @@ import java.util.List;
 public class UserMusicianProposalsAdapter extends RecyclerView.Adapter<UserMusicianProposalsAdapter.UserMusicianProposalAdapterViewHolder> {
 
     private List<Proposal> mProposals = new ArrayList<>();
+    private ListItemClickListener mOnListClickListener;
 
-    class UserMusicianProposalAdapterViewHolder extends RecyclerView.ViewHolder {
-        TextView mName;
-        TextView mPrice;
-
-        public UserMusicianProposalAdapterViewHolder(@NonNull View itemView) {
-            super(itemView);
-            mName = itemView.findViewById(R.id.proposal_name);
-            mPrice = itemView.findViewById(R.id.proposal_price);
-        }
+    UserMusicianProposalsAdapter(ListItemClickListener listItemClickListener) {
+        mOnListClickListener = listItemClickListener;
     }
 
     @NonNull
     @Override
     public UserMusicianProposalAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.proposal_list_item, viewGroup, false);
-        return new UserMusicianProposalAdapterViewHolder(view);
+        ProposalListItemBinding binding =
+                DataBindingUtil.inflate(LayoutInflater.from(viewGroup.getContext()),
+                        R.layout.proposal_list_item,
+                        viewGroup,
+                        false);
+        return new UserMusicianProposalAdapterViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final UserMusicianProposalAdapterViewHolder viewHolder, int position) {
         final Proposal proposal = mProposals.get(position);
+        if (proposal != null) {
+            viewHolder.bindTo(proposal);
+        }
+    }
 
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LayoutInflater layoutInflater = ((AppCompatActivity)viewHolder.itemView.getContext()).getLayoutInflater();
-                View view = layoutInflater.inflate(R.layout.proposal_dialog, null, false);
-                TextView name = view.findViewById(R.id.proposal_detail_name);
-                TextView price = view.findViewById(R.id.proposal_detail_price);
-                TextView description = view.findViewById(R.id.proposal_detail_description);
+    class UserMusicianProposalAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private ProposalListItemBinding mBinding;
 
-                name.setText(proposal.getName());
-                description.setText(proposal.getDescription());
-                price.setText(String.valueOf(proposal.getPrice()));
+        UserMusicianProposalAdapterViewHolder(@NonNull ProposalListItemBinding binding) {
+            super(binding.getRoot());
+            mBinding = binding;
+            itemView.setOnClickListener(this);
+        }
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(viewHolder.itemView.getContext());
-                builder.setView(view);
-                builder.show();
-            }
-        });
+        void bindTo(Proposal proposal) {
+            mBinding.setProposal(proposal);
+            mBinding.executePendingBindings();
+        }
 
-        viewHolder.mPrice.setText(String.valueOf(proposal.getPrice()));
-        viewHolder.mName.setText(proposal.getName());
+        @Override
+        public void onClick(View v) {
+            mOnListClickListener.onListItemClick(getAdapterPosition());
+        }
     }
 
     @Override
@@ -73,5 +72,9 @@ public class UserMusicianProposalsAdapter extends RecyclerView.Adapter<UserMusic
     public void setData(List<Proposal> proposals) {
         mProposals = proposals;
         notifyDataSetChanged();
+    }
+
+    public List<Proposal> getData() {
+        return mProposals;
     }
 }

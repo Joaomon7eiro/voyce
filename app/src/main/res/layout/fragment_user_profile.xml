@@ -1,131 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
-<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorPrimaryVeryDark"
-    tools:context=".ui.userprofile.UserProfileFragment">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent">
+    <data>
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/user_profile_image"
-            android:layout_width="230dp"
-            android:layout_height="230dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    </data>
 
-        <TextView
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimaryVeryDark"
+        tools:context=".ui.userprofile.UserProfileFragment">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="40dp"
-            android:background="@drawable/rounded_background"
-            android:backgroundTint="@color/colorLightTransparent"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:text="@string/profile_edit"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/user_profile_image"
-            app:layout_constraintEnd_toEndOf="@+id/user_profile_image"
-            app:layout_constraintStart_toStartOf="@+id/user_profile_image" />
+            android:layout_height="match_parent">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/followers_circle"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="100dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/user_profile_image"
-            app:layout_constraintStart_toStartOf="parent" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/user_profile_image"
+                android:layout_width="230dp"
+                android:layout_height="230dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="40dp"
-            android:text="@string/following"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/followers_circle"
-            app:layout_constraintEnd_toEndOf="@+id/followers_circle"
-            app:layout_constraintStart_toStartOf="@+id/followers_circle" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="40dp"
+                android:background="@drawable/rounded_background"
+                android:backgroundTint="@color/colorLightTransparent"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:text="@string/profile_edit"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/user_profile_image"
+                app:layout_constraintEnd_toEndOf="@+id/user_profile_image"
+                app:layout_constraintStart_toStartOf="@+id/user_profile_image" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/sponsoring_circle"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_marginStart="24dp"
-            app:layout_constraintBottom_toTopOf="@+id/followers_circle"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/followers_circle"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="100dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/user_profile_image"
+                app:layout_constraintStart_toStartOf="parent" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="40dp"
-            android:text="@string/sponsoring"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/sponsoring_circle"
-            app:layout_constraintEnd_toEndOf="@+id/sponsoring_circle"
-            app:layout_constraintStart_toStartOf="@+id/sponsoring_circle" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="40dp"
+                android:text="@string/following"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/followers_circle"
+                app:layout_constraintEnd_toEndOf="@+id/followers_circle"
+                app:layout_constraintStart_toStartOf="@+id/followers_circle" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/playlists_circle"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_marginEnd="24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/settings_circle" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/sponsoring_circle"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_marginStart="24dp"
+                app:layout_constraintBottom_toTopOf="@+id/followers_circle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="40dp"
-            android:text="@string/playlists"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/playlists_circle"
-            app:layout_constraintEnd_toEndOf="@+id/playlists_circle"
-            app:layout_constraintStart_toStartOf="@+id/playlists_circle" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="40dp"
+                android:text="@string/sponsoring"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/sponsoring_circle"
+                app:layout_constraintEnd_toEndOf="@+id/sponsoring_circle"
+                app:layout_constraintStart_toStartOf="@+id/sponsoring_circle" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/settings_circle"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="100dp"
-            android:layout_marginEnd="24dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/user_profile_image"
-            app:layout_constraintTop_toTopOf="parent" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/playlists_circle"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_marginEnd="24dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/settings_circle" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="40dp"
-            android:text="@string/settings"
-            android:textColor="@android:color/white"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/settings_circle"
-            app:layout_constraintEnd_toEndOf="@+id/settings_circle"
-            app:layout_constraintStart_toStartOf="@+id/settings_circle" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="40dp"
+                android:text="@string/playlists"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/playlists_circle"
+                app:layout_constraintEnd_toEndOf="@+id/playlists_circle"
+                app:layout_constraintStart_toStartOf="@+id/playlists_circle" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/settings_circle"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="100dp"
+                android:layout_marginEnd="24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/user_profile_image"
+                app:layout_constraintTop_toTopOf="parent" />
 
-</HorizontalScrollView>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="40dp"
+                android:text="@string/settings"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/settings_circle"
+                app:layout_constraintEnd_toEndOf="@+id/settings_circle"
+                app:layout_constraintStart_toStartOf="@+id/settings_circle" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </HorizontalScrollView>
+</layout>

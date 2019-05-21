@@ -13,7 +13,7 @@ public class SignUpViewModel extends ViewModel {
         mRepository = SignUpRepository.getInstance();
     }
 
-    public void registerUser(User user) {
+    void registerUser(User user) {
         mRepository.registerUser(user);
     }
 }

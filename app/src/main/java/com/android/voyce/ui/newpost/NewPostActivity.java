@@ -1,16 +1,25 @@
 package com.android.voyce.ui.newpost;
 
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+
 import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
+import com.android.voyce.databinding.ActivityNewPostBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -34,49 +43,39 @@ import com.squareup.picasso.Picasso;
 public class NewPostActivity extends AppCompatActivity {
     private static final int RC_PHOTO_PICKER = 1;
     private NewPostViewModel mViewModel;
-    private EditText mPostText;
     private boolean mPublishEnabled = false;
     private String mUserId;
     private String mUserName;
     private String mUserImage;
-    private ImageView mPostImage;
-    private ImageView mCancelImageIcon;
-    private ProgressBar mProgressBar;
     private StorageReference mPostImagesStorage;
-    private CoordinatorLayout mContainer;
+    private ActivityNewPostBinding mBinding;
     private Uri mSelectedImageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(R.style.AppTheme_NoActionBar);
-        setContentView(R.layout.activity_new_post);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_new_post);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
+        setSupportActionBar(mBinding.toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        mContainer = findViewById(R.id.new_post_container);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mUserImage = sharedPreferences.getString(Constants.KEY_CURRENT_USER_IMAGE, null);
         mUserName = sharedPreferences.getString(Constants.KEY_CURRENT_USER_NAME, null);
         mUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        mProgressBar = findViewById(R.id.post_progress_bar);
-        mCancelImageIcon = findViewById(R.id.cancel_image_icon);
-        mCancelImageIcon.setOnClickListener(new View.OnClickListener() {
+        mBinding.newPostContent.cancelImageIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mSelectedImageUri = null;
-                mPostImage.setVisibility(View.GONE);
-                mCancelImageIcon.setVisibility(View.GONE);
+                mViewModel.setSelectedImageUri(null);
+                mBinding.newPostContent.postImageIv.setVisibility(View.GONE);
+                mBinding.newPostContent.cancelImageIcon.setVisibility(View.GONE);
             }
         });
 
-        mPostImage = findViewById(R.id.post_image_iv);
-        mPostText = findViewById(R.id.post_text_et);
-        mPostText.addTextChangedListener(new TextWatcher() {
+        mBinding.newPostContent.postTextEt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -84,7 +83,7 @@ public class NewPostActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                mPublishEnabled = mPostText.getText().toString().length() > 0;
+                mPublishEnabled = mBinding.newPostContent.postTextEt.getText().toString().length() > 0;
                 invalidateOptionsMenu();
             }
 
@@ -96,20 +95,30 @@ public class NewPostActivity extends AppCompatActivity {
 
         mPostImagesStorage = FirebaseStorage.getInstance().getReference().child("posts_images");
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mBinding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("image/*");
                 intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
                 startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
-                mProgressBar.setVisibility(View.VISIBLE);
+                mBinding.newPostContent.postProgressBar.setVisibility(View.VISIBLE);
             }
         });
 
         mViewModel = ViewModelProviders.of(this).get(NewPostViewModel.class);
         mViewModel.init();
+        mViewModel.getSelectedImageUri().observe(this, new Observer<Uri>() {
+            @Override
+            public void onChanged(Uri uri) {
+                if (uri != null) {
+                    mSelectedImageUri = uri;
+                    Picasso.get().load(mSelectedImageUri).into(mBinding.newPostContent.postImageIv);
+                    mBinding.newPostContent.postImageIv.setVisibility(View.VISIBLE);
+                    mBinding.newPostContent.cancelImageIcon.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
     @Override
@@ -117,12 +126,9 @@ public class NewPostActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_PHOTO_PICKER) {
             if (data != null) {
-                mSelectedImageUri = data.getData();
-                Picasso.get().load(mSelectedImageUri).into(mPostImage);
-                mPostImage.setVisibility(View.VISIBLE);
-                mCancelImageIcon.setVisibility(View.VISIBLE);
+                mViewModel.setSelectedImageUri(data.getData());
             }
-            mProgressBar.setVisibility(View.GONE);
+            mBinding.newPostContent.postProgressBar.setVisibility(View.GONE);
         }
     }
 
@@ -147,8 +153,8 @@ public class NewPostActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.publish) {
             if (mSelectedImageUri != null) {
                 final StorageReference imageRef = mPostImagesStorage.child(mSelectedImageUri.getLastPathSegment());
-                mProgressBar.setVisibility(View.VISIBLE);
-                mContainer.setAlpha(0.9f);
+                mBinding.newPostContent.postProgressBar.setVisibility(View.VISIBLE);
+                mBinding.newPostContainer.setAlpha(0.9f);
                 imageRef.putFile(mSelectedImageUri)
                         .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                             @Override
@@ -156,8 +162,8 @@ public class NewPostActivity extends AppCompatActivity {
                                 imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                     @Override
                                     public void onSuccess(Uri uri) {
-                                        mProgressBar.setVisibility(View.GONE);
-                                        mContainer.setAlpha(1);
+                                        mBinding.newPostContent.postProgressBar.setVisibility(View.GONE);
+                                        mBinding.newPostContainer.setAlpha(1);
                                         if (uri != null) {
                                             publishPost(uri.toString());
                                         }
@@ -176,7 +182,7 @@ public class NewPostActivity extends AppCompatActivity {
 
     private void publishPost(String imageUrl) {
         Post post = new Post();
-        post.setText(mPostText.getText().toString());
+        post.setText(mBinding.newPostContent.postTextEt.getText().toString());
         post.setUser_id(mUserId);
         post.setUser_image(mUserImage);
         post.setImage(imageUrl);
@@ -187,7 +193,7 @@ public class NewPostActivity extends AppCompatActivity {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (mProgressBar.getVisibility() == View.VISIBLE) return false;
+        if (mBinding.newPostContent.postProgressBar.getVisibility() == View.VISIBLE) return false;
         return super.dispatchTouchEvent(ev);
     }
 }

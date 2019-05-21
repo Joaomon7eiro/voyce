@@ -59,7 +59,7 @@ public class FeedAdapter extends PagedListAdapter<Post, FeedAdapter.FeedAdapterV
 
     class FeedAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        FeedListItemBinding mBinding;
+        private FeedListItemBinding mBinding;
 
         FeedAdapterViewHolder(@NonNull FeedListItemBinding binding) {
             super(binding.getRoot());

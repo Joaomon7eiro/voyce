@@ -90,4 +90,6 @@
     <string name="profile_edit">Editar Perfil</string>
     <string name="save">Salvar</string>
     <string name="posts">Publicações</string>
+    <string name="post_image">post image</string>
+    <string name="post_cancel_icon">post cancel icon</string>
 </resources>

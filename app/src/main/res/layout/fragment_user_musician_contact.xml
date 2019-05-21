@@ -1,95 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp"
-    tools:context=".ui.usermusicianprofile.UserMusicianContactFragment">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
-        android:id="@+id/phone_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:contentDescription="@string/phone_icon"
-        android:src="@drawable/ic_action_phone" />
+    <data>
+        <variable
+            name="userPhoneNumber"
+            type="String" />
+    </data>
 
-    <TextView
-        android:id="@+id/user_phone_number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_toEndOf="@id/phone_icon"
-        android:textColor="@android:color/white"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        tools:context=".ui.usermusicianprofile.UserMusicianContactFragment">
 
-    <ImageView
-        android:id="@+id/instagram_icon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_below="@id/phone_icon"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:contentDescription="@string/instagram_icon"
-        android:src="@drawable/instagram_logo" />
+        <ImageView
+            android:id="@+id/phone_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="@string/phone_icon"
+            android:src="@drawable/ic_action_phone" />
 
-    <TextView
-        android:id="@+id/user_instagram_url"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/user_phone_number"
-        android:layout_margin="8dp"
-        android:layout_toEndOf="@id/instagram_icon"
-        android:text="@string/instagram"
-        android:textColor="@android:color/white"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        <TextView
+            android:id="@+id/user_phone_number"
+            android:layout_width="wrap_content"
+            android:text="@{userPhoneNumber}"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_toEndOf="@id/phone_icon"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
-    <ImageView
-        android:id="@+id/facebook_icon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_below="@id/instagram_icon"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:contentDescription="@string/facebook_icon"
-        android:src="@drawable/facebook_logo" />
+        <ImageView
+            android:id="@+id/instagram_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_below="@id/phone_icon"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="@string/instagram_icon"
+            android:src="@drawable/instagram_logo" />
 
-    <TextView
-        android:id="@+id/user_facebook_url"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/instagram_icon"
-        android:layout_margin="8dp"
-        android:layout_toEndOf="@id/facebook_icon"
-        android:text="@string/facebook"
-        android:textColor="@android:color/white"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        <TextView
+            android:id="@+id/user_instagram_url"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/user_phone_number"
+            android:layout_margin="8dp"
+            android:layout_toEndOf="@id/instagram_icon"
+            android:text="@string/instagram"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
-    <ImageView
-        android:id="@+id/twitter_icon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_below="@id/facebook_icon"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:contentDescription="@string/twitter_icon"
-        android:src="@drawable/twitter_logo" />
+        <ImageView
+            android:id="@+id/facebook_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_below="@id/instagram_icon"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="@string/facebook_icon"
+            android:src="@drawable/facebook_logo" />
 
-    <TextView
-        android:id="@+id/user_twitter_url"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/facebook_icon"
-        android:layout_margin="8dp"
-        android:layout_toEndOf="@id/twitter_icon"
-        android:text="@string/twitter"
-        android:textColor="@android:color/white"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        <TextView
+            android:id="@+id/user_facebook_url"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/instagram_icon"
+            android:layout_margin="8dp"
+            android:layout_toEndOf="@id/facebook_icon"
+            android:text="@string/facebook"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
-</RelativeLayout>
+        <ImageView
+            android:id="@+id/twitter_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_below="@id/facebook_icon"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="@string/twitter_icon"
+            android:src="@drawable/twitter_logo" />
+
+        <TextView
+            android:id="@+id/user_twitter_url"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/facebook_icon"
+            android:layout_margin="8dp"
+            android:layout_toEndOf="@id/twitter_icon"
+            android:text="@string/twitter"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+</layout>
 

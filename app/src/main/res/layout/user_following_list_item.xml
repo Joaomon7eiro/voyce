@@ -1,23 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:orientation="horizontal"
-    android:layout_margin="16dp"
-    android:background="?android:selectableItemBackground"
-    android:layout_height="wrap_content">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/user_following_musician_image"
-        android:layout_width="80dp"
-        android:layout_height="80dp" />
+    <data>
 
-    <com.android.voyce.common.customclasses.CapitalizedTextView
-        android:id="@+id/user_following_musician_name"
-        android:layout_width="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:textColor="@android:color/white"
-        android:layout_gravity="center"
-        android:textSize="20sp"
-        android:layout_height="wrap_content" />
-</LinearLayout>
+        <variable
+            name="musician"
+            type="com.android.voyce.data.model.UserFollowingMusician" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="?android:selectableItemBackground"
+        android:orientation="horizontal">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/user_following_musician_image"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            app:followingMusicianImage="@{musician}" />
+
+        <TextView
+            android:id="@+id/user_following_musician_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            app:followingMusicianName="@{musician}" />
+
+    </LinearLayout>
+
+</layout>

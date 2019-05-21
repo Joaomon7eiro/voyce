@@ -1,5 +1,6 @@
 package com.android.voyce.ui.musiciandetails;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -8,11 +9,12 @@ public class MusicianFragmentPagerAdapter extends FragmentPagerAdapter {
 
     private String[] mTabsTitle;
 
-    public MusicianFragmentPagerAdapter(FragmentManager fragmentManager,String[] tabsTitle) {
-        super(fragmentManager);
+    MusicianFragmentPagerAdapter(FragmentManager fragmentManager, String[] tabsTitle) {
+        super(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         mTabsTitle = tabsTitle;
     }
 
+    @NonNull
     @Override
     public Fragment getItem(int i) {
         switch (i) {

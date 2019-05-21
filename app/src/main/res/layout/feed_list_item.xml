@@ -34,7 +34,7 @@
                     android:background="?android:selectableItemBackground"
                     android:src="@drawable/profile_placeholder" />
 
-                <com.android.voyce.common.customclasses.CapitalizedTextView
+                <TextView
                     android:id="@+id/post_user_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -51,17 +51,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:image="@{post}"
+                app:postImage="@{post}"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:contentDescription="@string/post_image" />
 
             <TextView
                 android:id="@+id/post_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                app:text="@{post}"
+                app:postText="@{post}"
                 android:textColor="@android:color/white" />
 
             <TextView
@@ -69,7 +70,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                app:time="@{post}"
+                app:postTime="@{post}"
                 android:textColor="@android:color/darker_gray"
                 android:textSize="12sp" />
 

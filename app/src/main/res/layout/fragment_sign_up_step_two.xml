@@ -1,164 +1,167 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorPrimaryVeryDark"
-    tools:context=".ui.signup.SignUpStepOneFragment">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/sign_up_container"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimaryVeryDark">
+        android:background="@color/colorPrimaryVeryDark"
+        tools:context=".ui.signup.SignUpStepTwoFragment">
 
-        <View
-            android:id="@+id/line"
-            android:layout_width="50dp"
-            android:layout_height="5dp"
-            android:layout_marginStart="16dp"
-            android:background="@color/colorAccent"
-            app:layout_constraintBottom_toBottomOf="@+id/voyce_title"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/voyce_title" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/sign_up_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimaryVeryDark">
 
-        <TextView
-            android:id="@+id/voyce_title"
+            <View
+                android:id="@+id/line"
+                android:layout_width="50dp"
+                android:layout_height="5dp"
+                android:layout_marginStart="16dp"
+                android:background="@color/colorAccent"
+                app:layout_constraintBottom_toBottomOf="@+id/voyce_title"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/voyce_title" />
+
+            <TextView
+                android:id="@+id/voyce_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/register_label"
+                android:textColor="@android:color/white"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/sign_up_city"
+                app:layout_constraintStart_toEndOf="@+id/line"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <AutoCompleteTextView
+                android:id="@+id/sign_up_city"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
+                android:hint="@string/city_hint"
+                android:inputType="textCapWords"
+                android:textColor="@android:color/white"
+                android:textColorHint="@color/colorGray"
+                app:layout_constraintBottom_toTopOf="@+id/sign_up_state"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <EditText
+                android:id="@+id/sign_up_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
+                android:focusable="false"
+                android:hint="@string/state_hint"
+                android:inputType="textCapCharacters"
+                android:maxLength="2"
+                android:textColor="@android:color/white"
+                android:textColorHint="@color/colorGray"
+                app:layout_constraintBottom_toTopOf="@+id/sign_up_date_of_birth"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <com.santalu.maskedittext.MaskEditText
+                android:id="@+id/sign_up_date_of_birth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
+                android:hint="@string/date_of_birth_hint"
+                android:inputType="date"
+                android:textColor="@android:color/white"
+                android:textColorHint="@color/colorGray"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:met_mask="##/##/####" />
+
+            <TextView
+                android:id="@+id/gender_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/gender_question"
+                android:textColor="@color/colorGray"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/sign_up_date_of_birth" />
+
+            <RadioGroup
+                android:id="@+id/gender_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/gender_label">
+
+                <RadioButton
+                    android:id="@+id/gender_male"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:text="@string/gender_male"
+                    android:textColor="@android:color/white" />
+
+                <RadioButton
+                    android:id="@+id/gender_female"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gender_female"
+                    android:textColor="@android:color/white" />
+
+                <RadioButton
+                    android:id="@+id/gender_others"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gender_others"
+                    android:textColor="@android:color/white" />
+
+            </RadioGroup>
+
+            <Button
+                android:id="@+id/sign_up_login_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/transparent_bordered_inactive"
+                android:text="@string/enter"
+                android:textColor="@android:color/darker_gray"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/gender_container" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ProgressBar
+            android:id="@+id/sign_up_progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginBottom="8dp"
-            android:text="@string/register_label"
-            android:textColor="@android:color/white"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/sign_up_city"
-            app:layout_constraintStart_toEndOf="@+id/line"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <AutoCompleteTextView
-            android:id="@+id/sign_up_city"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
-            android:hint="@string/city_hint"
-            android:inputType="textCapWords"
-            android:textColor="@android:color/white"
-            android:textColorHint="@color/colorGray"
-            app:layout_constraintBottom_toTopOf="@+id/sign_up_state"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <EditText
-            android:id="@+id/sign_up_state"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
-            android:focusable="false"
-            android:hint="@string/state_hint"
-            android:inputType="textCapCharacters"
-            android:maxLength="2"
-            android:textColor="@android:color/white"
-            android:textColorHint="@color/colorGray"
-            app:layout_constraintBottom_toTopOf="@+id/sign_up_date_of_birth"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <com.santalu.maskedittext.MaskEditText
-            android:id="@+id/sign_up_date_of_birth"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
-            android:inputType="date"
-            android:hint="@string/date_of_birth_hint"
-            app:met_mask="##/##/####"
-            android:textColor="@android:color/white"
-            android:textColorHint="@color/colorGray"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/gender_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="18dp"
-            android:layout_marginTop="24dp"
-            android:text="@string/gender_question"
-            android:textColor="@color/colorGray"
-            android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sign_up_date_of_birth" />
-
-        <RadioGroup
-            android:id="@+id/gender_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/gender_label">
-
-            <RadioButton
-                android:id="@+id/gender_male"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:checked="true"
-                android:text="@string/gender_male"
-                android:textColor="@android:color/white" />
-
-            <RadioButton
-                android:id="@+id/gender_female"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/gender_female"
-                android:textColor="@android:color/white" />
-
-            <RadioButton
-                android:id="@+id/gender_others"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/gender_others"
-                android:textColor="@android:color/white" />
-
-        </RadioGroup>
-
-        <Button
-            android:id="@+id/sign_up_login_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/transparent_bordered_inactive"
-            android:text="@string/enter"
-            android:textColor="@android:color/darker_gray"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/gender_container" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <ProgressBar
-        android:id="@+id/sign_up_progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone"
-        android:layout_height="wrap_content" />
-</FrameLayout>
+            android:layout_gravity="center"
+            android:visibility="gone" />
+    </FrameLayout>
+</layout>

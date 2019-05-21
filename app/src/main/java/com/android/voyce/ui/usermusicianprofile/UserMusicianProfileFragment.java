@@ -1,6 +1,9 @@
 package com.android.voyce.ui.usermusicianprofile;
 
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -13,8 +16,12 @@ import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.Post;
 import com.android.voyce.data.model.UserFollowingMusician;
+import com.android.voyce.databinding.FeedListItemBinding;
+import com.android.voyce.databinding.FragmentUserMusicianProfileBinding;
+import com.android.voyce.databinding.ProposalDialogBinding;
 import com.android.voyce.ui.newpost.NewPostActivity;
 import com.android.voyce.ui.userprofile.UserFollowingAdapter;
 import com.android.voyce.utils.StringUtils;
@@ -30,6 +37,7 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import android.text.format.DateUtils;
@@ -58,32 +66,13 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserMusicianProfileFragment extends Fragment {
-
-    private NestedScrollView mContainer;
+public class UserMusicianProfileFragment extends Fragment implements ListItemClickListener {
 
     private String mUserId;
-    private TextView mName;
-    private TextView mFollowers;
-    private TextView mSponsors;
-    private TextView mListeners;
-    private TextView mLocation;
-    private TextView mGoalValue;
-    private TextView mGoalDescription;
-    private ImageView mImage;
-    private ImageView mBackgroundImage;
-    private ProgressBar mGoalProgress;
-
     private UserMusicianProposalsAdapter mAdapter;
-
-    private LinearLayout mGoalContainer;
-    private TextView mNoGoal;
-
-    private RelativeLayout mProposalsContainer;
-    private TextView mNoProposals;
-    private TextView mBecameMusician;
     private int mUserType;
     private UserMusicianProfileViewModel mViewModel;
+    private FragmentUserMusicianProfileBinding mBinding;
 
     public UserMusicianProfileFragment() {
         // Required empty public constructor
@@ -107,13 +96,9 @@ public class UserMusicianProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_user_musician_profile, container, false);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_user_musician_profile, container, false);
 
-        mContainer = view.findViewById(R.id.container_user_musician);
-        mBecameMusician = view.findViewById(R.id.became_musician_button);
-
-        TextView followersLabel = view.findViewById(R.id.followers_label);
-        followersLabel.setOnClickListener(new View.OnClickListener() {
+        mBinding.followersLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final UserFollowingAdapter adapter = new UserFollowingAdapter(null);
@@ -138,8 +123,7 @@ public class UserMusicianProfileFragment extends Fragment {
             }
         });
 
-        TextView sponsorsLabel = view.findViewById(R.id.sponsors_label);
-        sponsorsLabel.setOnClickListener(new View.OnClickListener() {
+        mBinding.sponsorsLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final UserFollowingAdapter adapter = new UserFollowingAdapter(null);
@@ -165,33 +149,15 @@ public class UserMusicianProfileFragment extends Fragment {
         });
 
         if (mUserType == 0) {
-            mContainer.setVisibility(View.GONE);
-            mBecameMusician.setVisibility(View.VISIBLE);
-            return view;
+            mBinding.containerUserMusician.setVisibility(View.GONE);
+            mBinding.becameMusicianButton.setVisibility(View.VISIBLE);
+            return mBinding.getRoot();
         } else {
-            mContainer.setVisibility(View.VISIBLE);
-            mBecameMusician.setVisibility(View.GONE);
+            mBinding.becameMusicianButton.setVisibility(View.GONE);
+            mBinding.containerUserMusician.setVisibility(View.VISIBLE);
         }
 
-        mGoalContainer = view.findViewById(R.id.goal_container);
-        mNoGoal = view.findViewById(R.id.no_goal);
-
-        mProposalsContainer = view.findViewById(R.id.proposals_container);
-        mNoProposals = view.findViewById(R.id.no_proposals);
-
-        mName = view.findViewById(R.id.user_musician_name);
-        mSponsors = view.findViewById(R.id.user_musician_sponsors_number);
-        mFollowers = view.findViewById(R.id.user_musician_followers_number);
-        mListeners = view.findViewById(R.id.user_musician_listeners_number);
-        mLocation = view.findViewById(R.id.user_musician_location);
-        mGoalValue = view.findViewById(R.id.user_musician_goal_value);
-        mGoalDescription = view.findViewById(R.id.goal_description);
-        mGoalProgress = view.findViewById(R.id.sb_goal_progress);
-        mImage = view.findViewById(R.id.user_musician_profile_image);
-        mBackgroundImage = view.findViewById(R.id.user_musician_background);
-
-        Button newPost = view.findViewById(R.id.new_post);
-        newPost.setOnClickListener(new View.OnClickListener() {
+        mBinding.newPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), NewPostActivity.class);
@@ -203,24 +169,21 @@ public class UserMusicianProfileFragment extends Fragment {
         UserMusicianProfileFragmentPagerAdapter pagerAdapter =
                 new UserMusicianProfileFragmentPagerAdapter(getChildFragmentManager(), tabsTitle);
 
-        ViewPager viewPager = view.findViewById(R.id.user_musician_view_pager);
-        viewPager.setAdapter(pagerAdapter);
+        mBinding.userMusicianViewPager.setAdapter(pagerAdapter);
 
-        TabLayout tabLayout = view.findViewById(R.id.user_musician_tab_layout);
-        tabLayout.setupWithViewPager(viewPager);
+        mBinding.userMusicianTabLayout.setupWithViewPager(mBinding.userMusicianViewPager);
 
-        mAdapter = new UserMusicianProposalsAdapter();
+        mAdapter = new UserMusicianProposalsAdapter(this);
 
-        RecyclerView recyclerView = view.findViewById(R.id.rv_user_musician_proposals);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        recyclerView.setAdapter(mAdapter);
+        mBinding.rvUserMusicianProposals.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        mBinding.rvUserMusicianProposals.setAdapter(mAdapter);
 
         SnapHelper snapHelper = new PagerSnapHelper();
-        snapHelper.attachToRecyclerView(recyclerView);
+        snapHelper.attachToRecyclerView(mBinding.rvUserMusicianProposals);
 
-        setupFeedRecyclerView(view);
+        setupFeedRecyclerView();
 
-        return view;
+        return mBinding.getRoot();
     }
 
     @Override
@@ -234,17 +197,10 @@ public class UserMusicianProfileFragment extends Fragment {
                 @Override
                 public void onChanged(@Nullable User user) {
                     if (user != null) {
-                        mName.setText(user.getName());
-                        mFollowers.setText(String.valueOf(user.getFollowers()));
-                        mSponsors.setText((String.valueOf(user.getSponsors())));
-                        mListeners.setText((String.valueOf(user.getListeners())));
-                        mLocation.setText(getString(R.string.user_location,
-                                StringUtils.capitalize(user.getCity()),
-                                user.getState().toUpperCase()
-                        ));
+                        mBinding.setUser(user);
                         if (user.getImage() != null) {
                             Picasso.get().load(user.getImage())
-                                    .placeholder(R.drawable.profile_placeholder).into(mImage);
+                                    .placeholder(R.drawable.profile_placeholder).into(mBinding.userMusicianProfileImage);
                         }
                     }
                 }
@@ -254,17 +210,11 @@ public class UserMusicianProfileFragment extends Fragment {
                 @Override
                 public void onChanged(@Nullable Goal goal) {
                     if (goal != null) {
-                        String goalValue = String.valueOf(goal.getValue());
-                        String currentGoalValue = String.valueOf(goal.getCurrent_value());
-                        mGoalValue.setText(getString(R.string.user_goal, currentGoalValue, goalValue));
-                        mGoalDescription.setText(goal.getDescription());
-                        int progress = (int) (goal.getCurrent_value() * 100 / goal.getValue());
-                        mGoalProgress.setProgress(progress);
-                        mNoGoal.setVisibility(View.GONE);
-                        mGoalContainer.setVisibility(View.VISIBLE);
+                        mBinding.setGoal(goal);
+                        mBinding.goalContainer.setVisibility(View.VISIBLE);
                     } else {
-                        mGoalContainer.setVisibility(View.GONE);
-                        mNoGoal.setVisibility(View.VISIBLE);
+                        mBinding.goalContainer.setVisibility(View.GONE);
+                        mBinding.noGoal.setVisibility(View.VISIBLE);
                     }
                 }
             });
@@ -273,11 +223,11 @@ public class UserMusicianProfileFragment extends Fragment {
                 @Override
                 public void onChanged(@Nullable List<Proposal> proposals) {
                     if (proposals != null && proposals.size() >= 1) {
-                        mProposalsContainer.setVisibility(View.VISIBLE);
-                        mNoProposals.setVisibility(View.GONE);
+                        mBinding.proposalsContainer.setVisibility(View.VISIBLE);
+                        mBinding.noProposals.setVisibility(View.GONE);
                     } else {
-                        mProposalsContainer.setVisibility(View.GONE);
-                        mNoProposals.setVisibility(View.VISIBLE);
+                        mBinding.proposalsContainer.setVisibility(View.GONE);
+                        mBinding.noProposals.setVisibility(View.VISIBLE);
                     }
 
                     mAdapter.setData(proposals);
@@ -286,7 +236,7 @@ public class UserMusicianProfileFragment extends Fragment {
         }
     }
 
-    private void setupFeedRecyclerView(View view) {
+    private void setupFeedRecyclerView() {
         Query baseQuery = FirebaseFirestore.getInstance()
                 .collection("user_posts")
                 .document(mUserId)
@@ -315,50 +265,46 @@ public class UserMusicianProfileFragment extends Fragment {
                     @NonNull
                     @Override
                     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                        View viewHolder = LayoutInflater.from(getContext()).inflate(R.layout.feed_list_item, parent, false);
-                        return new ViewHolder(viewHolder);
+                        FeedListItemBinding binding =
+                                DataBindingUtil.inflate(LayoutInflater.from(getContext()),
+                                        R.layout.feed_list_item,
+                                        parent,
+                                        false);
+                        return new ViewHolder(binding);
                     }
                 };
 
-        RecyclerView feedRecyclerView = view.findViewById(R.id.user_musician_feed_rv);
-        feedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        feedRecyclerView.setAdapter(adapter);
-        feedRecyclerView.setNestedScrollingEnabled(false);
+        mBinding.userMusicianFeedRv.setLayoutManager(new LinearLayoutManager(getContext()));
+        mBinding.userMusicianFeedRv.setAdapter(adapter);
+        mBinding.userMusicianFeedRv.setNestedScrollingEnabled(false);
+    }
+
+    @Override
+    public void onListItemClick(int index) {
+        final Proposal proposal = mAdapter.getData().get(index);
+        if (proposal != null) {
+            LayoutInflater layoutInflater = ((AppCompatActivity) getContext()).getLayoutInflater();
+            final ProposalDialogBinding binding = DataBindingUtil
+                    .inflate(layoutInflater, R.layout.proposal_dialog, null, false);
+
+            binding.setProposal(proposal);
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setView(binding.getRoot());
+            builder.show();
+        }
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder {
+        private FeedListItemBinding mBinding;
 
-        CircleImageView mUserImage;
-        ImageView mImage;
-        TextView mUserName;
-        TextView mText;
-        TextView mTime;
-
-        private ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            mUserImage = itemView.findViewById(R.id.post_user_image);
-            mUserName = itemView.findViewById(R.id.post_user_name);
-            mText = itemView.findViewById(R.id.post_text);
-            mImage = itemView.findViewById(R.id.post_image);
-            mTime = itemView.findViewById(R.id.post_time);
+        private ViewHolder(@NonNull FeedListItemBinding binding) {
+            super(binding.getRoot());
+            mBinding = binding;
         }
 
         private void bindTo(Post post) {
-            Picasso.get().load(post.getUser_image()).fit().into(mUserImage);
-            if (post.getImage() != null) {
-                mImage.setVisibility(View.VISIBLE);
-                Picasso.get().load(post.getImage()).into(mImage);
-            }
-            mText.setText(post.getText());
-            mUserName.setText(post.getUser_name());
-            mTime.setText(formatDate(post.getTimestamp()));
+            mBinding.setPost(post);
+            mBinding.executePendingBindings();
         }
-
-        private String formatDate(long timestamp) {
-            return (String) DateUtils.getRelativeTimeSpanString(timestamp,
-                    System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS);
-        }
-
     }
-
 }

@@ -8,6 +8,8 @@ import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.Navigation;
@@ -18,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.voyce.R;
+import com.android.voyce.databinding.FragmentUserSettingsBinding;
 import com.android.voyce.ui.LoginActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -34,30 +37,29 @@ import java.util.Map;
 public class UserSettingsFragment extends Fragment {
 
 
+    private FragmentUserSettingsBinding mBinding;
+
     public UserSettingsFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View rootView = inflater.inflate(R.layout.fragment_user_settings, container, false);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_user_settings, container, false);
 
-        Toolbar toolbar = rootView.findViewById(R.id.toolbar_settings);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(mBinding.toolbarSettings);
 
-        toolbar.setNavigationIcon(R.drawable.ic_action_back);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        mBinding.toolbarSettings.setNavigationIcon(R.drawable.ic_action_back);
+        mBinding.toolbarSettings.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Navigation.findNavController(rootView).popBackStack();
+                Navigation.findNavController(mBinding.getRoot()).popBackStack();
             }
         });
 
-        TextView logout = rootView.findViewById(R.id.settings_logout);
-        logout.setOnClickListener(new View.OnClickListener() {
+        mBinding.settingsLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -87,7 +89,7 @@ public class UserSettingsFragment extends Fragment {
             }
         });
 
-        return rootView;
+        return mBinding.getRoot();
     }
 
 }

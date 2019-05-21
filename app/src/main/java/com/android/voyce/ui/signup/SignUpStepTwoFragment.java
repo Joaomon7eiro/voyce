@@ -2,6 +2,7 @@ package com.android.voyce.ui.signup;
 
 
 
+import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Context;
@@ -12,7 +13,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
@@ -24,18 +24,14 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.City;
 import com.android.voyce.data.model.State;
 import com.android.voyce.data.model.User;
+import com.android.voyce.databinding.FragmentSignUpStepTwoBinding;
 import com.android.voyce.ui.loaduserdata.LoadUserDataActivity;
 import com.android.voyce.utils.Constants;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -58,6 +54,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -65,9 +62,6 @@ import java.util.List;
 public class SignUpStepTwoFragment extends Fragment {
 
     private FirebaseAuth mAuth;
-
-    private ConstraintLayout mContainer;
-    private ProgressBar mProgressBar;
 
     private String mName;
     private String mEmail;
@@ -79,26 +73,20 @@ public class SignUpStepTwoFragment extends Fragment {
     private boolean mIsCitySelected = false;
     private boolean mIsValidDate = false;
 
-    private AutoCompleteTextView mCityAutoComplete;
-    private EditText mState;
-    private EditText mDateOfBirth;
-
-    private RadioGroup mRadioGroup;
     private SignUpViewModel mViewModel;
+    private FragmentSignUpStepTwoBinding mBinding;
 
-    private Button mSignUp;
-
-    private View.OnClickListener mSignUpClickListener = new View.OnClickListener() {
+    private View.OnClickListener mLoginButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mContainer.setVisibility(View.GONE);
-            mProgressBar.setVisibility(View.VISIBLE);
+            mBinding.signUpContainer.setVisibility(View.GONE);
+            mBinding.signUpProgressBar.setVisibility(View.VISIBLE);
             mAuth.createUserWithEmailAndPassword(mEmail, mPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-                        int radioId = mRadioGroup.getCheckedRadioButtonId();
-                        RadioButton genderRadio = mRadioGroup.findViewById(radioId);
+                        int radioId = mBinding.genderContainer.getCheckedRadioButtonId();
+                        RadioButton genderRadio = mBinding.genderContainer.findViewById(radioId);
                         int genderInt = genderInt(genderRadio.getText().toString().toLowerCase());
 
                         User user = new User();
@@ -106,8 +94,8 @@ public class SignUpStepTwoFragment extends Fragment {
                         user.setName(mName.toLowerCase());
                         user.setEmail(mEmail);
                         user.setGender(genderInt);
-                        user.setCity(mCityAutoComplete.getText().toString().toLowerCase());
-                        user.setState(mState.getText().toString().toLowerCase());
+                        user.setCity(mBinding.signUpCity.getText().toString().toLowerCase());
+                        user.setState(mBinding.signUpState.getText().toString().toLowerCase());
 
                         mViewModel.registerUser(user);
 
@@ -117,8 +105,8 @@ public class SignUpStepTwoFragment extends Fragment {
                     } else {
                         Toast.makeText(getContext(), "Cadastro falhou", Toast.LENGTH_SHORT).show();
                     }
-                    mProgressBar.setVisibility(View.GONE);
-                    mContainer.setVisibility(View.VISIBLE);
+                    mBinding.signUpProgressBar.setVisibility(View.GONE);
+                    mBinding.signUpContainer.setVisibility(View.VISIBLE);
                 }
             });
 
@@ -133,9 +121,9 @@ public class SignUpStepTwoFragment extends Fragment {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             mIsCitySelected = false;
-            mCityAutoComplete.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorRed)));
-            mState.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorRed)));
-            mState.setText("");
+            mBinding.signUpCity.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorRed)));
+            mBinding.signUpState.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorRed)));
+            mBinding.signUpState.setText("");
             checkIsValidForm();
         }
 
@@ -147,20 +135,19 @@ public class SignUpStepTwoFragment extends Fragment {
     private TextWatcher mDateTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
         }
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (mDateOfBirth.getText().toString().length() == 10) {
-                mIsValidDate = validateDate(mDateOfBirth.getText().toString());
+            if (mBinding.signUpDateOfBirth.getText().toString().length() == 10) {
+                mIsValidDate = validateDate(mBinding.signUpDateOfBirth.getText().toString());
                 if (mIsValidDate) {
-                    mDateOfBirth.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorGreen)));
+                    mBinding.signUpDateOfBirth.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorGreen)));
                 } else {
-                    mDateOfBirth.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorRed)));
+                    mBinding.signUpDateOfBirth.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorRed)));
                 }
             } else {
-                mDateOfBirth.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorRed)));
+                mBinding.signUpDateOfBirth.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorRed)));
                 mIsValidDate = false;
             }
             checkIsValidForm();
@@ -168,12 +155,11 @@ public class SignUpStepTwoFragment extends Fragment {
 
         @Override
         public void afterTextChanged(Editable s) {
-
         }
     };
 
     private Boolean validateDate(String dateText) {
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
         try {
             format.setLenient(false);
             Date date = format.parse(dateText);
@@ -209,10 +195,10 @@ public class SignUpStepTwoFragment extends Fragment {
 
             for (State state : mStatesList) {
                 if (state.getId().equals(city.getStateId())) {
-                    mState.setText(state.getInitials());
+                    mBinding.signUpState.setText(state.getInitials());
                     mIsCitySelected = true;
-                    mCityAutoComplete.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorGreen)));
-                    mState.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorGreen)));
+                    mBinding.signUpCity.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorGreen)));
+                    mBinding.signUpState.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorGreen)));
                     checkIsValidForm();
                     break;
                 }
@@ -224,19 +210,19 @@ public class SignUpStepTwoFragment extends Fragment {
         @Override
         public boolean onTouch(View view, MotionEvent event) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                if (mDateOfBirth.isFocused()) {
+                if (mBinding.signUpDateOfBirth.isFocused()) {
                     Rect outRect = new Rect();
-                    mDateOfBirth.getGlobalVisibleRect(outRect);
+                    mBinding.signUpDateOfBirth.getGlobalVisibleRect(outRect);
                     if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
-                        mDateOfBirth.clearFocus();
+                        mBinding.signUpDateOfBirth.clearFocus();
                         hideKeyboard(view);
                     }
                 }
-                if (mCityAutoComplete.isFocused()) {
+                if (mBinding.signUpCity.isFocused()) {
                     Rect outRect = new Rect();
-                    mCityAutoComplete.getGlobalVisibleRect(outRect);
+                    mBinding.signUpCity.getGlobalVisibleRect(outRect);
                     if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
-                        mCityAutoComplete.clearFocus();
+                        mBinding.signUpCity.clearFocus();
                         hideKeyboard(view);
                     }
                 }
@@ -276,43 +262,33 @@ public class SignUpStepTwoFragment extends Fragment {
     }
 
     @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_sign_up_step_two, container, false);
+
+        mBinding.getRoot().setOnTouchListener(mTouchListener);
+
+        mBinding.signUpCity.setOnItemClickListener(mCityClickListener);
+        mBinding.signUpCity.addTextChangedListener(mCityTextWatcher);
+        setupAutoComplete();
+
+        mBinding.signUpDateOfBirth.addTextChangedListener(mDateTextWatcher);
+
+        mBinding.signUpLoginButton.setOnClickListener(mLoginButtonClickListener);
+        mBinding.signUpLoginButton.setClickable(false);
+
+        mAuth = FirebaseAuth.getInstance();
+
+        return mBinding.getRoot();
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
         mViewModel = ViewModelProviders.of(this).get(SignUpViewModel.class);
         mViewModel.init();
-    }
-
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_sign_up_step_two, container, false);
-
-        view.setOnTouchListener(mTouchListener);
-
-        mContainer = view.findViewById(R.id.sign_up_container);
-        mProgressBar = view.findViewById(R.id.sign_up_progress_bar);
-
-        mRadioGroup = view.findViewById(R.id.gender_container);
-
-        mCityAutoComplete = view.findViewById(R.id.sign_up_city);
-        mCityAutoComplete.setOnItemClickListener(mCityClickListener);
-        mCityAutoComplete.addTextChangedListener(mCityTextWatcher);
-        setupAutoComplete();
-
-        mState = view.findViewById(R.id.sign_up_state);
-
-        mDateOfBirth = view.findViewById(R.id.sign_up_date_of_birth);
-        mDateOfBirth.addTextChangedListener(mDateTextWatcher);
-
-        mSignUp = view.findViewById(R.id.sign_up_login_button);
-        mSignUp.setOnClickListener(mSignUpClickListener);
-        mSignUp.setClickable(false);
-
-        mAuth = FirebaseAuth.getInstance();
-
-        return view;
     }
 
     private void setupAutoComplete() {
@@ -353,7 +329,7 @@ public class SignUpStepTwoFragment extends Fragment {
         }
 
         ArrayAdapter<City> cityAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, mCitiesList);
-        mCityAutoComplete.setAdapter(cityAdapter);
+        mBinding.signUpCity.setAdapter(cityAdapter);
     }
 
     private String getJson(String filename) {
@@ -386,13 +362,13 @@ public class SignUpStepTwoFragment extends Fragment {
 
     private void checkIsValidForm() {
         if (mIsCitySelected && mIsValidDate) {
-            mSignUp.setBackground(getResources().getDrawable(R.drawable.transparent_bg_bordered));
-            mSignUp.setTextColor(getResources().getColor(android.R.color.white));
-            mSignUp.setClickable(true);
+            mBinding.signUpLoginButton.setBackground(getResources().getDrawable(R.drawable.transparent_bg_bordered));
+            mBinding.signUpLoginButton.setTextColor(getResources().getColor(android.R.color.white));
+            mBinding.signUpLoginButton.setClickable(true);
         } else {
-            mSignUp.setBackground(getResources().getDrawable(R.drawable.transparent_bordered_inactive));
-            mSignUp.setTextColor(getResources().getColor(android.R.color.darker_gray));
-            mSignUp.setClickable(false);
+            mBinding.signUpLoginButton.setBackground(getResources().getDrawable(R.drawable.transparent_bordered_inactive));
+            mBinding.signUpLoginButton.setTextColor(getResources().getColor(android.R.color.darker_gray));
+            mBinding.signUpLoginButton.setClickable(false);
         }
     }
 

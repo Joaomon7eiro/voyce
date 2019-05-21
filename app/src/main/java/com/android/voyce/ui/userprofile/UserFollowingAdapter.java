@@ -1,6 +1,7 @@
 package com.android.voyce.ui.userprofile;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import com.android.voyce.R;
 import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.UserFollowingMusician;
+import com.android.voyce.databinding.UserFollowingListItemBinding;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -25,36 +27,42 @@ public class UserFollowingAdapter extends RecyclerView.Adapter<UserFollowingAdap
         mOnClickListener = onClickListener;
     }
 
-    class UserFollowingAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        ImageView mMusicianImage;
-        TextView mMusicianName;
+    @NonNull
+    @Override
+    public UserFollowingAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        UserFollowingListItemBinding binding =
+                DataBindingUtil.inflate(LayoutInflater.from(viewGroup.getContext()),
+                        R.layout.user_following_list_item,
+                        viewGroup,
+                        false);
+        return new UserFollowingAdapterViewHolder(binding);
+    }
 
-        private UserFollowingAdapterViewHolder(@NonNull View itemView) {
-            super(itemView);
-            mMusicianImage = itemView.findViewById(R.id.user_following_musician_image);
-            mMusicianName = itemView.findViewById(R.id.user_following_musician_name);
+    @Override
+    public void onBindViewHolder(@NonNull UserFollowingAdapterViewHolder viewHolder, int i) {
+        UserFollowingMusician userFollowingMusician = mMusicians.get(i);
+        if (userFollowingMusician != null) {
+            viewHolder.bindTo(userFollowingMusician);
+        }
+    }
+
+    class UserFollowingAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private UserFollowingListItemBinding mBinding;
+        private UserFollowingAdapterViewHolder(@NonNull UserFollowingListItemBinding binding) {
+            super(binding.getRoot());
+            mBinding = binding;
             itemView.setOnClickListener(this);
+        }
+
+        void bindTo(UserFollowingMusician userFollowingMusician) {
+            mBinding.setMusician(userFollowingMusician);
+            mBinding.executePendingBindings();
         }
 
         @Override
         public void onClick(View view) {
             mOnClickListener.onListItemClick(getAdapterPosition());
         }
-    }
-    @NonNull
-    @Override
-    public UserFollowingAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(
-                R.layout.user_following_list_item, viewGroup, false);
-
-        return new UserFollowingAdapterViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull UserFollowingAdapterViewHolder viewHolder, int i) {
-        UserFollowingMusician userFollowingMusician = mMusicians.get(i);
-        Picasso.get().load(userFollowingMusician.getImage()).placeholder(R.drawable.profile_placeholder).into(viewHolder.mMusicianImage);
-        viewHolder.mMusicianName.setText(userFollowingMusician.getName());
     }
 
     @Override

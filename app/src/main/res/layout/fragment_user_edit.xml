@@ -1,78 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fragment_user_edit"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorPrimaryVeryDark"
-    android:fitsSystemWindows="true"
-    tools:context=".ui.userprofile.UserEditFragment">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.core.widget.NestedScrollView
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/fragment_user_edit"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimaryVeryDark"
+        android:fitsSystemWindows="true"
+        tools:context=".ui.userprofile.UserEditFragment">
 
-        <LinearLayout
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
-            <com.google.android.material.appbar.AppBarLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:theme="@style/AppTheme.NoActionBar.AppBarOverlay">
+                android:orientation="vertical">
 
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/toolbar_edit"
+                <com.google.android.material.appbar.AppBarLayout
                     android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:background="?attr/colorPrimary"
-                    app:popupTheme="@style/AppTheme.NoActionBar.PopupOverlay"
-                    app:title="@string/profile_edit"
-                    app:titleTextColor="@android:color/white" />
+                    android:layout_height="wrap_content"
+                    android:theme="@style/AppTheme.NoActionBar.AppBarOverlay">
 
-            </com.google.android.material.appbar.AppBarLayout>
+                    <androidx.appcompat.widget.Toolbar
+                        android:id="@+id/toolbar_edit"
+                        android:layout_width="match_parent"
+                        android:layout_height="?attr/actionBarSize"
+                        android:background="?attr/colorPrimary"
+                        app:popupTheme="@style/AppTheme.NoActionBar.PopupOverlay"
+                        app:title="@string/profile_edit"
+                        app:titleTextColor="@android:color/white" />
 
-            <TextView
-                android:id="@+id/edit_profile_image"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@color/colorPrimaryDark"
-                android:gravity="start"
-                android:padding="16dp"
-                android:text="@string/profile_image"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
+                </com.google.android.material.appbar.AppBarLayout>
 
-            <ImageView
-                android:id="@+id/edit_cancel_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:src="@drawable/ic_action_close"
-                android:visibility="gone" />
+                <TextView
+                    android:id="@+id/edit_profile_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/colorPrimaryDark"
+                    android:gravity="start"
+                    android:padding="16dp"
+                    android:text="@string/profile_image"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp" />
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/edit_image"
-                android:layout_width="230dp"
-                android:layout_height="230dp"
-                android:layout_gravity="center"
-                android:scaleType="centerCrop"
-                android:visibility="gone" />
+                <ImageView
+                    android:id="@+id/edit_cancel_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_action_close"
+                    android:visibility="gone" />
 
-        </LinearLayout>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/edit_image"
+                    android:layout_width="230dp"
+                    android:layout_height="230dp"
+                    android:layout_gravity="center"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
 
-    </androidx.core.widget.NestedScrollView>
+            </LinearLayout>
 
-    <ProgressBar
-        android:id="@+id/edit_progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone" />
+        </androidx.core.widget.NestedScrollView>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <ProgressBar
+            android:id="@+id/edit_progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

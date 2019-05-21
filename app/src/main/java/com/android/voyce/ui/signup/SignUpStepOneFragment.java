@@ -5,9 +5,12 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Rect;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.Navigation;
+
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -17,46 +20,28 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 
 import com.android.voyce.R;
+import com.android.voyce.databinding.FragmentSignUpStepOneBinding;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class SignUpStepOneFragment extends Fragment {
 
-    private EditText mNameEditText;
-    private EditText mEmailEditText;
-    private EditText mPasswordEditText;
-
     private boolean mIsNameValid = false;
     private boolean mIsEmailValid = false;
     private boolean mIsPasswordValid = false;
-
-    private ImageView mPasswordIcon;
     private boolean mPasswordIsVisible = false;
-
-    private Button mSignUpNext;
 
     private View.OnClickListener mNextClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out,
-                    R.anim.fade_in, R.anim.fade_out);
-            transaction.addToBackStack(null);
-            transaction.replace(R.id.sign_up_fragments_container,
-                    SignUpStepTwoFragment.newInstance(
-                            mNameEditText.getText().toString(),
-                            mEmailEditText.getText().toString().trim(),
-                            mPasswordEditText.getText().toString()
-                    ));
-            transaction.commit();
+            Navigation.findNavController(mBinding.getRoot())
+                    .navigate(R.id.action_signUpStepOneFragment_to_signUpStepTwoFragment);
         }
     };
+
     private TextWatcher mNameTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -70,12 +55,12 @@ public class SignUpStepOneFragment extends Fragment {
 
         @Override
         public void afterTextChanged(Editable s) {
-            if (mNameEditText.getText().toString().isEmpty()) {
+            if (mBinding.signUpNameEt.getText().toString().isEmpty()) {
                 mIsNameValid = false;
-                mNameEditText.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorRed)));
+                mBinding.signUpNameEt.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorRed)));
             } else {
                 mIsNameValid = true;
-                mNameEditText.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorGreen)));
+                mBinding.signUpNameEt.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorGreen)));
             }
             checkIsValidForm();
         }
@@ -93,18 +78,18 @@ public class SignUpStepOneFragment extends Fragment {
 
         @Override
         public void afterTextChanged(Editable s) {
-            String text = mEmailEditText.getText().toString();
+            String text = mBinding.signUpEmailEt.getText().toString();
             if (text.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(text).matches()) {
                 mIsEmailValid = false;
-                mEmailEditText.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorRed)));
+                mBinding.signUpEmailEt.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorRed)));
             } else {
                 mIsEmailValid = true;
-                mEmailEditText.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorGreen)));
+                mBinding.signUpEmailEt.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorGreen)));
             }
             checkIsValidForm();
         }
     };
-    private TextWatcher mPasswordTextWatcher =new TextWatcher() {
+    private TextWatcher mPasswordTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -117,13 +102,13 @@ public class SignUpStepOneFragment extends Fragment {
 
         @Override
         public void afterTextChanged(Editable s) {
-            String text = mPasswordEditText.getText().toString();
+            String text = mBinding.signUpPasswordEt.getText().toString();
             if (text.isEmpty() || text.length() < 8) {
                 mIsPasswordValid = false;
-                mPasswordEditText.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorRed)));
+                mBinding.signUpPasswordEt.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorRed)));
             } else {
                 mIsPasswordValid = true;
-                mPasswordEditText.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorGreen)));
+                mBinding.signUpPasswordEt.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorGreen)));
             }
             checkIsValidForm();
         }
@@ -133,13 +118,13 @@ public class SignUpStepOneFragment extends Fragment {
         @Override
         public void onClick(View v) {
             if (!mPasswordIsVisible) {
-                mPasswordIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_visible));
-                mPasswordEditText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                mBinding.passwordVisibilityIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_visible));
+                mBinding.signUpPasswordEt.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
             } else {
-                mPasswordIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_not_visible));
-                mPasswordEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                mBinding.passwordVisibilityIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_not_visible));
+                mBinding.signUpPasswordEt.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             }
-            mPasswordEditText.setSelection(mPasswordEditText.getText().length());
+            mBinding.signUpPasswordEt.setSelection(mBinding.signUpPasswordEt.getText().length());
             mPasswordIsVisible = !mPasswordIsVisible;
         }
     };
@@ -148,27 +133,27 @@ public class SignUpStepOneFragment extends Fragment {
         @Override
         public boolean onTouch(View view, MotionEvent event) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                if (mNameEditText.isFocused()) {
+                if (mBinding.signUpNameEt.isFocused()) {
                     Rect outRect = new Rect();
-                    mNameEditText.getGlobalVisibleRect(outRect);
-                    if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
-                        mNameEditText.clearFocus();
+                    mBinding.signUpNameEt.getGlobalVisibleRect(outRect);
+                    if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
+                        mBinding.signUpNameEt.clearFocus();
                         hideKeyboard(view);
                     }
                 }
-                if (mEmailEditText.isFocused()) {
+                if (mBinding.signUpEmailEt.isFocused()) {
                     Rect outRect = new Rect();
-                    mEmailEditText.getGlobalVisibleRect(outRect);
-                    if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
-                        mEmailEditText.clearFocus();
+                    mBinding.signUpEmailEt.getGlobalVisibleRect(outRect);
+                    if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
+                        mBinding.signUpEmailEt.clearFocus();
                         hideKeyboard(view);
                     }
                 }
-                if (mPasswordEditText.isFocused()) {
+                if (mBinding.signUpPasswordEt.isFocused()) {
                     Rect outRect = new Rect();
-                    mPasswordEditText.getGlobalVisibleRect(outRect);
-                    if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
-                        mPasswordEditText.clearFocus();
+                    mBinding.signUpPasswordEt.getGlobalVisibleRect(outRect);
+                    if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
+                        mBinding.signUpPasswordEt.clearFocus();
                         hideKeyboard(view);
                     }
                 }
@@ -176,6 +161,7 @@ public class SignUpStepOneFragment extends Fragment {
             return false;
         }
     };
+    private FragmentSignUpStepOneBinding mBinding;
 
     public SignUpStepOneFragment() {
         // Required empty public constructor
@@ -185,37 +171,31 @@ public class SignUpStepOneFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_sign_up_step_one, container, false);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_sign_up_step_one, container, false);
 
-        view.setOnTouchListener(mTouchListener);
+        mBinding.getRoot().setOnTouchListener(mTouchListener);
 
-        mNameEditText = view.findViewById(R.id.sign_up_name_et);
-        mEmailEditText = view.findViewById(R.id.sign_up_email_et);
-        mPasswordEditText = view.findViewById(R.id.sign_up_password_et);
+        mBinding.passwordVisibilityIcon.setOnClickListener(mPasswordIconClickListener);
 
-        mPasswordIcon = view.findViewById(R.id.password_visibility_icon);
-        mPasswordIcon.setOnClickListener(mPasswordIconClickListener);
+        mBinding.signUpNameEt.addTextChangedListener(mNameTextWatcher);
+        mBinding.signUpEmailEt.addTextChangedListener(mEmailTextWatcher);
+        mBinding.signUpPasswordEt.addTextChangedListener(mPasswordTextWatcher);
 
-        mNameEditText.addTextChangedListener(mNameTextWatcher);
-        mEmailEditText.addTextChangedListener(mEmailTextWatcher);
-        mPasswordEditText.addTextChangedListener(mPasswordTextWatcher);
+        mBinding.signUpNextButton.setOnClickListener(mNextClickListener);
+        mBinding.signUpNextButton.setClickable(false);
 
-        mSignUpNext = view.findViewById(R.id.sign_up_next_button);
-        mSignUpNext.setOnClickListener(mNextClickListener);
-        mSignUpNext.setClickable(false);
-
-        return view;
+        return mBinding.getRoot();
     }
 
     private void checkIsValidForm() {
         if (mIsEmailValid && mIsNameValid && mIsPasswordValid) {
-            mSignUpNext.setBackground(getResources().getDrawable(R.drawable.transparent_bg_bordered));
-            mSignUpNext.setTextColor(getResources().getColor(android.R.color.white));
-            mSignUpNext.setClickable(true);
+            mBinding.signUpNextButton.setBackground(getResources().getDrawable(R.drawable.transparent_bg_bordered));
+            mBinding.signUpNextButton.setTextColor(getResources().getColor(android.R.color.white));
+            mBinding.signUpNextButton.setClickable(true);
         } else {
-            mSignUpNext.setBackground(getResources().getDrawable(R.drawable.transparent_bordered_inactive));
-            mSignUpNext.setTextColor(getResources().getColor(android.R.color.darker_gray));
-            mSignUpNext.setClickable(false);
+            mBinding.signUpNextButton.setBackground(getResources().getDrawable(R.drawable.transparent_bordered_inactive));
+            mBinding.signUpNextButton.setTextColor(getResources().getColor(android.R.color.darker_gray));
+            mBinding.signUpNextButton.setClickable(false);
         }
     }
 

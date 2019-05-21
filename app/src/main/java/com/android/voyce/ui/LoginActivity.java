@@ -6,6 +6,8 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.voyce.R;
+import com.android.voyce.databinding.ActivityLoginBinding;
 import com.android.voyce.ui.loaduserdata.LoadUserDataActivity;
 import com.android.voyce.ui.main.MainActivity;
 import com.android.voyce.ui.signup.SignUpActivity;
@@ -35,13 +38,9 @@ import com.google.firebase.auth.FirebaseUser;
 public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
+    private ActivityLoginBinding mBinding;
 
-    private EditText mEmail;
-    private EditText mPassword;
-    private ImageView mPasswordIcon;
-    private ProgressBar mProgressBar;
     private boolean mPasswordIsVisible = false;
-    private Button mLogin;
 
     private TextWatcher loginFormTextWatcher = new TextWatcher() {
         @Override
@@ -63,11 +62,11 @@ public class LoginActivity extends AppCompatActivity {
     private View.OnClickListener mLoginClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mProgressBar.setVisibility(View.VISIBLE);
-            mLogin.setVisibility(View.INVISIBLE);
+            mBinding.loginProgressBar.setVisibility(View.VISIBLE);
+            mBinding.loginButton.setVisibility(View.INVISIBLE);
             mAuth.signInWithEmailAndPassword(
-                    mEmail.getText().toString().trim(),
-                    mPassword.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    mBinding.loginEmailEt.getText().toString().trim(),
+                    mBinding.loginPasswordEt.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
@@ -77,8 +76,8 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         Toast.makeText(getApplicationContext(), "Erro na autenticação", Toast.LENGTH_SHORT).show();
                     }
-                    mProgressBar.setVisibility(View.GONE);
-                    mLogin.setVisibility(View.VISIBLE);
+                    mBinding.loginProgressBar.setVisibility(View.GONE);
+                    mBinding.loginButton.setVisibility(View.VISIBLE);
                 }
             });
         }
@@ -88,13 +87,15 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             if (!mPasswordIsVisible) {
-                mPasswordIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_visible));
-                mPassword.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                mBinding.loginPasswordVisibilityIcon.setImageDrawable(
+                        getResources().getDrawable(R.drawable.ic_action_visible));
+                mBinding.loginPasswordEt.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
             } else {
-                mPasswordIcon.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_not_visible));
-                mPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                mBinding.loginPasswordVisibilityIcon.setImageDrawable(
+                        getResources().getDrawable(R.drawable.ic_action_not_visible));
+                mBinding.loginPasswordEt.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             }
-            mPassword.setSelection(mPassword.getText().length());
+            mBinding.loginPasswordEt.setSelection(mBinding.loginPasswordEt.getText().length());
             mPasswordIsVisible = !mPasswordIsVisible;
         }
     };
@@ -103,19 +104,19 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         public boolean onTouch(View view, MotionEvent event) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                if (mEmail.isFocused()) {
+                if (mBinding.loginEmailEt.isFocused()) {
                     Rect outRect = new Rect();
-                    mEmail.getGlobalVisibleRect(outRect);
+                    mBinding.loginEmailEt.getGlobalVisibleRect(outRect);
                     if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
-                        mEmail.clearFocus();
+                        mBinding.loginEmailEt.clearFocus();
                         hideKeyboard(view);
                     }
                 }
-                if (mPassword.isFocused()) {
+                if (mBinding.loginPasswordEt.isFocused()) {
                     Rect outRect = new Rect();
-                    mPassword.getGlobalVisibleRect(outRect);
+                    mBinding.loginPasswordEt.getGlobalVisibleRect(outRect);
                     if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
-                        mPassword.clearFocus();
+                        mBinding.loginPasswordEt.clearFocus();
                         hideKeyboard(view);
                     }
                 }
@@ -129,37 +130,29 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(R.style.AppTheme_NoActionBar);
-        setContentView(R.layout.activity_login);
+
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_login);
 
         mAuth = FirebaseAuth.getInstance();
 
-        mEmail = findViewById(R.id.login_email_et);
-        mEmail.addTextChangedListener(loginFormTextWatcher);
+        mBinding.loginEmailEt.addTextChangedListener(loginFormTextWatcher);
 
-        ConstraintLayout container = findViewById(R.id.login_container);
-        container.setOnTouchListener(mTouchListener);
+        mBinding.loginContainer.setOnTouchListener(mTouchListener);
 
-        mPassword = findViewById(R.id.login_password_et);
-        mPassword.addTextChangedListener(loginFormTextWatcher);
+        mBinding.loginPasswordEt.addTextChangedListener(loginFormTextWatcher);
 
-        mPasswordIcon = findViewById(R.id.login_password_visibility_icon);
-        mPasswordIcon.setOnClickListener(mPasswordIconClickListener);
+        mBinding.loginPasswordVisibilityIcon.setOnClickListener(mPasswordIconClickListener);
 
-        mProgressBar = findViewById(R.id.login_progress_bar);
+        mBinding.loginButton.setOnClickListener(mLoginClickListener);
+        mBinding.loginButton.setClickable(false);
 
-        mLogin = findViewById(R.id.login_button);
-        mLogin.setOnClickListener(mLoginClickListener);
-        mLogin.setClickable(false);
-
-        TextView signUp = findViewById(R.id.login_sign_up);
-        signUp.setOnClickListener(new View.OnClickListener() {
+        mBinding.loginSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
                 startActivity(intent);
             }
         });
-
     }
 
     private void hideKeyboard(View view) {
@@ -168,14 +161,16 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void checkValidForm() {
-        if (!mEmail.getText().toString().isEmpty() && !mPassword.getText().toString().isEmpty()) {
-            mLogin.setBackground(getResources().getDrawable(R.drawable.transparent_bg_bordered));
-            mLogin.setTextColor(getResources().getColor(android.R.color.white));
-            mLogin.setClickable(true);
+        if (!mBinding.loginEmailEt.getText().toString().isEmpty()
+                && !mBinding.loginPasswordEt.getText().toString().isEmpty()) {
+            mBinding.loginButton.setBackground(getResources().getDrawable(R.drawable.transparent_bg_bordered));
+            mBinding.loginButton.setTextColor(getResources().getColor(android.R.color.white));
+            mBinding.loginButton.setClickable(true);
         } else {
-            mLogin.setBackground(getResources().getDrawable(R.drawable.transparent_bordered_inactive));
-            mLogin.setTextColor(getResources().getColor(android.R.color.darker_gray));
-            mLogin.setClickable(false);
+            mBinding.loginButton.setBackground(
+                    getResources().getDrawable(R.drawable.transparent_bordered_inactive));
+            mBinding.loginButton.setTextColor(getResources().getColor(android.R.color.darker_gray));
+            mBinding.loginButton.setClickable(false);
         }
     }
 

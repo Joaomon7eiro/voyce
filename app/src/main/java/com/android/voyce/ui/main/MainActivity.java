@@ -61,16 +61,12 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
                                 .getChildFragmentManager()
                                 .getBackStackEntryCount();
 
-                        if (item.getItemId() == R.id.navigation_feed) {
-                            if (backStackCount > 0) {
-                                mNavController.popBackStack();
-                                return;
-                            }
-                        } else {
-                            if (backStackCount > 1) {
-                                mNavController.popBackStack();
-                                return;
-                            }
+                        if (item.getItemId() == R.id.navigation_feed && backStackCount > 0) {
+                            mNavController.popBackStack();
+                            return;
+                        } else if (backStackCount > 1) {
+                            mNavController.popBackStack();
+                            return;
                         }
 
                         switch (item.getItemId()) {
@@ -97,9 +93,9 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
 
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        getUser();
-
         OneSignal.addSubscriptionObserver(this);
+
+        setUser();
 
         mNavController = Navigation.findNavController(this, R.id.main_content);
 
@@ -127,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
         }
     }
 
-    private void getUser() {
+    private void setUser() {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         final FirebaseUser currentUser = auth.getCurrentUser();
 
@@ -138,16 +134,18 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
             mViewModel.getUserLiveData().observe(this, new Observer<User>() {
                 @Override
                 public void onChanged(@Nullable User user) {
-                    if (!user.getId().equals(currentUser.getUid())) return;
-                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                    SharedPreferences.Editor edit = sharedPreferences.edit();
-                    edit.putString(Constants.KEY_CURRENT_USER_ID, currentUser.getUid());
-                    edit.putString(Constants.KEY_CURRENT_USER_IMAGE, user.getImage());
-                    edit.putString(Constants.KEY_CURRENT_USER_NAME, user.getName());
-                    edit.putString(Constants.KEY_CURRENT_USER_CITY, user.getCity());
-                    edit.putString(Constants.KEY_CURRENT_USER_STATE, user.getState());
-                    edit.putInt(Constants.KEY_CURRENT_USER_TYPE, user.getType());
-                    edit.apply();
+                    if (user != null) {
+                        if (!user.getId().equals(currentUser.getUid())) return;
+                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        SharedPreferences.Editor edit = sharedPreferences.edit();
+                        edit.putString(Constants.KEY_CURRENT_USER_ID, currentUser.getUid());
+                        edit.putString(Constants.KEY_CURRENT_USER_IMAGE, user.getImage());
+                        edit.putString(Constants.KEY_CURRENT_USER_NAME, user.getName());
+                        edit.putString(Constants.KEY_CURRENT_USER_CITY, user.getCity());
+                        edit.putString(Constants.KEY_CURRENT_USER_STATE, user.getState());
+                        edit.putInt(Constants.KEY_CURRENT_USER_TYPE, user.getType());
+                        edit.apply();
+                    }
                 }
             });
         } else {

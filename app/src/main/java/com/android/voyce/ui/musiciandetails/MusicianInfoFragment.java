@@ -1,6 +1,8 @@
 package com.android.voyce.ui.musiciandetails;
 
 
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -14,7 +16,7 @@ import android.widget.TextView;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.User;
-
+import com.android.voyce.databinding.FragmentMusicianInfoBinding;
 
 
 /**
@@ -22,13 +24,22 @@ import com.android.voyce.data.model.User;
  */
 public class MusicianInfoFragment extends Fragment {
 
-    private TextView mBiography;
+    private FragmentMusicianInfoBinding mBinding;
 
     public MusicianInfoFragment() {
     }
 
     public static MusicianInfoFragment newInstance() {
         return new MusicianInfoFragment();
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_musician_info, container, false);
+
+        return mBinding.getRoot();
     }
 
     @Override
@@ -40,21 +51,10 @@ public class MusicianInfoFragment extends Fragment {
             @Override
             public void onChanged(@Nullable User user) {
                 if (user != null) {
-                    mBiography.setText(user.getBiography());
+                    mBinding.setMusician(user);
                 }
             }
         });
-    }
-
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_musician_info, container, false);
-
-        mBiography = view.findViewById(R.id.musician_biography);
-
-        return view;
     }
 
 }

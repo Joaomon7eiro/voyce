@@ -60,29 +60,17 @@ public class SearchFragment extends Fragment implements
     public SearchFragment() {
     }
 
-    public static SearchFragment newInstance(String userCity, String userState) {
+    public static SearchFragment newInstance() {
         SearchFragment fragment = new SearchFragment();
-
-        Bundle args = new Bundle();
-        args.putString(Constants.KEY_CURRENT_USER_CITY, userCity);
-        args.putString(Constants.KEY_CURRENT_USER_STATE, userState);
-        fragment.setArguments(args);
         return fragment;
     }
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle args = getArguments();
-        if (args != null) {
-            mUserCity = args.getString(Constants.KEY_CURRENT_USER_CITY, null);
-            mUserState = args.getString(Constants.KEY_CURRENT_USER_STATE, null);
-        } else {
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-            mUserCity = sharedPreferences.getString(Constants.KEY_CURRENT_USER_CITY, null);
-            mUserState = sharedPreferences.getString(Constants.KEY_CURRENT_USER_STATE, null);
-        }
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        mUserCity = sharedPreferences.getString(Constants.KEY_CURRENT_USER_CITY, null);
+        mUserState = sharedPreferences.getString(Constants.KEY_CURRENT_USER_STATE, null);
     }
 
     @Override
@@ -91,7 +79,6 @@ public class SearchFragment extends Fragment implements
         // Inflate the layout for this fragment
         mBinding = DataBindingUtil
                 .inflate(inflater, R.layout.fragment_search, container, false);
-
 
         mBinding.searchScrollContainer.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             boolean isCollapsed = true;

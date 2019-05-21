@@ -1,6 +1,7 @@
 package com.android.voyce.ui.musiciandetails;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import com.android.voyce.R;
 import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.Proposal;
+import com.android.voyce.databinding.ProposalListItemBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,24 +23,24 @@ public class ProposalsAdapter extends RecyclerView.Adapter<ProposalsAdapter.Prop
     private List<Proposal> mProposals = new ArrayList<>();
     private ListItemClickListener mOnClickListener;
 
-    public ProposalsAdapter(ListItemClickListener listener) {
+    ProposalsAdapter(ListItemClickListener listener) {
         mOnClickListener = listener;
     }
 
     @NonNull
     @Override
     public ProposalAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.proposal_list_item,
+        ProposalListItemBinding binding = DataBindingUtil.inflate(LayoutInflater.from(viewGroup.getContext()),R.layout.proposal_list_item,
                 viewGroup, false);
-
-        return new ProposalAdapterViewHolder(view);
+        return new ProposalAdapterViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final ProposalAdapterViewHolder viewHolder, int position) {
-        final Proposal proposal = mProposals.get(position);
-        viewHolder.mPrice.setText(String.valueOf(proposal.getPrice()));
-        viewHolder.mName.setText(proposal.getName());
+        Proposal proposal = mProposals.get(position);
+        if (proposal != null) {
+            viewHolder.bindTo(proposal);
+        }
     }
 
     @Override
@@ -49,16 +51,17 @@ public class ProposalsAdapter extends RecyclerView.Adapter<ProposalsAdapter.Prop
 
     class ProposalAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView mName;
-        ImageView mImage;
-        TextView mPrice;
+        private ProposalListItemBinding mBinding;
 
-        private ProposalAdapterViewHolder(@NonNull View itemView) {
-            super(itemView);
-            mName = itemView.findViewById(R.id.proposal_name);
-            mImage = itemView.findViewById(R.id.proposal_image);
-            mPrice = itemView.findViewById(R.id.proposal_price);
+        private ProposalAdapterViewHolder(@NonNull ProposalListItemBinding binding) {
+            super(binding.getRoot());
+            mBinding = binding;
             itemView.setOnClickListener(this);
+        }
+
+        void bindTo(Proposal proposal) {
+            mBinding.setProposal(proposal);
+            mBinding.executePendingBindings();
         }
 
         @Override

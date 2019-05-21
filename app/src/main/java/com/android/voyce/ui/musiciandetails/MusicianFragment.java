@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 
 import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.Post;
+import com.android.voyce.databinding.FeedListItemBinding;
 import com.android.voyce.databinding.FragmentMusicianBinding;
 import com.android.voyce.databinding.ProposalDialogBinding;
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
@@ -65,8 +66,6 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
     private String mMusicianName;
     private String mMusicianImage;
 
-    private String[] mTabsTitle;
-
     private MusicianViewModel mViewModel;
 
     private String mUserId;
@@ -86,7 +85,7 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
     private Runnable mScrollRunnable = new Runnable() {
         @Override
         public void run() {
-            int scrollTo = mBinding.goalContainer.getTop() + OFFSET;
+            int scrollTo = mBinding.goalCard.getTop() + OFFSET;
             mBinding.containerMusician.smoothScrollTo(0, scrollTo);
             mScrollHandler.removeCallbacks(mScrollRunnable);
         }
@@ -129,8 +128,6 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
         mUserId = sharedPreferences.getString(Constants.KEY_CURRENT_USER_ID, null);
         mUserName = sharedPreferences.getString(Constants.KEY_CURRENT_USER_NAME, null);
         mUserImage = sharedPreferences.getString(Constants.KEY_CURRENT_USER_IMAGE, null);
-
-        mTabsTitle = new String[]{"Info", "Contato"};
     }
 
     @Override
@@ -139,7 +136,6 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
         // Inflate the layout for this fragment
         mBinding = DataBindingUtil
                 .inflate(inflater, R.layout.fragment_musician, container, false);
-
 
         mBinding.musicianBackButton.setOnClickListener(mBackOnClickListener);
 
@@ -150,7 +146,8 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
             }
         });
 
-        MusicianFragmentPagerAdapter mPagerAdapter = new MusicianFragmentPagerAdapter(getChildFragmentManager(), mTabsTitle);
+        String[] tabsTitle = new String[]{"Info", "Contato"};
+        MusicianFragmentPagerAdapter mPagerAdapter = new MusicianFragmentPagerAdapter(getChildFragmentManager(), tabsTitle);
         mBinding.musicianViewPager.setAdapter(mPagerAdapter);
         mBinding.musicianTabLayout.setupWithViewPager(mBinding.musicianViewPager);
 
@@ -331,8 +328,11 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
                     @NonNull
                     @Override
                     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                        View viewHolder = LayoutInflater.from(getContext()).inflate(R.layout.feed_list_item, parent, false);
-                        return new ViewHolder(viewHolder);
+                        FeedListItemBinding binding = DataBindingUtil
+                                .inflate(LayoutInflater.from(getContext()),
+                                        R.layout.feed_list_item, parent,
+                                        false);
+                        return new ViewHolder(binding);
                     }
                 };
 
@@ -342,37 +342,16 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder {
+        private FeedListItemBinding mBinding;
 
-        CircleImageView mUserImage;
-        ImageView mImage;
-        TextView mUserName;
-        TextView mText;
-        TextView mTime;
-
-        private ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            mUserImage = itemView.findViewById(R.id.post_user_image);
-            mUserName = itemView.findViewById(R.id.post_user_name);
-            mText = itemView.findViewById(R.id.post_text);
-            mImage = itemView.findViewById(R.id.post_image);
-            mTime = itemView.findViewById(R.id.post_time);
+        ViewHolder(@NonNull FeedListItemBinding binding) {
+            super(binding.getRoot());
+            mBinding = binding;
         }
 
-        private void bindTo(Post post) {
-            Picasso.get().load(post.getUser_image()).fit().into(mUserImage);
-            if (post.getImage() != null) {
-                mImage.setVisibility(View.VISIBLE);
-                Picasso.get().load(post.getImage()).into(mImage);
-            }
-            mText.setText(post.getText());
-            mUserName.setText(post.getUser_name());
-            mTime.setText(formatDate(post.getTimestamp()));
+        void bindTo(Post post) {
+            mBinding.setPost(post);
+            mBinding.executePendingBindings();
         }
-
-        private String formatDate(long timestamp) {
-            return (String) DateUtils.getRelativeTimeSpanString(timestamp,
-                    System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS);
-        }
-
     }
 }

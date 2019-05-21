@@ -3,6 +3,8 @@ package com.android.voyce.ui.userprofile;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -21,6 +23,7 @@ import android.widget.TextView;
 import com.android.voyce.R;
 import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.UserSponsoringProposal;
+import com.android.voyce.databinding.FragmentUserSponsorsBinding;
 import com.android.voyce.utils.ConnectivityHelper;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -30,11 +33,8 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class UserSponsorsFragment extends Fragment implements ListItemClickListener {
-
-    private TextView mNoSponsoring;
-    private LinearLayout mContainer;
     private UserSponsoringAdapter mAdapter;
-    private View mRootView;
+    private FragmentUserSponsorsBinding mBinding;
 
     public UserSponsorsFragment() {
         // Required empty public constructor
@@ -49,31 +49,25 @@ public class UserSponsorsFragment extends Fragment implements ListItemClickListe
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        mRootView = inflater.inflate(R.layout.fragment_user_sponsors, container, false);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_user_sponsors, container, false);
 
-        Toolbar toolbar = mRootView.findViewById(R.id.toolbar_sponsors);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(mBinding.toolbarSponsors);
 
-        toolbar.setNavigationIcon(R.drawable.ic_action_back);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        mBinding.toolbarSponsors.setNavigationIcon(R.drawable.ic_action_back);
+        mBinding.toolbarSponsors.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Navigation.findNavController(mRootView).popBackStack();
+                Navigation.findNavController(mBinding.getRoot()).popBackStack();
             }
         });
 
-        mNoSponsoring = mRootView.findViewById(R.id.no_sponsoring);
-        mContainer = mRootView.findViewById(R.id.sponsoring_container);
-
-        RecyclerView recyclerView = mRootView.findViewById(R.id.rv_user_sponsoring);
-
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(layoutManager);
-
         mAdapter = new UserSponsoringAdapter(this);
-        recyclerView.setAdapter(mAdapter);
 
-        return mRootView;
+        mBinding.rvUserSponsoring.setLayoutManager(layoutManager);
+        mBinding.rvUserSponsoring.setAdapter(mAdapter);
+
+        return mBinding.getRoot();
     }
 
     @Override
@@ -85,12 +79,12 @@ public class UserSponsorsFragment extends Fragment implements ListItemClickListe
             @Override
             public void onChanged(@Nullable List<UserSponsoringProposal> userSponsoringProposals) {
                 if (userSponsoringProposals != null && userSponsoringProposals.size() > 0) {
-                    mNoSponsoring.setVisibility(View.GONE);
-                    mContainer.setVisibility(View.VISIBLE);
+                    mBinding.noSponsoring.setVisibility(View.GONE);
+                    mBinding.sponsoringContainer.setVisibility(View.VISIBLE);
                     mAdapter.setData(userSponsoringProposals);
                 } else {
-                    mContainer.setVisibility(View.GONE);
-                    mNoSponsoring.setVisibility(View.VISIBLE);
+                    mBinding.sponsoringContainer.setVisibility(View.GONE);
+                    mBinding.noSponsoring.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -106,7 +100,7 @@ public class UserSponsorsFragment extends Fragment implements ListItemClickListe
                                 proposal.getUser_id(),
                                 proposal.getUser_name(), proposal.getUser_image(), true);
 
-                Navigation.findNavController(mRootView).navigate(action);
+                Navigation.findNavController(mBinding.getRoot()).navigate(action);
             }
         } else {
             Snackbar.make(getView(), getContext().getResources().getString(R.string.verify_connection), Snackbar.LENGTH_LONG).show();
