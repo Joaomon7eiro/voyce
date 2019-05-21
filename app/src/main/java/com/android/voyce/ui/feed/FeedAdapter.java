@@ -2,6 +2,8 @@ package com.android.voyce.ui.feed;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 import com.android.voyce.R;
 import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.Post;
+import com.android.voyce.databinding.FeedListItemBinding;
 import com.squareup.picasso.Picasso;
 
 
@@ -34,8 +37,11 @@ public class FeedAdapter extends PagedListAdapter<Post, FeedAdapter.FeedAdapterV
     @NonNull
     @Override
     public FeedAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.feed_list_item, viewGroup, false);
-        return new FeedAdapterViewHolder(view);
+        FeedListItemBinding binding = DataBindingUtil
+                .inflate(LayoutInflater.from(viewGroup.getContext()),
+                        R.layout.feed_list_item, viewGroup,
+                        false);
+        return new FeedAdapterViewHolder(binding);
     }
 
     @Override
@@ -47,56 +53,30 @@ public class FeedAdapter extends PagedListAdapter<Post, FeedAdapter.FeedAdapterV
             // Null defines a placeholder item - PagedListAdapter automatically
             // invalidates this row when the actual object is loaded from the
             // database.
-            viewHolder.bindPlaceholder();
+            //viewHolder.clear();
         }
     }
 
     class FeedAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        CircleImageView mUserImage;
-        ImageView mImage;
-        TextView mUserName;
-        TextView mText;
-        TextView mTime;
+        FeedListItemBinding mBinding;
 
-        FeedAdapterViewHolder(@NonNull View itemView) {
-            super(itemView);
-            mUserImage = itemView.findViewById(R.id.post_user_image);
-            mUserName = itemView.findViewById(R.id.post_user_name);
-            mText = itemView.findViewById(R.id.post_text);
-            mImage = itemView.findViewById(R.id.post_image);
-            mTime = itemView.findViewById(R.id.post_time);
-            mUserImage.setOnClickListener(this);
-            mUserName.setOnClickListener(this);
+        FeedAdapterViewHolder(@NonNull FeedListItemBinding binding) {
+            super(binding.getRoot());
+            mBinding = binding;
+            mBinding.postUserImage.setOnClickListener(this);
+            mBinding.postUserName.setOnClickListener(this);
         }
 
         void bindTo(Post post) {
-            Picasso.get().load(post.getUser_image()).into(mUserImage);
-            if (post.getImage() != null) {
-                mImage.setVisibility(View.VISIBLE);
-                Picasso.get().load(post.getImage()).into(mImage);
-            }
-            mText.setText(post.getText());
-            mUserName.setText(post.getUser_name());
-            mTime.setText(formatDate(post.getTimestamp()));
-        }
-
-        void bindPlaceholder() {
-            Picasso.get().load(R.drawable.profile_placeholder).into(mUserImage);
-            mText.setText("");
-            mUserName.setText("");
-            mTime.setText("");
+            mBinding.setPost(post);
+            mBinding.executePendingBindings();
         }
 
         @Override
         public void onClick(View v) {
             mOnListItemClickListener.onListItemClick(getAdapterPosition());
         }
-    }
-
-    private String formatDate(long timestamp) {
-        return (String) DateUtils.getRelativeTimeSpanString(timestamp,
-                System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS);
     }
 
     @Nullable

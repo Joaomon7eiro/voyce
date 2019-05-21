@@ -1,6 +1,7 @@
 package com.android.voyce.ui.search;
 
 
+import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -11,31 +12,24 @@ import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.core.widget.NestedScrollView;
 import androidx.navigation.Navigation;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.android.voyce.data.model.User;
-import com.android.voyce.ui.main.MainActivity;
-import com.android.voyce.ui.musiciandetails.MusicianFragment;
 import com.android.voyce.R;
+import com.android.voyce.databinding.FragmentSearchBinding;
 import com.android.voyce.utils.ConnectivityHelper;
 import com.android.voyce.utils.Constants;
+import com.google.android.material.snackbar.Snackbar;
 
 
 import java.util.List;
-
-import iammert.com.view.scalinglib.ScalingLayout;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -48,16 +42,11 @@ public class SearchFragment extends Fragment implements
     private MusiciansAdapter mCityMusiciansAdapter;
     private MusiciansAdapter mStateMusiciansAdapter;
 
-    private SwipeRefreshLayout mRefreshLayout;
     private SearchViewModel mViewModel;
-
-    private TextView mVoyceLabel;
-    private TextView mLocalLabel;
-    private TextView mRegionLabel;
+    private FragmentSearchBinding mBinding;
 
     private String mUserCity;
     private String mUserState;
-    private View mRootView;
 
     private static final long REFRESH_TIME = 60000;
 
@@ -97,6 +86,66 @@ public class SearchFragment extends Fragment implements
     }
 
     @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        mBinding = DataBindingUtil
+                .inflate(inflater, R.layout.fragment_search, container, false);
+
+
+        mBinding.searchScrollContainer.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            boolean isCollapsed = true;
+
+            @Override
+            public void onScrollChange(NestedScrollView nestedScrollView, int scrollX, int scrollY, int oldX, int oldY) {
+                if (scrollY == 0 && oldY > 0) {
+                    if (!isCollapsed) {
+                        mBinding.scalingLayout.collapse();
+                        isCollapsed = true;
+                        mBinding.swipeRefresh.setEnabled(true);
+                    }
+                } else {
+                    if (isCollapsed) {
+                        mBinding.swipeRefresh.setEnabled(false);
+                        mBinding.scalingLayout.expand();
+                        isCollapsed = false;
+                    }
+                }
+            }
+        });
+
+        mBinding.searchContainer.setOnClickListener(mSearchClickListener);
+
+        mBinding.swipeRefresh.setOnRefreshListener(this);
+        mBinding.swipeRefresh.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager layoutManagerCity = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager layoutManagerState = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+
+        mMusiciansAdapter = new MusiciansAdapter(this, Constants.ADAPTER_GENERAL);
+        mCityMusiciansAdapter = new MusiciansAdapter(this, Constants.ADAPTER_CITY);
+        mStateMusiciansAdapter = new MusiciansAdapter(this, Constants.ADAPTER_STATE);
+
+        mBinding.mainArtistsRv.setLayoutManager(layoutManager);
+        mBinding.mainArtistsRv.setNestedScrollingEnabled(false);
+        mBinding.mainArtistsRv.setHasFixedSize(true);
+        mBinding.mainArtistsRv.setAdapter(mMusiciansAdapter);
+
+        mBinding.localArtistsRv.setLayoutManager(layoutManagerCity);
+        mBinding.localArtistsRv.setNestedScrollingEnabled(false);
+        mBinding.localArtistsRv.setHasFixedSize(true);
+        mBinding.localArtistsRv.setAdapter(mCityMusiciansAdapter);
+
+        mBinding.regionArtistsRv.setLayoutManager(layoutManagerState);
+        mBinding.regionArtistsRv.setNestedScrollingEnabled(false);
+        mBinding.regionArtistsRv.setHasFixedSize(true);
+        mBinding.regionArtistsRv.setAdapter(mStateMusiciansAdapter);
+
+        return mBinding.getRoot();
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(SearchViewModel.class);
@@ -107,12 +156,12 @@ public class SearchFragment extends Fragment implements
             public void onChanged(@Nullable List<User> users) {
                 if (users != null && users.size() > 0) {
                     mMusiciansAdapter.setData(users);
-                    if (mVoyceLabel.getVisibility() == View.GONE) {
-                        mVoyceLabel.setVisibility(View.VISIBLE);
+                    if (mBinding.onVoyceLabel.getVisibility() == View.GONE) {
+                        mBinding.onVoyceLabel.setVisibility(View.VISIBLE);
                     }
                 } else {
                     if (mMusiciansAdapter.getItemCount() < 1) {
-                        mVoyceLabel.setVisibility(View.GONE);
+                        mBinding.onVoyceLabel.setVisibility(View.GONE);
                     }
                 }
             }
@@ -123,12 +172,12 @@ public class SearchFragment extends Fragment implements
             public void onChanged(@Nullable List<User> users) {
                 if (users != null && users.size() > 0) {
                     mCityMusiciansAdapter.setData(users);
-                    if (mLocalLabel.getVisibility() == View.GONE) {
-                        mLocalLabel.setVisibility(View.VISIBLE);
+                    if (mBinding.localArtistsLabel.getVisibility() == View.GONE) {
+                        mBinding.localArtistsLabel.setVisibility(View.VISIBLE);
                     }
                 } else {
                     if (mCityMusiciansAdapter.getItemCount() < 1) {
-                        mLocalLabel.setVisibility(View.GONE);
+                        mBinding.localArtistsLabel.setVisibility(View.GONE);
                     }
                 }
             }
@@ -139,12 +188,12 @@ public class SearchFragment extends Fragment implements
             public void onChanged(@Nullable List<User> users) {
                 if (users != null && users.size() > 0) {
                     mStateMusiciansAdapter.setData(users);
-                    if (mRegionLabel.getVisibility() == View.GONE) {
-                        mRegionLabel.setVisibility(View.VISIBLE);
+                    if (mBinding.regionArtistsLabel.getVisibility() == View.GONE) {
+                        mBinding.regionArtistsLabel.setVisibility(View.VISIBLE);
                     }
                 } else {
                     if (mStateMusiciansAdapter.getItemCount() < 1) {
-                        mRegionLabel.setVisibility(View.GONE);
+                        mBinding.regionArtistsLabel.setVisibility(View.GONE);
                     }
                 }
             }
@@ -154,82 +203,12 @@ public class SearchFragment extends Fragment implements
             @Override
             public void onChanged(@Nullable Boolean isLoading) {
                 if (isLoading != null && isLoading) {
-                    mRefreshLayout.setRefreshing(true);
+                    mBinding.swipeRefresh.setRefreshing(true);
                 } else {
-                    mRefreshLayout.setRefreshing(false);
+                    mBinding.swipeRefresh.setRefreshing(false);
                 }
             }
         });
-    }
-
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        mRootView = inflater.inflate(R.layout.fragment_search, container, false);
-
-        mVoyceLabel = mRootView.findViewById(R.id.on_voyce_label);
-        mLocalLabel = mRootView.findViewById(R.id.local_artists_label);
-        mRegionLabel = mRootView.findViewById(R.id.region_artists_label);
-
-        final ScalingLayout scalingLayout = mRootView.findViewById(R.id.scaling_layout);
-
-        NestedScrollView scrollView = mRootView.findViewById(R.id.search_scroll_container);
-        scrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-            boolean isCollapsed = true;
-
-            @Override
-            public void onScrollChange(NestedScrollView nestedScrollView, int scrollX, int scrollY, int oldX, int oldY) {
-                if (scrollY == 0 && oldY > 0) {
-                    if (!isCollapsed) {
-                        scalingLayout.collapse();
-                        isCollapsed = true;
-                        mRefreshLayout.setEnabled(true);
-                    }
-                } else {
-                    if (isCollapsed) {
-                        mRefreshLayout.setEnabled(false);
-                        scalingLayout.expand();
-                        isCollapsed = false;
-                    }
-                }
-            }
-        });
-
-        RelativeLayout searchContainer = mRootView.findViewById(R.id.search_container);
-        searchContainer.setOnClickListener(mSearchClickListener);
-
-        mRefreshLayout = mRootView.findViewById(R.id.swipe_refresh);
-        mRefreshLayout.setOnRefreshListener(this);
-        mRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        LinearLayoutManager layoutManagerCity = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        LinearLayoutManager layoutManagerState = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-
-        mMusiciansAdapter = new MusiciansAdapter(this, Constants.ADAPTER_GENERAL);
-        mCityMusiciansAdapter = new MusiciansAdapter(this, Constants.ADAPTER_CITY);
-        mStateMusiciansAdapter = new MusiciansAdapter(this, Constants.ADAPTER_STATE);
-
-        RecyclerView musiciansRv = mRootView.findViewById(R.id.main_artists_rv);
-        musiciansRv.setLayoutManager(layoutManager);
-        musiciansRv.setNestedScrollingEnabled(false);
-        musiciansRv.setHasFixedSize(true);
-        musiciansRv.setAdapter(mMusiciansAdapter);
-
-        RecyclerView cityMusiciansRv = mRootView.findViewById(R.id.local_artists_rv);
-        cityMusiciansRv.setLayoutManager(layoutManagerCity);
-        cityMusiciansRv.setNestedScrollingEnabled(false);
-        cityMusiciansRv.setHasFixedSize(true);
-        cityMusiciansRv.setAdapter(mCityMusiciansAdapter);
-
-        RecyclerView stateMusiciansRv = mRootView.findViewById(R.id.region_artists_rv);
-        stateMusiciansRv.setLayoutManager(layoutManagerState);
-        stateMusiciansRv.setNestedScrollingEnabled(false);
-        stateMusiciansRv.setHasFixedSize(true);
-        stateMusiciansRv.setAdapter(mStateMusiciansAdapter);
-
-        return mRootView;
     }
 
     @Override
@@ -256,21 +235,25 @@ public class SearchFragment extends Fragment implements
                                 musician.getImage(),
                                 false);
 
-                Navigation.findNavController(mRootView).navigate(action);
+                Navigation.findNavController(mBinding.getRoot()).navigate(action);
             }
         } else {
-            MainActivity activity = (MainActivity) getActivity();
-            if (activity != null) activity.setLayoutVisibility(false);
+            Snackbar.make(getView(), getContext().getResources().getString(R.string.verify_connection), Snackbar.LENGTH_LONG).show();
         }
     }
 
     @Override
     public void onRefresh() {
-        mViewModel.refreshData(REFRESH_TIME);
+        if (ConnectivityHelper.isConnected(getContext())) {
+            mViewModel.refreshData(REFRESH_TIME);
+        } else {
+            mBinding.swipeRefresh.setRefreshing(false);
+            Snackbar.make(getView(), getContext().getResources().getString(R.string.verify_connection), Snackbar.LENGTH_LONG).show();
+        }
     }
 
     public void openSearchResults() {
-        Navigation.findNavController(mRootView)
+        Navigation.findNavController(mBinding.getRoot())
                 .navigate(R.id.action_navigation_search_to_searchResultsFragment2);
     }
 }

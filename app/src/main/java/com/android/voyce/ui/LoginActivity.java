@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.voyce.R;
+import com.android.voyce.ui.loaduserdata.LoadUserDataActivity;
 import com.android.voyce.ui.main.MainActivity;
 import com.android.voyce.ui.signup.SignUpActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -70,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), LoadUserDataActivity.class);
                         startActivity(intent);
                         finish();
                     } else {

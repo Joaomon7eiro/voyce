@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.android.voyce.R;
-import com.android.voyce.ui.main.MainActivity;
+import com.android.voyce.ui.loaduserdata.LoadUserDataActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -41,7 +41,7 @@ public class LoginTesteActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                    Intent intent = new Intent(getApplicationContext(), LoadUserDataActivity.class);
                                     startActivity(intent);
                                     finish();
                                 } else {
@@ -61,7 +61,7 @@ public class LoginTesteActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                    Intent intent = new Intent(getApplicationContext(), LoadUserDataActivity.class);
                                     startActivity(intent);
                                     finish();
                                 } else {
@@ -81,7 +81,7 @@ public class LoginTesteActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                    Intent intent = new Intent(getApplicationContext(), LoadUserDataActivity.class);
                                     startActivity(intent);
                                     finish();
                                 } else {
@@ -96,7 +96,7 @@ public class LoginTesteActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                Intent intent = new Intent(getApplicationContext(), LoadUserDataActivity.class);
                 startActivity(intent);
                 finish();
             }

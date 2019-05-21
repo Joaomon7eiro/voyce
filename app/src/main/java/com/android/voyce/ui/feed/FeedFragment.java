@@ -1,7 +1,7 @@
 package com.android.voyce.ui.feed;
 
 
-import androidx.core.widget.NestedScrollView;
+import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -12,27 +12,25 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.android.voyce.R;
 import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.Post;
+import com.android.voyce.databinding.FragmentFeedBinding;
 import com.android.voyce.ui.newpost.NewPostActivity;
+import com.android.voyce.utils.ConnectivityHelper;
 import com.android.voyce.utils.Constants;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.concurrent.TimeUnit;
 
@@ -43,14 +41,10 @@ public class FeedFragment extends Fragment
         implements SwipeRefreshLayout.OnRefreshListener,
         ListItemClickListener {
 
-    private RecyclerView mRecyclerView;
-    private NestedScrollView mContainer;
+    private FragmentFeedBinding mBinding;
     private FeedAdapter mAdapter;
     private FeedViewModel mViewModel;
-    private SwipeRefreshLayout mRefresh;
-    private TextView mNoFeed;
     private int mUserType;
-    private View mRootView;
 
     private DiffUtil.ItemCallback<Post> mDiffCallback = new DiffUtil.ItemCallback<Post>() {
         @Override
@@ -90,23 +84,17 @@ public class FeedFragment extends Fragment
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        mRootView = inflater.inflate(R.layout.fragment_feed, container, false);
+       mBinding = DataBindingUtil
+               .inflate(inflater, R.layout.fragment_feed, container, false);
 
-        mContainer = mRootView.findViewById(R.id.feed_scroll);
-
-        mRecyclerView = mRootView.findViewById(R.id.feed_rv);
-        mNoFeed = mRootView.findViewById(R.id.no_feed);
-
-        mRefresh = mRootView.findViewById(R.id.feed_refresh);
-        mRefresh.setOnRefreshListener(this);
-        mRefresh.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        mBinding.feedRefresh.setOnRefreshListener(this);
+        mBinding.feedRefresh.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
 
         mAdapter = new FeedAdapter(mDiffCallback, this);
 
         if (mUserType != 0) {
-            Button newPost = mRootView.findViewById(R.id.new_post);
-            newPost.setVisibility(View.VISIBLE);
-            newPost.setOnClickListener(new View.OnClickListener() {
+            mBinding.newPost.setVisibility(View.VISIBLE);
+            mBinding.newPost.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getContext(), NewPostActivity.class);
@@ -117,11 +105,11 @@ public class FeedFragment extends Fragment
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
 
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setNestedScrollingEnabled(false);
+        mBinding.feedRv.setLayoutManager(layoutManager);
+        mBinding.feedRv.setAdapter(mAdapter);
+        mBinding.feedRv.setNestedScrollingEnabled(false);
 
-        return mRootView;
+        return mBinding.getRoot();
     }
 
     @Override
@@ -134,12 +122,12 @@ public class FeedFragment extends Fragment
             public void onChanged(@Nullable PagedList<Post> posts) {
                 if (posts != null && posts.size() > 0) {
                     mAdapter.submitList(posts);
-                    mNoFeed.setVisibility(View.GONE);
-                    mRecyclerView.setVisibility(View.VISIBLE);
+                    mBinding.noFeed.setVisibility(View.GONE);
+                    mBinding.feedRv.setVisibility(View.VISIBLE);
                 } else {
                     if (mAdapter.getItemCount() == 0) {
-                        mNoFeed.setVisibility(View.VISIBLE);
-                        mRecyclerView.setVisibility(View.GONE);
+                        mBinding.noFeed.setVisibility(View.VISIBLE);
+                        mBinding.feedRv.setVisibility(View.GONE);
                     }
                 }
             }
@@ -148,9 +136,9 @@ public class FeedFragment extends Fragment
             @Override
             public void onChanged(@Nullable Boolean isLoading) {
                 if (isLoading != null && isLoading) {
-                    mRefresh.setRefreshing(true);
+                    mBinding.feedRefresh.setRefreshing(true);
                 } else {
-                    mRefresh.setRefreshing(false);
+                    mBinding.feedRefresh.setRefreshing(false);
                 }
             }
         });
@@ -158,25 +146,34 @@ public class FeedFragment extends Fragment
 
     @Override
     public void onRefresh() {
-        mViewModel.refreshData(TimeUnit.MINUTES.toMillis(1));
+        if (ConnectivityHelper.isConnected(getContext())) {
+            mViewModel.refreshData(TimeUnit.MINUTES.toMillis(1));
+        } else {
+            Snackbar.make(getView(), getContext().getResources().getString(R.string.verify_connection), Snackbar.LENGTH_LONG).show();
+        }
     }
 
     public void scrollToStart() {
-        mContainer.smoothScrollTo(0, 0);
+        mBinding.feedScroll.smoothScrollTo(0, 0);
     }
 
     @Override
     public void onListItemClick(int index) {
-        Post post = mAdapter.getItem(index);
-        if (post != null) {
-            FeedFragmentDirections.ActionNavigationFeedToMusicianFragment action =
-                    FeedFragmentDirections.actionNavigationFeedToMusicianFragment(
-                    post.getUser_id(),
-                    post.getUser_name(),
-                    post.getUser_image(),
-                    false);
+        if (ConnectivityHelper.isConnected(getContext())) {
+            Post post = mAdapter.getItem(index);
+            if (post != null) {
+                FeedFragmentDirections.ActionNavigationFeedToMusicianFragment action =
+                        FeedFragmentDirections.actionNavigationFeedToMusicianFragment(
+                                post.getUser_id(),
+                                post.getUser_name(),
+                                post.getUser_image(),
+                                false);
 
-            Navigation.findNavController(mRootView).navigate(action);
+                Navigation.findNavController(mBinding.getRoot()).navigate(action);
+            }
+        } else {
+            mBinding.feedRefresh.setRefreshing(false);
+            Snackbar.make(getView(), getContext().getResources().getString(R.string.verify_connection), Snackbar.LENGTH_LONG).show();
         }
     }
 }

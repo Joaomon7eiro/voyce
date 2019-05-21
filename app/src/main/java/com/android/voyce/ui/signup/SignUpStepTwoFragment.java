@@ -1,7 +1,6 @@
 package com.android.voyce.ui.signup;
 
 
-import android.app.DatePickerDialog;
 
 import androidx.lifecycle.ViewModelProviders;
 
@@ -27,19 +26,17 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.City;
 import com.android.voyce.data.model.State;
 import com.android.voyce.data.model.User;
-import com.android.voyce.ui.main.MainActivity;
+import com.android.voyce.ui.loaduserdata.LoadUserDataActivity;
 import com.android.voyce.utils.Constants;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -61,7 +58,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -115,7 +111,7 @@ public class SignUpStepTwoFragment extends Fragment {
 
                         mViewModel.registerUser(user);
 
-                        Intent intent = new Intent(getContext(), MainActivity.class);
+                        Intent intent = new Intent(getContext(), LoadUserDataActivity.class);
                         startActivity(intent);
                         getActivity().finish();
                     } else {

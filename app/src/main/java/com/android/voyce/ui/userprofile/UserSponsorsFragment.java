@@ -3,7 +3,6 @@ package com.android.voyce.ui.userprofile;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -22,7 +21,8 @@ import android.widget.TextView;
 import com.android.voyce.R;
 import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.UserSponsoringProposal;
-import com.android.voyce.ui.musiciandetails.MusicianFragment;
+import com.android.voyce.utils.ConnectivityHelper;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
@@ -98,14 +98,18 @@ public class UserSponsorsFragment extends Fragment implements ListItemClickListe
 
     @Override
     public void onListItemClick(int index) {
-        UserSponsoringProposal proposal = mAdapter.getData().get(index);
-        if (proposal != null) {
-            UserSponsorsFragmentDirections.ActionUserSponsorsFragmentToMusicianFragment action =
-                    UserSponsorsFragmentDirections.actionUserSponsorsFragmentToMusicianFragment(
-                    proposal.getUser_id(),
-                    proposal.getUser_name(), proposal.getUser_image(), true);
+        if (ConnectivityHelper.isConnected(getContext())) {
+            UserSponsoringProposal proposal = mAdapter.getData().get(index);
+            if (proposal != null) {
+                UserSponsorsFragmentDirections.ActionUserSponsorsFragmentToMusicianFragment action =
+                        UserSponsorsFragmentDirections.actionUserSponsorsFragmentToMusicianFragment(
+                                proposal.getUser_id(),
+                                proposal.getUser_name(), proposal.getUser_image(), true);
 
-           Navigation.findNavController(mRootView).navigate(action);
+                Navigation.findNavController(mRootView).navigate(action);
+            }
+        } else {
+            Snackbar.make(getView(), getContext().getResources().getString(R.string.verify_connection), Snackbar.LENGTH_LONG).show();
         }
     }
 }

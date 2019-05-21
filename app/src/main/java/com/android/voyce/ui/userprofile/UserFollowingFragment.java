@@ -11,7 +11,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,9 +24,8 @@ import android.widget.TextView;
 import com.android.voyce.R;
 import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.UserFollowingMusician;
-import com.android.voyce.ui.main.MainActivity;
-import com.android.voyce.ui.musiciandetails.MusicianFragment;
 import com.android.voyce.utils.ConnectivityHelper;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
@@ -92,8 +90,7 @@ public class UserFollowingFragment extends Fragment implements ListItemClickList
                 Navigation.findNavController(mRootView).navigate(action);
             }
         } else {
-            MainActivity activity = (MainActivity) getActivity();
-            if (activity != null) activity.setLayoutVisibility(false);
+            Snackbar.make(getView(), getContext().getResources().getString(R.string.verify_connection), Snackbar.LENGTH_LONG).show();
         }
     }
 

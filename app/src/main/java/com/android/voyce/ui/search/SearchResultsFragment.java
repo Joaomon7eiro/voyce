@@ -25,9 +25,9 @@ import android.widget.TextView;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.User;
-import com.android.voyce.ui.main.MainActivity;
 import com.android.voyce.utils.ConnectivityHelper;
 import com.android.voyce.utils.Constants;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
@@ -150,8 +150,7 @@ public class SearchResultsFragment extends Fragment implements MusiciansAdapter.
                 Navigation.findNavController(mRootView).navigate(action);
             }
         } else {
-            MainActivity activity = (MainActivity) getActivity();
-            if (activity != null) activity.setLayoutVisibility(false);
+            Snackbar.make(getView(), getContext().getResources().getString(R.string.verify_connection), Snackbar.LENGTH_LONG).show();
         }
     }
 }

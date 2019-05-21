@@ -1,5 +1,6 @@
 package com.android.voyce.ui.main;
 
+import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -11,6 +12,7 @@ import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.android.voyce.databinding.ActivityMainBinding;
 import com.android.voyce.ui.userprofile.UserEditFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -41,14 +43,9 @@ import com.onesignal.OneSignal;
 
 public class MainActivity extends AppCompatActivity implements OSSubscriptionObserver {
 
-    private TextView mNoInternetConnection;
-    private FrameLayout mFrameLayout;
-    private BottomNavigationView mNavigation;
     private MainViewModel mViewModel;
     private NavController mNavController;
     private static final int RC_PHOTO_PICKER = 2;
-
-    private static final String KEY_HAS_FRAGMENT = "key_has_fragment";
 
     private BottomNavigationView.OnNavigationItemReselectedListener mBottomNavItemReselectListener =
             new BottomNavigationView.OnNavigationItemReselectedListener() {
@@ -93,33 +90,22 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
                 }
             };
 
-    public void setLayoutVisibility(boolean layoutVisibility) {
-        if (layoutVisibility) {
-            mNoInternetConnection.setVisibility(View.GONE);
-            mFrameLayout.setVisibility(View.VISIBLE);
-        } else {
-            mNoInternetConnection.setVisibility(View.VISIBLE);
-            mFrameLayout.setVisibility(View.GONE);
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(R.style.AppTheme_NoActionBar);
-        setContentView(R.layout.activity_main);
 
-        verifyUser();
+        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+
+        getUser();
 
         OneSignal.addSubscriptionObserver(this);
 
-        mNavigation = findViewById(R.id.navigation);
         mNavController = Navigation.findNavController(this, R.id.main_content);
 
-        mNavigation.setOnNavigationItemReselectedListener(mBottomNavItemReselectListener);
+        binding.bottomNavigation.setOnNavigationItemReselectedListener(mBottomNavItemReselectListener);
 
-        mNoInternetConnection = findViewById(R.id.no_connection_text);
-        mFrameLayout = findViewById(R.id.main_content);
+        NavigationUI.setupWithNavController(binding.bottomNavigation, mNavController);
     }
 
 
@@ -141,11 +127,12 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
         }
     }
 
-    private void verifyUser() {
+    private void getUser() {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         final FirebaseUser currentUser = auth.getCurrentUser();
 
         if (currentUser != null) {
+            OneSignal.setSubscription(true);
             mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
             mViewModel.init(currentUser.getUid());
             mViewModel.getUserLiveData().observe(this, new Observer<User>() {
@@ -161,11 +148,8 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
                     edit.putString(Constants.KEY_CURRENT_USER_STATE, user.getState());
                     edit.putInt(Constants.KEY_CURRENT_USER_TYPE, user.getType());
                     edit.apply();
-
-                    NavigationUI.setupWithNavController(mNavigation, mNavController);
                 }
             });
-            OneSignal.setSubscription(true);
         } else {
             Intent intent = new Intent(this, LoginTesteActivity.class);
             startActivity(intent);

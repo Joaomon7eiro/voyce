@@ -3,6 +3,8 @@ package com.android.voyce.ui.musiciandetails;
 
 import android.app.AlertDialog;
 
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -16,21 +18,17 @@ import androidx.annotation.Nullable;
 
 import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.Post;
-import com.android.voyce.ui.usermusicianprofile.UserMusicianProfileFragment;
-import com.android.voyce.utils.StringUtils;
+import com.android.voyce.databinding.FragmentMusicianBinding;
+import com.android.voyce.databinding.ProposalDialogBinding;
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
-import com.google.android.material.tabs.TabLayout;
 
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.SnapHelper;
-import androidx.viewpager.widget.ViewPager;
-import androidx.core.widget.NestedScrollView;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -41,7 +39,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -51,8 +48,6 @@ import com.android.voyce.data.model.Goal;
 import com.android.voyce.data.model.Proposal;
 import com.android.voyce.data.model.User;
 import com.android.voyce.data.model.UserFollowingMusician;
-import com.android.voyce.ui.main.MainActivity;
-import com.android.voyce.utils.ConnectivityHelper;
 import com.android.voyce.utils.Constants;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -66,8 +61,6 @@ import java.util.List;
  */
 public class MusicianFragment extends Fragment implements ListItemClickListener {
 
-    private Button mFollowButton;
-
     private String mMusicianId;
     private String mMusicianName;
     private String mMusicianImage;
@@ -76,43 +69,25 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
 
     private MusicianViewModel mViewModel;
 
-    private NestedScrollView mContainer;
-
-    private ImageView mImage;
-    private TextView mName;
-
     private String mUserId;
     private String mUserName;
     private String mUserImage;
 
     private String mSignalId;
-    private TextView mFollowers;
-    private TextView mSponsors;
-    private TextView mListeners;
-    private TextView mLocation;
-    private TextView mGoalValue;
-    private TextView mGoalDescription;
-    private ImageView mBackgroundImage;
-
-    private ProgressBar mGoalProgress;
+    private FragmentMusicianBinding mBinding;
 
     private ProposalsAdapter mAdapter;
-    private ProgressBar mProgressBar;
-
-    private CardView mGoalContainer;
-    private CardView mProposalsContainer;
 
     private boolean mScrollToPlans = false;
     private Handler mScrollHandler;
     private static final int SCROLL_DELAY = 600;
-
-    private View mRootView;
+    private static final int OFFSET = 150;
 
     private Runnable mScrollRunnable = new Runnable() {
         @Override
         public void run() {
-            int scrollTo = mProposalsContainer.getTop();
-            mContainer.smoothScrollTo(0, scrollTo);
+            int scrollTo = mBinding.goalContainer.getTop() + OFFSET;
+            mBinding.containerMusician.smoothScrollTo(0, scrollTo);
             mScrollHandler.removeCallbacks(mScrollRunnable);
         }
     };
@@ -120,12 +95,7 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
     private View.OnClickListener mBackOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if (ConnectivityHelper.isConnected(getContext())) {
-                Navigation.findNavController(mRootView).popBackStack();
-            } else {
-                MainActivity activity = (MainActivity) getActivity();
-                if (activity != null) activity.setLayoutVisibility(false);
-            }
+            Navigation.findNavController(mBinding.getRoot()).popBackStack();
         }
     };
 
@@ -164,6 +134,42 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
     }
 
     @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        mBinding = DataBindingUtil
+                .inflate(inflater, R.layout.fragment_musician, container, false);
+
+
+        mBinding.musicianBackButton.setOnClickListener(mBackOnClickListener);
+
+        mBinding.followButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mViewModel.handleFollower(mSignalId, mUserName);
+            }
+        });
+
+        MusicianFragmentPagerAdapter mPagerAdapter = new MusicianFragmentPagerAdapter(getChildFragmentManager(), mTabsTitle);
+        mBinding.musicianViewPager.setAdapter(mPagerAdapter);
+        mBinding.musicianTabLayout.setupWithViewPager(mBinding.musicianViewPager);
+
+        mAdapter = new ProposalsAdapter(this);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        mBinding.rvMusicianProposals.setLayoutManager(layoutManager);
+
+        mBinding.rvMusicianProposals.setAdapter(mAdapter);
+
+        SnapHelper snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(mBinding.rvMusicianProposals);
+
+        setupFeedRecyclerView();
+
+        return mBinding.getRoot();
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
@@ -181,18 +187,11 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
             @Override
             public void onChanged(@Nullable User user) {
                 if (user != null) {
-                    mName.setText(user.getName());
+                    mBinding.setMusician(user);
                     if (user.getImage() != null) {
                         Picasso.get().load(user.getImage())
-                                .placeholder(R.drawable.profile_placeholder).into(mImage);
+                                .placeholder(R.drawable.profile_placeholder).into(mBinding.musicianProfileImage);
                     }
-                    mFollowers.setText(String.valueOf(user.getFollowers()));
-                    mSponsors.setText(String.valueOf(user.getSponsors()));
-                    mListeners.setText(String.valueOf(user.getListeners()));
-                    mLocation.setText(getString(R.string.user_location,
-                            StringUtils.capitalize(user.getCity()),
-                            user.getState().toUpperCase()
-                    ));
                     mSignalId = user.getSignal_id();
                 }
             }
@@ -203,9 +202,9 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
             public void onChanged(@Nullable List<Proposal> proposals) {
                 if (proposals != null && proposals.size() > 0) {
                     mAdapter.setData(proposals);
-                    mProposalsContainer.setVisibility(View.VISIBLE);
+                    mBinding.proposalsContainer.setVisibility(View.VISIBLE);
                 } else {
-                    mProposalsContainer.setVisibility(View.GONE);
+                    mBinding.proposalsContainer.setVisibility(View.GONE);
                 }
             }
         });
@@ -214,15 +213,10 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
             @Override
             public void onChanged(@Nullable Goal goal) {
                 if (goal != null) {
-                    String goalValue = String.valueOf(goal.getValue());
-                    String currentGoalValue = String.valueOf(goal.getCurrent_value());
-                    mGoalValue.setText(getString(R.string.user_goal, currentGoalValue, goalValue));
-                    mGoalDescription.setText(goal.getDescription());
-                    int progress = (int) (goal.getCurrent_value() * 100 / goal.getValue());
-                    mGoalProgress.setProgress(progress);
-                    mGoalContainer.setVisibility(View.VISIBLE);
+                    mBinding.setGoal(goal);
+                    mBinding.goalContainer.setVisibility(View.VISIBLE);
                 } else {
-                    mGoalContainer.setVisibility(View.GONE);
+                    mBinding.goalContainer.setVisibility(View.GONE);
                 }
             }
         });
@@ -232,11 +226,11 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
             public void onChanged(@Nullable Boolean isLoading) {
                 if (isLoading != null) {
                     if (isLoading) {
-                        mProgressBar.setVisibility(View.VISIBLE);
-                        mContainer.setVisibility(View.GONE);
+                        mBinding.musicianProgressBar.setVisibility(View.VISIBLE);
+                        mBinding.containerMusician.setVisibility(View.GONE);
                     } else {
-                        mProgressBar.setVisibility(View.GONE);
-                        mContainer.setVisibility(View.VISIBLE);
+                        mBinding.musicianProgressBar.setVisibility(View.GONE);
+                        mBinding.containerMusician.setVisibility(View.VISIBLE);
                         if (mScrollToPlans) {
                             mScrollHandler = new Handler();
                             mScrollHandler.postDelayed(mScrollRunnable, SCROLL_DELAY);
@@ -251,75 +245,15 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
             public void onChanged(@Nullable Boolean isFollowing) {
                 if (isFollowing != null) {
                     if (isFollowing) {
-                        mFollowButton.setBackground(getResources().getDrawable(R.drawable.rounded_background));
-                        mFollowButton.setText(getString(R.string.following));
+                        mBinding.followButton.setBackground(getResources().getDrawable(R.drawable.rounded_background));
+                        mBinding.followButton.setText(getString(R.string.following));
                     } else {
-                        mFollowButton.setBackground(getResources().getDrawable(R.drawable.transparent_bg_bordered));
-                        mFollowButton.setText(getString(R.string.follow));
+                        mBinding.followButton.setBackground(getResources().getDrawable(R.drawable.transparent_bg_bordered));
+                        mBinding.followButton.setText(getString(R.string.follow));
                     }
                 }
             }
         });
-    }
-
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        mRootView = inflater.inflate(R.layout.fragment_musician, container, false);
-
-        mContainer = mRootView.findViewById(R.id.container_musician);
-
-        mGoalContainer = mRootView.findViewById(R.id.goal_card);
-        mProposalsContainer = mRootView.findViewById(R.id.proposal_card);
-
-        mSponsors = mRootView.findViewById(R.id.musician_sponsors_number);
-        mFollowers = mRootView.findViewById(R.id.musician_followers_number);
-        mListeners = mRootView.findViewById(R.id.musician_listeners_number);
-        mLocation = mRootView.findViewById(R.id.musician_location);
-        mGoalValue = mRootView.findViewById(R.id.musician_goal_value);
-        mGoalDescription = mRootView.findViewById(R.id.goal_description);
-        mGoalProgress = mRootView.findViewById(R.id.sb_goal_progress);
-        mImage = mRootView.findViewById(R.id.musician_profile_image);
-        mBackgroundImage = mRootView.findViewById(R.id.musician_background);
-
-        ImageButton backButton = mRootView.findViewById(R.id.musician_back_button);
-        backButton.setOnClickListener(mBackOnClickListener);
-
-        mFollowButton = mRootView.findViewById(R.id.follow_button);
-        mFollowButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mViewModel.handleFollower(mSignalId, mUserName);
-            }
-        });
-
-        mProgressBar = mRootView.findViewById(R.id.musician_progress_bar);
-
-        ViewPager viewPager = mRootView.findViewById(R.id.musician_view_pager);
-        TabLayout tabLayout = mRootView.findViewById(R.id.musician_tab_layout);
-
-        mImage = mRootView.findViewById(R.id.musician_profile_image);
-        mName = mRootView.findViewById(R.id.musician_name);
-
-        MusicianFragmentPagerAdapter mPagerAdapter = new MusicianFragmentPagerAdapter(getChildFragmentManager(), mTabsTitle);
-        viewPager.setAdapter(mPagerAdapter);
-        tabLayout.setupWithViewPager(viewPager);
-
-        RecyclerView recyclerView = mRootView.findViewById(R.id.rv_musician_proposals);
-        mAdapter = new ProposalsAdapter(this);
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        recyclerView.setLayoutManager(layoutManager);
-
-        recyclerView.setAdapter(mAdapter);
-
-        SnapHelper snapHelper = new PagerSnapHelper();
-        snapHelper.attachToRecyclerView(recyclerView);
-
-        setupFeedRecyclerView(mRootView);
-
-        return mRootView;
     }
 
     @Override
@@ -327,20 +261,18 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
         final Proposal proposal = mAdapter.getData().get(index);
         if (proposal != null) {
             LayoutInflater layoutInflater = ((AppCompatActivity) getContext()).getLayoutInflater();
-            View view = layoutInflater.inflate(R.layout.proposal_dialog, null, false);
-            TextView name = view.findViewById(R.id.proposal_detail_name);
-            TextView price = view.findViewById(R.id.proposal_detail_price);
-            TextView description = view.findViewById(R.id.proposal_detail_description);
-            final ProgressBar progressBar = view.findViewById(R.id.proposal_loading);
-            final Button sponsorButton = view.findViewById(R.id.sponsor_button);
+            final ProposalDialogBinding binding = DataBindingUtil
+                    .inflate(layoutInflater, R.layout.proposal_dialog, null, false);
+
+            binding.setProposal(proposal);
 
             mViewModel.getIsSponsoring(proposal.getId()).observe(this, new Observer<Boolean>() {
                 @Override
                 public void onChanged(@Nullable Boolean isSponsoring) {
                     if (isSponsoring != null && isSponsoring) {
-                        sponsorButton.setText(getResources().getString(R.string.cancel_plan));
+                        binding.sponsorButton.setText(getResources().getString(R.string.cancel_plan));
                     } else {
-                        sponsorButton.setText(getResources().getString(R.string.sponsor_artist));
+                        binding.sponsorButton.setText(getResources().getString(R.string.sponsor_artist));
                     }
                 }
             });
@@ -348,33 +280,29 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
                 @Override
                 public void onChanged(@Nullable Boolean isLoading) {
                     if (isLoading != null && isLoading) {
-                        progressBar.setVisibility(View.VISIBLE);
-                        sponsorButton.setVisibility(View.INVISIBLE);
+                        binding.proposalLoading.setVisibility(View.VISIBLE);
+                        binding.sponsorButton.setVisibility(View.INVISIBLE);
                     } else {
-                        progressBar.setVisibility(View.GONE);
-                        sponsorButton.setVisibility(View.VISIBLE);
+                        binding.proposalLoading.setVisibility(View.GONE);
+                        binding.sponsorButton.setVisibility(View.VISIBLE);
                     }
                 }
             });
 
-            sponsorButton.setOnClickListener(new View.OnClickListener() {
+            binding.sponsorButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mViewModel.handleSponsor(mSignalId, mUserName, proposal);
                 }
             });
 
-            name.setText(proposal.getName());
-            price.setText(String.valueOf(proposal.getPrice()));
-            description.setText(proposal.getDescription());
-
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setView(view);
+            builder.setView(binding.getRoot());
             builder.show();
         }
     }
 
-    private void setupFeedRecyclerView(View view) {
+    private void setupFeedRecyclerView() {
         Query baseQuery = FirebaseFirestore.getInstance()
                 .collection("user_posts")
                 .document(mMusicianId)
@@ -408,10 +336,9 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
                     }
                 };
 
-        RecyclerView feedRecyclerView = view.findViewById(R.id.musician_feed_rv);
-        feedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        feedRecyclerView.setAdapter(adapter);
-        feedRecyclerView.setNestedScrollingEnabled(false);
+        mBinding.musicianFeedRv.setLayoutManager(new LinearLayoutManager(getContext()));
+        mBinding.musicianFeedRv.setAdapter(adapter);
+        mBinding.musicianFeedRv.setNestedScrollingEnabled(false);
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder {

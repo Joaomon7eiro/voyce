@@ -1,374 +1,398 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorPrimaryVeryDark">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/container_musician"
+    <data>
+
+        <import type="com.android.voyce.utils.StringUtils" />
+
+        <variable
+            name="musician"
+            type="com.android.voyce.data.model.User" />
+
+        <variable
+            name="goal"
+            type="com.android.voyce.data.model.Goal" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clipToPadding="false">
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimaryVeryDark">
 
-        <LinearLayout
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/container_musician"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:clipToPadding="false">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/musician_background"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="295dp"
-                    android:background="@drawable/gradient_user_musician_background"
-                    android:contentDescription="@string/profile_photo_background"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:layout_height="match_parent">
 
-                <ImageButton
-                    android:id="@+id/musician_back_button"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="40dp"
-                    android:background="@drawable/ic_action_back"
-                    android:contentDescription="@string/back_button"
-                    android:padding="8dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/musician_profile_image"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_marginTop="40dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <com.android.voyce.common.customclasses.CapitalizedTextView
-                    android:id="@+id/musician_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:textColor="@android:color/white"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="@+id/musician_profile_image"
-                    app:layout_constraintStart_toStartOf="@+id/musician_profile_image"
-                    app:layout_constraintTop_toBottomOf="@+id/musician_profile_image" />
-
-                <TextView
-                    android:id="@+id/musician_location"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:textColor="@color/colorLightGray"
-                    android:textSize="16sp"
-                    app:layout_constraintEnd_toEndOf="@+id/musician_name"
-                    app:layout_constraintStart_toStartOf="@+id/musician_name"
-                    app:layout_constraintTop_toBottomOf="@+id/musician_name" />
-
-                <Button
-                    android:id="@+id/follow_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/transparent_bg_bordered"
-                    android:paddingStart="4dp"
-                    android:paddingEnd="4dp"
-                    android:text="@string/follow"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp"
-                    app:layout_constraintEnd_toEndOf="@+id/musician_location"
-                    app:layout_constraintStart_toStartOf="@+id/musician_location"
-                    app:layout_constraintTop_toBottomOf="@+id/musician_location" />
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/stats_card"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    app:cardBackgroundColor="@color/colorPrimary"
-                    app:cardCornerRadius="10dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/follow_button">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
+                    <ImageView
+                        android:id="@+id/musician_background"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="295dp"
+                        android:background="@drawable/gradient_user_musician_background"
+                        android:contentDescription="@string/profile_photo_background"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                        <TextView
-                            android:id="@+id/followers_label"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:text="@string/followers"
-                            android:textColor="@android:color/white"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            app:layout_constraintEnd_toStartOf="@+id/sponsors_label"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                    <ImageButton
+                        android:id="@+id/musician_back_button"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="40dp"
+                        android:background="@drawable/ic_action_back"
+                        android:contentDescription="@string/back_button"
+                        android:padding="8dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                        <TextView
-                            android:id="@+id/sponsors_label"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:text="@string/sponsors"
-                            android:textColor="@android:color/white"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/musician_profile_image"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_marginTop="40dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                        <TextView
-                            android:id="@+id/listeners_label"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:text="@string/listeners"
-                            android:textColor="@android:color/white"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/sponsors_label"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <TextView
-                            android:id="@+id/musician_followers_number"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:textColor="@color/colorLightGray"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="@+id/followers_label"
-                            app:layout_constraintStart_toStartOf="@+id/followers_label"
-                            app:layout_constraintTop_toBottomOf="@+id/followers_label" />
-
-                        <TextView
-                            android:id="@+id/musician_sponsors_number"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:textColor="@color/colorLightGray"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="@+id/sponsors_label"
-                            app:layout_constraintStart_toStartOf="@+id/sponsors_label"
-                            app:layout_constraintTop_toBottomOf="@+id/sponsors_label" />
-
-                        <TextView
-                            android:id="@+id/musician_listeners_number"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:textColor="@color/colorLightGray"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="@+id/listeners_label"
-                            app:layout_constraintStart_toStartOf="@+id/listeners_label"
-                            app:layout_constraintTop_toBottomOf="@+id/listeners_label" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/goal_card"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    app:cardBackgroundColor="@color/colorPrimary"
-                    app:cardCornerRadius="10dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/stats_card">
-
-
-                    <LinearLayout
-                        android:id="@+id/goal_container"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="8dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/musician_goal_value"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="8dp"
-                            android:textColor="@android:color/white"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-
-                        <ProgressBar
-                            android:id="@+id/sb_goal_progress"
-                            style="@android:style/Widget.ProgressBar.Horizontal"
-                            android:layout_width="match_parent"
-                            android:layout_height="10dp"
-                            android:layout_margin="8dp"
-                            android:max="100"
-                            android:progressBackgroundTint="@color/colorPrimaryVeryDark"
-                            android:progressTint="@color/colorAccent" />
-
-                        <TextView
-                            android:id="@+id/goal_description"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="8dp"
-                            android:textColor="@android:color/white" />
-
-                    </LinearLayout>
-
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/proposal_card"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    app:cardBackgroundColor="@color/colorPrimary"
-                    app:cardCornerRadius="10dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/goal_card">
-
-                    <RelativeLayout
-                        android:id="@+id/proposals_container"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/label_proposals"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:gravity="center"
-                            android:text="@string/proposal_tab"
-                            android:textColor="@android:color/white"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
-
-                        <View
-                            android:layout_width="100dp"
-                            android:layout_height="1dp"
-                            android:layout_below="@id/label_proposals"
-                            android:layout_centerHorizontal="true"
-                            android:layout_marginTop="4dp"
-                            android:background="@color/colorAccent" />
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/rv_musician_proposals"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_below="@id/label_proposals"
-                            android:layout_centerHorizontal="true"
-                            android:layout_margin="2dp" />
-
-                    </RelativeLayout>
-
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/info_card"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    app:cardBackgroundColor="@color/colorPrimary"
-                    app:cardCornerRadius="10dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/proposal_card">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <com.google.android.material.tabs.TabLayout
-                            android:id="@+id/musician_tab_layout"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            app:tabSelectedTextColor="@color/colorAccent"
-                            app:tabTextAppearance="@style/TabLayoutTextAppearance" />
-
-                        <com.android.voyce.common.customclasses.WrapContentViewPager
-                            android:id="@+id/musician_view_pager"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
-
-                    </LinearLayout>
-
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    app:cardBackgroundColor="@color/colorPrimary"
-                    app:cardCornerRadius="10dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/info_card">
-
-                    <TextView
+                    <com.android.voyce.common.customclasses.CapitalizedTextView
+                        android:id="@+id/musician_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:padding="8dp"
-                        android:text="@string/posts"
+                        android:layout_marginTop="8dp"
+                        android:text="@{musician.name}"
                         android:textColor="@android:color/white"
                         android:textSize="20sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/musician_profile_image"
+                        app:layout_constraintStart_toStartOf="@+id/musician_profile_image"
+                        app:layout_constraintTop_toBottomOf="@+id/musician_profile_image" />
 
-                </androidx.cardview.widget.CardView>
+                    <TextView
+                        android:id="@+id/musician_location"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@{@string/user_location(StringUtils.capitalize(musician.city), musician.state.toUpperCase())}"
+                        android:textColor="@color/colorLightGray"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toEndOf="@+id/musician_name"
+                        app:layout_constraintStart_toStartOf="@+id/musician_name"
+                        app:layout_constraintTop_toBottomOf="@+id/musician_name" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <Button
+                        android:id="@+id/follow_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/transparent_bg_bordered"
+                        android:paddingStart="4dp"
+                        android:paddingEnd="4dp"
+                        android:text="@string/follow"
+                        android:textColor="@android:color/white"
+                        android:textSize="12sp"
+                        app:layout_constraintEnd_toEndOf="@+id/musician_location"
+                        app:layout_constraintStart_toStartOf="@+id/musician_location"
+                        app:layout_constraintTop_toBottomOf="@+id/musician_location" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/musician_feed_rv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/stats_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        app:cardBackgroundColor="@color/colorPrimary"
+                        app:cardCornerRadius="10dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/follow_button">
 
-        </LinearLayout>
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/followers_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginEnd="8dp"
+                                android:text="@string/followers"
+                                android:textColor="@android:color/white"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                app:layout_constraintEnd_toStartOf="@+id/sponsors_label"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/sponsors_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginEnd="8dp"
+                                android:text="@string/sponsors"
+                                android:textColor="@android:color/white"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/listeners_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginEnd="8dp"
+                                android:text="@string/listeners"
+                                android:textColor="@android:color/white"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@+id/sponsors_label"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <TextView
+                                android:id="@+id/musician_followers_number"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginBottom="8dp"
+                                android:text="@{String.valueOf(musician.followers)}"
+                                android:textColor="@color/colorLightGray"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="@+id/followers_label"
+                                app:layout_constraintStart_toStartOf="@+id/followers_label"
+                                app:layout_constraintTop_toBottomOf="@+id/followers_label" />
+
+                            <TextView
+                                android:id="@+id/musician_sponsors_number"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginBottom="8dp"
+                                android:text="@{String.valueOf(musician.sponsors)}"
+                                android:textColor="@color/colorLightGray"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="@+id/sponsors_label"
+                                app:layout_constraintStart_toStartOf="@+id/sponsors_label"
+                                app:layout_constraintTop_toBottomOf="@+id/sponsors_label" />
+
+                            <TextView
+                                android:id="@+id/musician_listeners_number"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginBottom="8dp"
+                                android:text="@{String.valueOf(musician.listeners)}"
+                                android:textColor="@color/colorLightGray"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="@+id/listeners_label"
+                                app:layout_constraintStart_toStartOf="@+id/listeners_label"
+                                app:layout_constraintTop_toBottomOf="@+id/listeners_label" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/goal_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        app:cardBackgroundColor="@color/colorPrimary"
+                        app:cardCornerRadius="10dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/stats_card">
 
 
-    </androidx.core.widget.NestedScrollView>
+                        <LinearLayout
+                            android:id="@+id/goal_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="8dp"
+                            android:orientation="vertical">
 
-    <ProgressBar
-        android:id="@+id/musician_progress_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+                            <TextView
+                                android:id="@+id/musician_goal_value"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="8dp"
+                                android:text="@{@string/user_goal(goal.current_value, goal.value)}"
+                                android:textColor="@android:color/white"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+                            <ProgressBar
+                                android:id="@+id/sb_goal_progress"
+                                style="@android:style/Widget.ProgressBar.Horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="10dp"
+                                android:layout_margin="8dp"
+                                android:max="100"
+                                android:progress="@{(int) (goal.current_value * 100 / goal.value)}"
+                                android:progressBackgroundTint="@color/colorPrimaryVeryDark"
+                                android:progressTint="@color/colorAccent" />
+
+                            <TextView
+                                android:id="@+id/goal_description"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="8dp"
+                                android:text="@{goal.description}"
+                                android:textColor="@android:color/white" />
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/proposal_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        app:cardBackgroundColor="@color/colorPrimary"
+                        app:cardCornerRadius="10dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/goal_card">
+
+                        <RelativeLayout
+                            android:id="@+id/proposals_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/label_proposals"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:gravity="center"
+                                android:text="@string/proposal_tab"
+                                android:textColor="@android:color/white"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                            <View
+                                android:layout_width="100dp"
+                                android:layout_height="1dp"
+                                android:layout_below="@id/label_proposals"
+                                android:layout_centerHorizontal="true"
+                                android:layout_marginTop="4dp"
+                                android:background="@color/colorAccent" />
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/rv_musician_proposals"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_below="@id/label_proposals"
+                                android:layout_centerHorizontal="true"
+                                android:layout_margin="2dp" />
+
+                        </RelativeLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/info_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        app:cardBackgroundColor="@color/colorPrimary"
+                        app:cardCornerRadius="10dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/proposal_card">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <com.google.android.material.tabs.TabLayout
+                                android:id="@+id/musician_tab_layout"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:tabSelectedTextColor="@color/colorAccent"
+                                app:tabTextAppearance="@style/TabLayoutTextAppearance" />
+
+                            <com.android.voyce.common.customclasses.WrapContentViewPager
+                                android:id="@+id/musician_view_pager"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        app:cardBackgroundColor="@color/colorPrimary"
+                        app:cardCornerRadius="10dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/info_card">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:padding="8dp"
+                            android:text="@string/posts"
+                            android:textColor="@android:color/white"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                    </androidx.cardview.widget.CardView>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/musician_feed_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+
+        </androidx.core.widget.NestedScrollView>
+
+        <ProgressBar
+            android:id="@+id/musician_progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

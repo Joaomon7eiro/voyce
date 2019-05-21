@@ -15,11 +15,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Launcher"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".ui.loaduserdata.LoadUserDataActivity"></activity>
         <activity
             android:name=".ui.newpost.NewPostActivity"
-            android:windowSoftInputMode="adjustResize"
             android:label="@string/create_new_post"
-            android:parentActivityName=".ui.main.MainActivity" />
+            android:parentActivityName=".ui.main.MainActivity"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.signup.SignUpActivity"
             android:launchMode="singleTop" />

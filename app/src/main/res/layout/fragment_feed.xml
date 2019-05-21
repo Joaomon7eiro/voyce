@@ -1,75 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:background="@color/colorPrimaryVeryDark"
-    android:layout_height="match_parent"
-    tools:context=".ui.feed.FeedFragment">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/feed_refresh"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:background="@color/colorPrimaryVeryDark"
+        android:layout_height="match_parent"
+        tools:context=".ui.feed.FeedFragment">
 
-        <FrameLayout
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/feed_refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.core.widget.NestedScrollView
-                android:id="@+id/feed_scroll"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                android:paddingTop="32dp">
+                android:layout_height="match_parent">
 
-                <LinearLayout
+                <androidx.core.widget.NestedScrollView
+                    android:id="@+id/feed_scroll"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:paddingTop="32dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_margin="8dp"
-                        android:text="@string/news"
-                        android:textColor="@android:color/white"
-                        android:textSize="20sp" />
-
-                    <Button
-                        android:id="@+id/new_post"
-                        android:layout_width="300dp"
-                        android:layout_height="45dp"
-                        android:layout_gravity="center"
-                        android:layout_marginBottom="16dp"
-                        android:background="@drawable/transparent_bg_bordered"
-                        android:text="@string/new_post"
-                        android:textColor="@android:color/darker_gray"
-                        android:textSize="16sp"
-                        android:visibility="gone" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/feed_rv"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
 
-                </LinearLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_margin="8dp"
+                            android:text="@string/news"
+                            android:textColor="@android:color/white"
+                            android:textSize="20sp" />
 
-            </androidx.core.widget.NestedScrollView>
+                        <Button
+                            android:id="@+id/new_post"
+                            android:layout_width="300dp"
+                            android:layout_height="45dp"
+                            android:layout_gravity="center"
+                            android:layout_marginBottom="16dp"
+                            android:background="@drawable/transparent_bg_bordered"
+                            android:text="@string/new_post"
+                            android:textColor="@android:color/darker_gray"
+                            android:textSize="16sp"
+                            android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/no_feed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="16dp"
-                android:gravity="center"
-                android:text="@string/no_feed_text"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                android:visibility="gone" />
-        </FrameLayout>
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/feed_rv"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
 
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                    </LinearLayout>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+                </androidx.core.widget.NestedScrollView>
+
+                <TextView
+                    android:id="@+id/no_feed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="16dp"
+                    android:gravity="center"
+                    android:text="@string/no_feed_text"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    android:visibility="gone" />
+            </FrameLayout>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>
