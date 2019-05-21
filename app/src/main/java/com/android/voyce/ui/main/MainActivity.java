@@ -93,8 +93,6 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
 
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        OneSignal.addSubscriptionObserver(this);
-
         setUser();
 
         mNavController = Navigation.findNavController(this, R.id.main_content);
@@ -128,9 +126,12 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
         final FirebaseUser currentUser = auth.getCurrentUser();
 
         if (currentUser != null) {
-            OneSignal.setSubscription(true);
             mViewModel = ViewModelProviders.of(this).get(MainViewModel.class);
             mViewModel.init(currentUser.getUid());
+
+            OneSignal.setSubscription(true);
+            OneSignal.addSubscriptionObserver(this);
+
             mViewModel.getUserLiveData().observe(this, new Observer<User>() {
                 @Override
                 public void onChanged(@Nullable User user) {

@@ -73,10 +73,10 @@ public class UserSettingsFragment extends Fragment {
                 task.addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
+                        OneSignal.setSubscription(false);
+
                         PreferenceManager.getDefaultSharedPreferences(getContext()).
                                 edit().clear().apply();
-
-                        OneSignal.setSubscription(false);
 
                         auth.signOut();
 
