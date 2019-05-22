@@ -4,25 +4,21 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.android.voyce.AudioPlayerService;
 import com.android.voyce.databinding.ActivityMainBinding;
 import com.android.voyce.ui.userprofile.UserEditFragment;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.fragment.app.Fragment;
@@ -43,8 +39,6 @@ import com.android.voyce.ui.search.SearchFragment;
 import com.android.voyce.utils.Constants;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.onesignal.OSSubscriptionObserver;
 import com.onesignal.OSSubscriptionStateChanges;
 import com.onesignal.OneSignal;
@@ -54,6 +48,28 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
     private MainViewModel mViewModel;
     private NavController mNavController;
     private static final int RC_PHOTO_PICKER = 2;
+    private AudioPlayerService.PlayerBinder mPlayerBinder;
+    private ActivityMainBinding mBinding;
+
+    private ServiceConnection mPlayerServiceConnection = new ServiceConnection(){
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mPlayerBinder = (AudioPlayerService.PlayerBinder) service;
+            mBinding.playerView.setPlayer(mPlayerBinder.getPlayer());
+            playSingle("87Zbgz7We5TE5DHPBdL9RXiPpHr2", "X7Bn5n0U9N7aSzeym0wU");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mPlayerBinder = null;
+        }
+    };
+
+    public void playSingle(String userId, String songId) {
+        if (mPlayerBinder != null) {
+            mPlayerBinder.playSingle(userId, songId);
+        }
+    }
 
     private BottomNavigationView.OnNavigationItemReselectedListener mBottomNavItemReselectListener =
             new BottomNavigationView.OnNavigationItemReselectedListener() {
@@ -98,31 +114,24 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(R.style.AppTheme_NoActionBar);
-
-        final ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         setUser();
 
         mNavController = Navigation.findNavController(this, R.id.main_content);
+        mBinding.bottomNavigation.setOnNavigationItemReselectedListener(mBottomNavItemReselectListener);
+        NavigationUI.setupWithNavController(mBinding.bottomNavigation, mNavController);
 
-        binding.bottomNavigation.setOnNavigationItemReselectedListener(mBottomNavItemReselectListener);
+        Intent intent = new Intent(this, AudioPlayerService.class);
+        intent.putExtra("url", "https://firebasestorage.googleapis.com/v0/b/voyce-5e1c3.appspot.com/o/song.mp3?alt=media&token=a7f47789-6ce5-42b3-af84-243644a63f2b");
+        Util.startForegroundService(this, intent);
+        bindService(intent, mPlayerServiceConnection, BIND_AUTO_CREATE);
+    }
 
-        NavigationUI.setupWithNavController(binding.bottomNavigation, mNavController);
-
-        StorageReference reference = FirebaseStorage.getInstance().getReference("song.mp3");
-        reference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(getApplicationContext());
-                binding.playerView.setPlayer(player);
-
-                DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getApplicationContext(),
-                        Util.getUserAgent(getApplicationContext(), "yourApplicationName"));
-                MediaSource videoSource = new ProgressiveMediaSource.Factory(dataSourceFactory)
-                        .createMediaSource(uri);
-                player.prepare(videoSource);
-            }
-        });
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(mPlayerServiceConnection);
     }
 
     @Override

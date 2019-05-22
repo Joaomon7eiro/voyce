@@ -5,6 +5,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:name=".ApplicationClass"
@@ -15,7 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Launcher"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.loaduserdata.LoadUserDataActivity"></activity>
+        <activity
+            android:name=".ui.loaduserdata.LoadUserDataActivity"
+            android:noHistory="true" />
         <activity
             android:name=".ui.newpost.NewPostActivity"
             android:label="@string/create_new_post"
@@ -38,6 +41,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.LoginTesteActivity" />
+
+        <service android:name=".AudioPlayerService" />
     </application>
 
 </manifest>
