@@ -30,7 +30,6 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -138,65 +137,85 @@ public class AudioPlayerService extends Service {
     }
 
     public class PlayerBinder extends Binder {
+        int mSongCount;
+        int mChosenSongIndex;
+
         public SimpleExoPlayer getPlayer() {
             return mPlayer;
         }
 
-        public void playSingle(String userId, String songId) {
+        public void playSingles(String userId, String songId) {
             final CollectionReference reference = FirebaseFirestore.getInstance()
                     .collection("music")
                     .document(userId)
                     .collection("singles");
 
-            reference.document(songId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                @Override
-                public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    final Song chosenSong = documentSnapshot.toObject(Song.class);
-                    if (chosenSong != null) {
-                        mSongList.clear();
-                        Picasso.get().load(chosenSong.getImage_url()).into(new Target() {
-                            @Override
-                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                                chosenSong.setBitmap(bitmap);
-                                mSongList.add(chosenSong);
-                            }
-
-                            @Override
-                            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                            }
-
-                            @Override
-                            public void onPrepareLoad(Drawable placeHolderDrawable) {
-                            }
-                        });
-                        addMoreSingles(reference, chosenSong.getMediaId());
-                    }
-                }
-            });
-
+            mSongList.clear();
+            if (songId != null) {
+                addSingles(reference, songId);
+            } else {
+                addSingles(reference, "");
+            }
         }
 
-        private void addMoreSingles(CollectionReference reference, final String mediaId) {
+        private void addSingles(CollectionReference reference, final String mediaId) {
+            mSongCount = 0;
+            if (mediaId.equals("")) {
+                mChosenSongIndex = -1;
+            }
             reference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                 @Override
-                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                    for (QueryDocumentSnapshot snapshot: queryDocumentSnapshots) {
-                        Song song = snapshot.toObject(Song.class);
-                        if (!song.getMediaId().equals(mediaId)) {
-                            mSongList.add(song);
+                public void onSuccess(final QuerySnapshot queryDocumentSnapshots) {
+
+                    for (QueryDocumentSnapshot snapshot : queryDocumentSnapshots) {
+                        final Song song = snapshot.toObject(Song.class);
+
+                        if (!song.getId().equals(mediaId)) {
+                            Picasso.get().load(song.getImage_url()).into(new Target() {
+                                @Override
+                                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                    song.setBitmap(bitmap);
+                                    mSongList.add(song);
+                                    mSongCount += 1;
+                                    if (mSongCount == queryDocumentSnapshots.size()) {
+                                        concatSongs(mChosenSongIndex);
+                                    }
+                                }
+
+                                @Override
+                                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                                    mSongList.add(song);
+                                    mSongCount += 1;
+                                    if (mSongCount == queryDocumentSnapshots.size()) {
+                                        concatSongs(mChosenSongIndex);
+                                    }
+                                }
+
+                                @Override
+                                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                                }
+                            });
+                        } else {
+                            mChosenSongIndex = mSongCount;
                         }
                     }
-                    ConcatenatingMediaSource concatenatingMediaSource = new ConcatenatingMediaSource();
-                    for (Song song : mSongList) {
-                        MediaSource mediaSource =
-                                new ProgressiveMediaSource.Factory(mDataSourceFactory)
-                                        .createMediaSource(Uri.parse(song.getUrl()));
-                        concatenatingMediaSource.addMediaSource(mediaSource);
-                    }
-                    mPlayer.prepare(concatenatingMediaSource);
-                    mPlayer.setPlayWhenReady(true);
                 }
             });
+        }
+
+        private void concatSongs(int mChosenSongIndex) {
+            ConcatenatingMediaSource concatenatingMediaSource = new ConcatenatingMediaSource();
+            for (Song song : mSongList) {
+                MediaSource mediaSource =
+                        new ProgressiveMediaSource.Factory(mDataSourceFactory)
+                                .createMediaSource(Uri.parse(song.getUrl()));
+                concatenatingMediaSource.addMediaSource(mediaSource);
+            }
+            mPlayer.prepare(concatenatingMediaSource);
+            if (mChosenSongIndex != -1) {
+                mPlayer.seekTo(mChosenSongIndex, 0);
+            }
+            mPlayer.setPlayWhenReady(true);
         }
     }
 }

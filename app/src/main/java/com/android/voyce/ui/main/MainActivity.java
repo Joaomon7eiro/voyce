@@ -50,13 +50,15 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
     private static final int RC_PHOTO_PICKER = 2;
     private AudioPlayerService.PlayerBinder mPlayerBinder;
     private ActivityMainBinding mBinding;
+    private Intent mPlayerServiceIntent;
+    private boolean mPlayerHasStarted;
 
     private ServiceConnection mPlayerServiceConnection = new ServiceConnection(){
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mPlayerBinder = (AudioPlayerService.PlayerBinder) service;
             mBinding.playerView.setPlayer(mPlayerBinder.getPlayer());
-            playSingle("87Zbgz7We5TE5DHPBdL9RXiPpHr2", "X7Bn5n0U9N7aSzeym0wU");
+            mBinding.playerView.show();
         }
 
         @Override
@@ -67,7 +69,14 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
 
     public void playSingle(String userId, String songId) {
         if (mPlayerBinder != null) {
-            mPlayerBinder.playSingle(userId, songId);
+            mPlayerBinder.playSingles(userId, songId);
+        }
+    }
+
+    public void startPlayerService() {
+        if (!mPlayerHasStarted) {
+            Util.startForegroundService(this, mPlayerServiceIntent);
+            mPlayerHasStarted = true;
         }
     }
 
@@ -122,10 +131,9 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
         mBinding.bottomNavigation.setOnNavigationItemReselectedListener(mBottomNavItemReselectListener);
         NavigationUI.setupWithNavController(mBinding.bottomNavigation, mNavController);
 
-        Intent intent = new Intent(this, AudioPlayerService.class);
-        intent.putExtra("url", "https://firebasestorage.googleapis.com/v0/b/voyce-5e1c3.appspot.com/o/song.mp3?alt=media&token=a7f47789-6ce5-42b3-af84-243644a63f2b");
-        Util.startForegroundService(this, intent);
-        bindService(intent, mPlayerServiceConnection, BIND_AUTO_CREATE);
+        mPlayerServiceIntent = new Intent(this, AudioPlayerService.class);
+        bindService(mPlayerServiceIntent, mPlayerServiceConnection, BIND_AUTO_CREATE);
+        mBinding.playerView.hide();
     }
 
     @Override

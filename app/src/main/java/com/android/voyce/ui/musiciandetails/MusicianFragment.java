@@ -4,7 +4,6 @@ package com.android.voyce.ui.musiciandetails;
 import android.app.AlertDialog;
 
 import androidx.databinding.DataBindingUtil;
-import androidx.databinding.ViewDataBinding;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -21,6 +20,7 @@ import com.android.voyce.data.model.Post;
 import com.android.voyce.databinding.FeedListItemBinding;
 import com.android.voyce.databinding.FragmentMusicianBinding;
 import com.android.voyce.databinding.ProposalDialogBinding;
+import com.android.voyce.ui.main.MainActivity;
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 
@@ -33,16 +33,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.Goal;
@@ -251,6 +246,11 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
                 }
             }
         });
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity != null) {
+            activity.startPlayerService();
+            activity.playSingle(mMusicianId, null);
+        }
     }
 
     @Override

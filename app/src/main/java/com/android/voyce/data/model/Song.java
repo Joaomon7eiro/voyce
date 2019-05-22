@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 
 public class Song {
     private String url;
-    private String mediaId;
+    private String id;
     private String title;
     private String description;
     private String image_url;
@@ -40,12 +40,12 @@ public class Song {
         this.url = url;
     }
 
-    public String getMediaId() {
-        return mediaId;
+    public String getId() {
+        return id;
     }
 
-    public void setMediaId(String mediaId) {
-        this.mediaId = mediaId;
+    public void setId(String mediaId) {
+        this.id = mediaId;
     }
 
     public String getTitle() {
