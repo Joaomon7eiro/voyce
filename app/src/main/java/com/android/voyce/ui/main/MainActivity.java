@@ -16,8 +16,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.android.voyce.AudioPlayerService;
+import com.android.voyce.data.model.Song;
 import com.android.voyce.databinding.ActivityMainBinding;
 import com.android.voyce.ui.userprofile.UserEditFragment;
+import com.android.voyce.utils.PlayerServiceCallbacks;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -30,6 +32,8 @@ import androidx.navigation.ui.NavigationUI;
 
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.User;
@@ -43,7 +47,9 @@ import com.onesignal.OSSubscriptionObserver;
 import com.onesignal.OSSubscriptionStateChanges;
 import com.onesignal.OneSignal;
 
-public class MainActivity extends AppCompatActivity implements OSSubscriptionObserver {
+public class MainActivity extends AppCompatActivity implements
+        OSSubscriptionObserver,
+        PlayerServiceCallbacks {
 
     private MainViewModel mViewModel;
     private NavController mNavController;
@@ -51,14 +57,14 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
     private AudioPlayerService.PlayerBinder mPlayerBinder;
     private ActivityMainBinding mBinding;
     private Intent mPlayerServiceIntent;
-    private boolean mPlayerHasStarted;
 
-    private ServiceConnection mPlayerServiceConnection = new ServiceConnection(){
+    private ServiceConnection mPlayerServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mPlayerBinder = (AudioPlayerService.PlayerBinder) service;
-            mBinding.playerView.setPlayer(mPlayerBinder.getPlayer());
-            mBinding.playerView.show();
+            AudioPlayerService audioPlayerService = mPlayerBinder.getService();
+            mBinding.playerView.setPlayer(audioPlayerService.getPlayer());
+            audioPlayerService.setCallback(MainActivity.this);
         }
 
         @Override
@@ -74,9 +80,8 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
     }
 
     public void startPlayerService() {
-        if (!mPlayerHasStarted) {
+        if (mPlayerBinder != null && !mPlayerBinder.serviceHasStarted()) {
             Util.startForegroundService(this, mPlayerServiceIntent);
-            mPlayerHasStarted = true;
         }
     }
 
@@ -133,13 +138,13 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
 
         mPlayerServiceIntent = new Intent(this, AudioPlayerService.class);
         bindService(mPlayerServiceIntent, mPlayerServiceConnection, BIND_AUTO_CREATE);
-        mBinding.playerView.hide();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mPlayerServiceConnection);
+        mBinding.playerView.setPlayer(null);
     }
 
     @Override
@@ -205,5 +210,19 @@ public class MainActivity extends AppCompatActivity implements OSSubscriptionObs
         }
 
         Log.d("Debug", "onOSPermissionChanged: " + stateChanges);
+    }
+
+    @Override
+    public void updateUi(Song song) {
+        if (song == null) {
+            mBinding.playerView.hide();
+            return;
+        } else if (mBinding.playerView.getVisibility() == View.GONE) {
+            mBinding.playerView.show();
+        }
+        TextView title = mBinding.playerView.findViewById(R.id.song_title);
+        TextView artist = mBinding.playerView.findViewById(R.id.song_artist);
+        title.setText(song.getTitle());
+        artist.setText(song.getDescription());
     }
 }

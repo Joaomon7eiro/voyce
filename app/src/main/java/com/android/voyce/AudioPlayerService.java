@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 
 import com.android.voyce.data.model.Song;
 import com.android.voyce.ui.main.MainActivity;
+import com.android.voyce.utils.PlayerServiceCallbacks;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -46,6 +47,9 @@ public class AudioPlayerService extends Service {
     private DataSource.Factory mDataSourceFactory;
     private PlayerNotificationManager mPlayerNotificationManager;
     private PlayerBinder mPlayerBinder = new PlayerBinder();
+    private int mCurrentIndex;
+    private PlayerServiceCallbacks mPlayerServiceCallbacks;
+    private boolean mServiceHasStarted = false;
 
     @Nullable
     @Override
@@ -70,11 +74,23 @@ public class AudioPlayerService extends Service {
         mPlayer = ExoPlayerFactory.newSimpleInstance(context);
         mDataSourceFactory = new DefaultDataSourceFactory(context,
                 Util.getUserAgent(context, "Voyce"));
+
+        mPlayer.addListener(new Player.EventListener() {
+            @Override
+            public void onPositionDiscontinuity(int reason) {
+                if (mPlayer.getCurrentWindowIndex() != mCurrentIndex) {
+                    mCurrentIndex = mPlayer.getCurrentWindowIndex();
+                    mPlayerServiceCallbacks.updateUi(mSongList.get(mCurrentIndex));
+                }
+            }
+        });
     }
 
     @Override
     public int onStartCommand(final Intent intent, int flags, int startId) {
         final Context context = this;
+
+        mServiceHasStarted = true;
 
         NotificationChannel notificationChannel;
         String channelId = "com.android.voyce";
@@ -130,18 +146,67 @@ public class AudioPlayerService extends Service {
 
     @Override
     public void onDestroy() {
-        mPlayerNotificationManager.setPlayer(null);
+        if (mPlayerNotificationManager != null) {
+            mPlayerNotificationManager.setPlayer(null);
+        }
         mPlayer.release();
         mPlayer = null;
+        mServiceHasStarted = false;
         super.onDestroy();
+    }
+
+
+
+    public void setCallback(PlayerServiceCallbacks callback) {
+        if (mPlayerServiceCallbacks == null) {
+            mPlayerServiceCallbacks = callback;
+        }
+        Song song = null;
+        if (mSongList.size() > 0) {
+            song = mSongList.get(mPlayer.getCurrentWindowIndex());
+        }
+        mPlayerServiceCallbacks.updateUi(song);
+    }
+
+    public SimpleExoPlayer getPlayer() {
+        return mPlayer;
     }
 
     public class PlayerBinder extends Binder {
         int mSongCount;
         int mChosenSongIndex;
+        Target mTarget;
 
-        public SimpleExoPlayer getPlayer() {
-            return mPlayer;
+        public AudioPlayerService getService() {
+            return AudioPlayerService.this;
+        }
+
+        void downloadBitmap(final Song song, final int querySize) {
+            mTarget = new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    song.setBitmap(bitmap);
+                    mSongList.add(song);
+                    mSongCount += 1;
+                    if (mSongCount == querySize) {
+                        concatSongs(mChosenSongIndex);
+                    }
+                }
+
+                @Override
+                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                    mSongList.add(song);
+                    mSongCount += 1;
+                    if (mSongCount == querySize) {
+                        concatSongs(mChosenSongIndex);
+                    }
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                }
+            };
+            Picasso.get().load(song.getImage_url()).into(mTarget);
         }
 
         public void playSingles(String userId, String songId) {
@@ -150,12 +215,15 @@ public class AudioPlayerService extends Service {
                     .document(userId)
                     .collection("singles");
 
-            mSongList.clear();
             if (songId != null) {
                 addSingles(reference, songId);
             } else {
                 addSingles(reference, "");
             }
+        }
+
+        public boolean serviceHasStarted() {
+            return mServiceHasStarted;
         }
 
         private void addSingles(CollectionReference reference, final String mediaId) {
@@ -166,35 +234,11 @@ public class AudioPlayerService extends Service {
             reference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                 @Override
                 public void onSuccess(final QuerySnapshot queryDocumentSnapshots) {
-
+                    mSongList.clear();
                     for (QueryDocumentSnapshot snapshot : queryDocumentSnapshots) {
-                        final Song song = snapshot.toObject(Song.class);
-
+                        Song song = snapshot.toObject(Song.class);
                         if (!song.getId().equals(mediaId)) {
-                            Picasso.get().load(song.getImage_url()).into(new Target() {
-                                @Override
-                                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                                    song.setBitmap(bitmap);
-                                    mSongList.add(song);
-                                    mSongCount += 1;
-                                    if (mSongCount == queryDocumentSnapshots.size()) {
-                                        concatSongs(mChosenSongIndex);
-                                    }
-                                }
-
-                                @Override
-                                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                                    mSongList.add(song);
-                                    mSongCount += 1;
-                                    if (mSongCount == queryDocumentSnapshots.size()) {
-                                        concatSongs(mChosenSongIndex);
-                                    }
-                                }
-
-                                @Override
-                                public void onPrepareLoad(Drawable placeHolderDrawable) {
-                                }
-                            });
+                            downloadBitmap(song, queryDocumentSnapshots.size());
                         } else {
                             mChosenSongIndex = mSongCount;
                         }
@@ -216,6 +260,8 @@ public class AudioPlayerService extends Service {
                 mPlayer.seekTo(mChosenSongIndex, 0);
             }
             mPlayer.setPlayWhenReady(true);
+            mCurrentIndex = mPlayer.getCurrentWindowIndex();
+            mPlayerServiceCallbacks.updateUi(mSongList.get(mCurrentIndex));
         }
     }
 }
