@@ -66,6 +66,9 @@ public class AudioPlayerService extends Service {
 
     private Target mTarget;
 
+    private NotificationChannel mNotificationChannel;
+    private String mChannelId;
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -85,13 +88,30 @@ public class AudioPlayerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Context context = this;
+        final Context context = this;
         mPlayer = ExoPlayerFactory.newSimpleInstance(context);
         mPlayer.setRepeatMode(Player.REPEAT_MODE_ALL);
         mDataSourceFactory = new DefaultDataSourceFactory(context,
                 Util.getUserAgent(context, "Voyce"));
 
         mPlayer.addListener(new Player.EventListener() {
+
+            @Override
+            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                if (playWhenReady) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        startForeground(1,  new Notification.Builder(context, mChannelId).build());
+                    }
+                } else {
+                    stopForeground(false);
+                }
+            }
+
+            @Override
+            public void onSeekProcessed() {
+                mCurrentPosition = mPlayer.getCurrentPosition();
+            }
+
             @Override
             public void onPlayerError(ExoPlaybackException error) {
                 error.printStackTrace();
@@ -113,21 +133,20 @@ public class AudioPlayerService extends Service {
     public int onStartCommand(final Intent intent, int flags, int startId) {
         mServiceHasStarted = true;
         startPlayerNotificationManager();
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     public void startPlayerNotificationManager() {
         final Context context = this;
 
-        NotificationChannel notificationChannel;
-        String channelId = "com.android.voyce";
+        mChannelId = "com.android.voyce";
         if (Build.VERSION.SDK_INT >= 26) {
-            notificationChannel = new NotificationChannel("playback_channel", "player", NotificationManager.IMPORTANCE_HIGH);
-            channelId = notificationChannel.getId();
+            mNotificationChannel = new NotificationChannel("playback_channel", "player", NotificationManager.IMPORTANCE_HIGH);
+            mChannelId = mNotificationChannel.getId();
         }
 
         mPlayerNotificationManager = PlayerNotificationManager.createWithNotificationChannel(
-                context, channelId, R.string.channel_name, 1,
+                context, mChannelId, R.string.channel_name, 1,
                 new PlayerNotificationManager.MediaDescriptionAdapter() {
                     @Override
                     public String getCurrentContentTitle(Player player) {
@@ -157,14 +176,16 @@ public class AudioPlayerService extends Service {
                 , new PlayerNotificationManager.NotificationListener() {
                     @Override
                     public void onNotificationCancelled(int notificationId, boolean dismissedByUser) {
-                        if (!mPlayerHasError || dismissedByUser) {
+                        if (mPlayer.getPlaybackState() == Player.STATE_ENDED && dismissedByUser) {
                             stopSelf();
                         }
                     }
 
                     @Override
                     public void onNotificationPosted(int notificationId, Notification notification, boolean ongoing) {
-                        startForeground(notificationId, notification);
+                        if (ongoing) {
+                            startForeground(notificationId, notification);
+                        }
                     }
                 });
 
