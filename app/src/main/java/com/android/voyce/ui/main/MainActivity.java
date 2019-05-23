@@ -19,6 +19,7 @@ import com.android.voyce.AudioPlayerService;
 import com.android.voyce.data.model.Song;
 import com.android.voyce.databinding.ActivityMainBinding;
 import com.android.voyce.ui.userprofile.UserEditFragment;
+import com.android.voyce.utils.ConnectivityHelper;
 import com.android.voyce.utils.PlayerServiceCallbacks;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -32,6 +33,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -54,33 +56,33 @@ public class MainActivity extends AppCompatActivity implements
     private MainViewModel mViewModel;
     private NavController mNavController;
     private static final int RC_PHOTO_PICKER = 2;
-    private AudioPlayerService.PlayerBinder mPlayerBinder;
+    private AudioPlayerService mAudioPlayerService;
     private ActivityMainBinding mBinding;
     private Intent mPlayerServiceIntent;
 
     private ServiceConnection mPlayerServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            mPlayerBinder = (AudioPlayerService.PlayerBinder) service;
-            AudioPlayerService audioPlayerService = mPlayerBinder.getService();
-            mBinding.playerView.setPlayer(audioPlayerService.getPlayer());
-            audioPlayerService.setCallback(MainActivity.this);
+            AudioPlayerService.PlayerBinder binder = (AudioPlayerService.PlayerBinder) service;
+            mAudioPlayerService = binder.getService();
+            mBinding.playerView.setPlayer(mAudioPlayerService.getPlayer());
+            mAudioPlayerService.setCallback(MainActivity.this);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            mPlayerBinder = null;
+            mAudioPlayerService = null;
         }
     };
 
     public void playSingle(String userId, String songId) {
-        if (mPlayerBinder != null) {
-            mPlayerBinder.playSingles(userId, songId);
+        if (mAudioPlayerService != null) {
+            mAudioPlayerService.playSingles(userId, songId);
         }
     }
 
     public void startPlayerService() {
-        if (mPlayerBinder != null && !mPlayerBinder.serviceHasStarted()) {
+        if (mAudioPlayerService != null && !mAudioPlayerService.serviceHasStarted()) {
             Util.startForegroundService(this, mPlayerServiceIntent);
         }
     }
@@ -128,9 +130,10 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(R.style.AppTheme_NoActionBar);
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         setUser();
+
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         mNavController = Navigation.findNavController(this, R.id.main_content);
         mBinding.bottomNavigation.setOnNavigationItemReselectedListener(mBottomNavItemReselectListener);
@@ -138,6 +141,20 @@ public class MainActivity extends AppCompatActivity implements
 
         mPlayerServiceIntent = new Intent(this, AudioPlayerService.class);
         bindService(mPlayerServiceIntent, mPlayerServiceConnection, BIND_AUTO_CREATE);
+
+        mBinding.playerView.findViewById(R.id.exo_play).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN
+                        && ConnectivityHelper.isConnected(getApplicationContext())
+                        && mAudioPlayerService.hasError()) {
+                    mAudioPlayerService.resumePlayer();
+                    return true;
+                }
+                return false;
+            }
+        });
+
     }
 
     @Override
@@ -217,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements
         if (song == null) {
             mBinding.playerView.hide();
             return;
-        } else if (mBinding.playerView.getVisibility() == View.GONE) {
+        } else if (!mBinding.playerView.isVisible()) {
             mBinding.playerView.show();
         }
         TextView title = mBinding.playerView.findViewById(R.id.song_title);

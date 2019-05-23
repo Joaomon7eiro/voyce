@@ -18,7 +18,10 @@ import androidx.annotation.Nullable;
 
 import com.android.voyce.data.model.Song;
 import com.android.voyce.ui.main.MainActivity;
+import com.android.voyce.utils.ConnectivityHelper;
 import com.android.voyce.utils.PlayerServiceCallbacks;
+import com.google.android.exoplayer2.DefaultControlDispatcher;
+import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -41,15 +44,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AudioPlayerService extends Service {
+    private List<Song> mSongList = new ArrayList<>();
 
     private SimpleExoPlayer mPlayer;
-    private List<Song> mSongList = new ArrayList<>();
     private DataSource.Factory mDataSourceFactory;
+    private ConcatenatingMediaSource mConcatenatingMediaSource;
     private PlayerNotificationManager mPlayerNotificationManager;
+
     private PlayerBinder mPlayerBinder = new PlayerBinder();
-    private int mCurrentIndex;
+
     private PlayerServiceCallbacks mPlayerServiceCallbacks;
+
+    private int mCurrentIndex;
+    private long mCurrentPosition = 0;
+
+    private int mSongCount;
+    private int mChosenSongIndex;
+
     private boolean mServiceHasStarted = false;
+    private boolean mPlayerHasError = false;
+
+    private Target mTarget;
 
     @Nullable
     @Override
@@ -72,10 +87,18 @@ public class AudioPlayerService extends Service {
         super.onCreate();
         Context context = this;
         mPlayer = ExoPlayerFactory.newSimpleInstance(context);
+        mPlayer.setRepeatMode(Player.REPEAT_MODE_ALL);
         mDataSourceFactory = new DefaultDataSourceFactory(context,
                 Util.getUserAgent(context, "Voyce"));
 
         mPlayer.addListener(new Player.EventListener() {
+            @Override
+            public void onPlayerError(ExoPlaybackException error) {
+                error.printStackTrace();
+                mPlayerHasError = true;
+                mCurrentPosition = mPlayer.getCurrentPosition();
+            }
+
             @Override
             public void onPositionDiscontinuity(int reason) {
                 if (mPlayer.getCurrentWindowIndex() != mCurrentIndex) {
@@ -88,9 +111,13 @@ public class AudioPlayerService extends Service {
 
     @Override
     public int onStartCommand(final Intent intent, int flags, int startId) {
-        final Context context = this;
-
         mServiceHasStarted = true;
+        startPlayerNotificationManager();
+        return START_STICKY;
+    }
+
+    public void startPlayerNotificationManager() {
+        final Context context = this;
 
         NotificationChannel notificationChannel;
         String channelId = "com.android.voyce";
@@ -130,7 +157,9 @@ public class AudioPlayerService extends Service {
                 , new PlayerNotificationManager.NotificationListener() {
                     @Override
                     public void onNotificationCancelled(int notificationId, boolean dismissedByUser) {
-                        stopSelf();
+                        if (!mPlayerHasError || dismissedByUser) {
+                            stopSelf();
+                        }
                     }
 
                     @Override
@@ -140,8 +169,18 @@ public class AudioPlayerService extends Service {
                 });
 
         mPlayerNotificationManager.setPlayer(mPlayer);
+        mPlayerNotificationManager.setControlDispatcher(new CustomControlDispatcher());
+    }
 
-        return START_STICKY;
+    class CustomControlDispatcher extends DefaultControlDispatcher {
+        @Override
+        public boolean dispatchSetPlayWhenReady(Player player, boolean playWhenReady) {
+            if (mPlayerHasError && ConnectivityHelper.isConnected(getApplicationContext())) {
+                resumePlayer();
+            }
+            player.setPlayWhenReady(playWhenReady);
+            return true;
+        }
     }
 
     @Override
@@ -155,12 +194,25 @@ public class AudioPlayerService extends Service {
         super.onDestroy();
     }
 
-
+    private void concatSongs(int mChosenSongIndex) {
+        mConcatenatingMediaSource = new ConcatenatingMediaSource();
+        for (Song song : mSongList) {
+            MediaSource mediaSource =
+                    new ProgressiveMediaSource.Factory(mDataSourceFactory)
+                            .createMediaSource(Uri.parse(song.getUrl()));
+            mConcatenatingMediaSource.addMediaSource(mediaSource);
+        }
+        mPlayer.prepare(mConcatenatingMediaSource);
+        if (mChosenSongIndex != -1) {
+            mPlayer.seekTo(mChosenSongIndex, 0);
+        }
+        mPlayer.setPlayWhenReady(true);
+        mCurrentIndex = mPlayer.getCurrentWindowIndex();
+        mPlayerServiceCallbacks.updateUi(mSongList.get(mCurrentIndex));
+    }
 
     public void setCallback(PlayerServiceCallbacks callback) {
-        if (mPlayerServiceCallbacks == null) {
-            mPlayerServiceCallbacks = callback;
-        }
+        mPlayerServiceCallbacks = callback;
         Song song = null;
         if (mSongList.size() > 0) {
             song = mSongList.get(mPlayer.getCurrentWindowIndex());
@@ -173,95 +225,86 @@ public class AudioPlayerService extends Service {
     }
 
     public class PlayerBinder extends Binder {
-        int mSongCount;
-        int mChosenSongIndex;
-        Target mTarget;
-
         public AudioPlayerService getService() {
             return AudioPlayerService.this;
         }
+    }
 
-        void downloadBitmap(final Song song, final int querySize) {
-            mTarget = new Target() {
-                @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    song.setBitmap(bitmap);
-                    mSongList.add(song);
-                    mSongCount += 1;
-                    if (mSongCount == querySize) {
-                        concatSongs(mChosenSongIndex);
+    public void resumePlayer() {
+        mPlayer.prepare(mConcatenatingMediaSource);
+        mPlayer.seekTo(mCurrentIndex, mCurrentPosition);
+        mPlayer.setPlayWhenReady(true);
+        mPlayerNotificationManager.setPlayer(mPlayer);
+        mPlayerHasError = false;
+    }
+
+    public void playSingles(String userId, String songId) {
+        final CollectionReference reference = FirebaseFirestore.getInstance()
+                .collection("music")
+                .document(userId)
+                .collection("singles");
+
+        if (songId != null) {
+            addSingles(reference, songId);
+        } else {
+            addSingles(reference, "");
+        }
+    }
+
+    void downloadBitmap(final Song song, final int querySize) {
+        mTarget = new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                song.setBitmap(bitmap);
+                mSongList.add(song);
+                mSongCount += 1;
+                if (mSongCount == querySize) {
+                    concatSongs(mChosenSongIndex);
+                }
+            }
+
+            @Override
+            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                mSongList.add(song);
+                mSongCount += 1;
+                if (mSongCount == querySize) {
+                    concatSongs(mChosenSongIndex);
+                }
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+            }
+        };
+        Picasso.get().load(song.getImage_url()).into(mTarget);
+    }
+
+    private void addSingles(CollectionReference reference, final String mediaId) {
+        mSongCount = 0;
+        if (mediaId.equals("")) {
+            mChosenSongIndex = -1;
+        }
+        reference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(final QuerySnapshot queryDocumentSnapshots) {
+                mSongList.clear();
+                for (QueryDocumentSnapshot snapshot : queryDocumentSnapshots) {
+                    Song song = snapshot.toObject(Song.class);
+                    if (!song.getId().equals(mediaId)) {
+                        downloadBitmap(song, queryDocumentSnapshots.size());
+                    } else {
+                        mChosenSongIndex = mSongCount;
                     }
                 }
-
-                @Override
-                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                    mSongList.add(song);
-                    mSongCount += 1;
-                    if (mSongCount == querySize) {
-                        concatSongs(mChosenSongIndex);
-                    }
-                }
-
-                @Override
-                public void onPrepareLoad(Drawable placeHolderDrawable) {
-                }
-            };
-            Picasso.get().load(song.getImage_url()).into(mTarget);
-        }
-
-        public void playSingles(String userId, String songId) {
-            final CollectionReference reference = FirebaseFirestore.getInstance()
-                    .collection("music")
-                    .document(userId)
-                    .collection("singles");
-
-            if (songId != null) {
-                addSingles(reference, songId);
-            } else {
-                addSingles(reference, "");
             }
-        }
+        });
+    }
 
-        public boolean serviceHasStarted() {
-            return mServiceHasStarted;
-        }
+    public boolean hasError() {
+        return mPlayerHasError;
+    }
 
-        private void addSingles(CollectionReference reference, final String mediaId) {
-            mSongCount = 0;
-            if (mediaId.equals("")) {
-                mChosenSongIndex = -1;
-            }
-            reference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                @Override
-                public void onSuccess(final QuerySnapshot queryDocumentSnapshots) {
-                    mSongList.clear();
-                    for (QueryDocumentSnapshot snapshot : queryDocumentSnapshots) {
-                        Song song = snapshot.toObject(Song.class);
-                        if (!song.getId().equals(mediaId)) {
-                            downloadBitmap(song, queryDocumentSnapshots.size());
-                        } else {
-                            mChosenSongIndex = mSongCount;
-                        }
-                    }
-                }
-            });
-        }
-
-        private void concatSongs(int mChosenSongIndex) {
-            ConcatenatingMediaSource concatenatingMediaSource = new ConcatenatingMediaSource();
-            for (Song song : mSongList) {
-                MediaSource mediaSource =
-                        new ProgressiveMediaSource.Factory(mDataSourceFactory)
-                                .createMediaSource(Uri.parse(song.getUrl()));
-                concatenatingMediaSource.addMediaSource(mediaSource);
-            }
-            mPlayer.prepare(concatenatingMediaSource);
-            if (mChosenSongIndex != -1) {
-                mPlayer.seekTo(mChosenSongIndex, 0);
-            }
-            mPlayer.setPlayWhenReady(true);
-            mCurrentIndex = mPlayer.getCurrentWindowIndex();
-            mPlayerServiceCallbacks.updateUi(mSongList.get(mCurrentIndex));
-        }
+    public boolean serviceHasStarted() {
+        return mServiceHasStarted;
     }
 }
