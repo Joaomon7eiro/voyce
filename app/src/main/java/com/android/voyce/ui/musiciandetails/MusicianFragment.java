@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 
 import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.Post;
+import com.android.voyce.data.model.Song;
 import com.android.voyce.databinding.FeedListItemBinding;
 import com.android.voyce.databinding.FragmentMusicianBinding;
 import com.android.voyce.databinding.ProposalDialogBinding;
@@ -55,7 +56,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MusicianFragment extends Fragment implements ListItemClickListener {
+public class MusicianFragment extends Fragment implements ListItemClickListener, PopularSongsAdapter.SongListItemClick {
 
     private String mMusicianId;
     private String mMusicianName;
@@ -71,6 +72,7 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
     private FragmentMusicianBinding mBinding;
 
     private ProposalsAdapter mAdapter;
+    private PopularSongsAdapter mSongsAdapter;
 
     private boolean mScrollToPlans = false;
     private Handler mScrollHandler;
@@ -146,11 +148,16 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
         mBinding.musicianViewPager.setAdapter(mPagerAdapter);
         mBinding.musicianTabLayout.setupWithViewPager(mBinding.musicianViewPager);
 
-        mAdapter = new ProposalsAdapter(this);
+        mSongsAdapter = new PopularSongsAdapter(this);
+        mBinding.popularSongsRv.setAdapter(mSongsAdapter);
+        mBinding.popularSongsRv.setLayoutManager(new LinearLayoutManager(getContext()));
+        mBinding.popularSongsRv.setHasFixedSize(true);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager layoutManager =
+                new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         mBinding.rvMusicianProposals.setLayoutManager(layoutManager);
 
+        mAdapter = new ProposalsAdapter(this);
         mBinding.rvMusicianProposals.setAdapter(mAdapter);
 
         SnapHelper snapHelper = new PagerSnapHelper();
@@ -201,6 +208,18 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
             }
         });
 
+        mViewModel.getPopularSongs().observe(this, new Observer<List<Song>>() {
+            @Override
+            public void onChanged(List<Song> songs) {
+                if (songs != null && songs.size() > 0) {
+                    mSongsAdapter.setData(songs);
+                    mBinding.songContainer.setVisibility(View.VISIBLE);
+                } else {
+                    mBinding.songContainer.setVisibility(View.GONE);
+                }
+            }
+        });
+
         mViewModel.getGoal().observe(this, new Observer<Goal>() {
             @Override
             public void onChanged(@Nullable Goal goal) {
@@ -246,11 +265,6 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
                 }
             }
         });
-        MainActivity activity = (MainActivity) getActivity();
-        if (activity != null) {
-            activity.startPlayerService();
-            activity.playSingle(mMusicianId, null);
-        }
     }
 
     @Override
@@ -339,6 +353,18 @@ public class MusicianFragment extends Fragment implements ListItemClickListener 
         mBinding.musicianFeedRv.setLayoutManager(new LinearLayoutManager(getContext()));
         mBinding.musicianFeedRv.setAdapter(adapter);
         mBinding.musicianFeedRv.setNestedScrollingEnabled(false);
+    }
+
+    @Override
+    public void onSongListItemClick(int index) {
+        Song song = mSongsAdapter.getData().get(index);
+        if (song != null) {
+            MainActivity activity = (MainActivity) getActivity();
+            if (activity != null) {
+                activity.startPlayerService();
+                activity.playSingles(mSongsAdapter.getData(), song.getId());
+            }
+        }
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder {

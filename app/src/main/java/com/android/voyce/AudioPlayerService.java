@@ -100,7 +100,7 @@ public class AudioPlayerService extends Service {
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                 if (playWhenReady) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        startForeground(1,  new Notification.Builder(context, mChannelId).build());
+                        startForeground(1, new Notification.Builder(context, mChannelId).build());
                     }
                 } else {
                     stopForeground(false);
@@ -259,16 +259,18 @@ public class AudioPlayerService extends Service {
         mPlayerHasError = false;
     }
 
-    public void playSingles(String userId, String songId) {
-        final CollectionReference reference = FirebaseFirestore.getInstance()
-                .collection("music")
-                .document(userId)
-                .collection("singles");
-
-        if (songId != null) {
-            addSingles(reference, songId);
-        } else {
-            addSingles(reference, "");
+    public void playSingles(List<Song> singles, String songId) {
+        if (songId == null) {
+            songId = "";
+            mChosenSongIndex = -1;
+        }
+        mSongCount = 0;
+        mSongList.clear();
+        for (Song song: singles) {
+            if (song.getId().equals(songId)) {
+                mChosenSongIndex = mSongCount;
+            }
+            downloadBitmap(song, singles.size());
         }
     }
 
@@ -298,27 +300,6 @@ public class AudioPlayerService extends Service {
             }
         };
         Picasso.get().load(song.getImage_url()).into(mTarget);
-    }
-
-    private void addSingles(CollectionReference reference, final String mediaId) {
-        mSongCount = 0;
-        if (mediaId.equals("")) {
-            mChosenSongIndex = -1;
-        }
-        reference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(final QuerySnapshot queryDocumentSnapshots) {
-                mSongList.clear();
-                for (QueryDocumentSnapshot snapshot : queryDocumentSnapshots) {
-                    Song song = snapshot.toObject(Song.class);
-                    if (!song.getId().equals(mediaId)) {
-                        downloadBitmap(song, queryDocumentSnapshots.size());
-                    } else {
-                        mChosenSongIndex = mSongCount;
-                    }
-                }
-            }
-        });
     }
 
     public boolean hasError() {

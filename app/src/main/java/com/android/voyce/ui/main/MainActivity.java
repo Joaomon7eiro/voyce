@@ -49,6 +49,8 @@ import com.onesignal.OSSubscriptionObserver;
 import com.onesignal.OSSubscriptionStateChanges;
 import com.onesignal.OneSignal;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity implements
         OSSubscriptionObserver,
         PlayerServiceCallbacks {
@@ -75,9 +77,9 @@ public class MainActivity extends AppCompatActivity implements
         }
     };
 
-    public void playSingle(String userId, String songId) {
+    public void playSingles(List<Song> singles, String songId) {
         if (mAudioPlayerService != null) {
-            mAudioPlayerService.playSingles(userId, songId);
+            mAudioPlayerService.playSingles(singles, songId);
         }
     }
 
@@ -85,6 +87,10 @@ public class MainActivity extends AppCompatActivity implements
         if (mAudioPlayerService != null && !mAudioPlayerService.serviceHasStarted()) {
             Util.startForegroundService(this, mPlayerServiceIntent);
         }
+    }
+
+    public void stopPlayerService() {
+        stopService(mPlayerServiceIntent);
     }
 
     private BottomNavigationView.OnNavigationItemReselectedListener mBottomNavItemReselectListener =

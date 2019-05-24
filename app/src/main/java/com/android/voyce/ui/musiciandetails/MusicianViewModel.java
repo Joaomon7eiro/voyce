@@ -1,12 +1,14 @@
 package com.android.voyce.ui.musiciandetails;
 
 import android.app.Application;
+
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.annotation.NonNull;
 
 import com.android.voyce.data.model.Goal;
 import com.android.voyce.data.model.Proposal;
+import com.android.voyce.data.model.Song;
 import com.android.voyce.data.model.User;
 import com.android.voyce.data.model.UserFollowingMusician;
 import com.android.voyce.data.repository.MusicianDetailsRepository;
@@ -17,6 +19,7 @@ public class MusicianViewModel extends AndroidViewModel {
 
     private LiveData<User> mMusician;
     private LiveData<List<Proposal>> mProposals;
+    private LiveData<List<Song>> mSongs;
     private LiveData<Boolean> mIsLoading;
     private LiveData<Boolean> mIsFollowing;
     private LiveData<Boolean> mIsSponsoring;
@@ -36,6 +39,7 @@ public class MusicianViewModel extends AndroidViewModel {
         mRepository.setUserFollowingMusician(userFollowingMusician);
         mMusician = mRepository.getMusician();
         mProposals = mRepository.getProposals();
+        mSongs = mRepository.getPopularSongs();
         mGoal = mRepository.getGoal();
         mIsFollowing = mRepository.getIsFollowing();
         mIsLoading = mRepository.getIsLoading();
@@ -49,29 +53,33 @@ public class MusicianViewModel extends AndroidViewModel {
         return mIsLoading;
     }
 
-    public LiveData<Boolean> getProposalLoading() {
+    LiveData<Boolean> getProposalLoading() {
         return mIsProposalLoading;
     }
 
-    public LiveData<List<Proposal>> getProposals() {
+    LiveData<List<Proposal>> getProposals() {
         return mProposals;
     }
 
-    public void handleFollower(String signalId, String name) {
+    LiveData<List<Song>> getPopularSongs() {
+        return mSongs;
+    }
+
+    void handleFollower(String signalId, String name) {
         mRepository.handleFollower(signalId, name);
     }
 
-    public void handleSponsor(String signalId, String name, Proposal proposal) {
+    void handleSponsor(String signalId, String name, Proposal proposal) {
         mRepository.handleSponsor(signalId, name, proposal);
     }
 
-    public LiveData<Boolean> getIsSponsoring(String proposalId) {
+    LiveData<Boolean> getIsSponsoring(String proposalId) {
         mIsProposalLoading = mRepository.getProposalLoading();
         mIsSponsoring = mRepository.getIsSponsoring(proposalId);
         return mIsSponsoring;
     }
 
-    public LiveData<Boolean> getIsFollowing() {
+    LiveData<Boolean> getIsFollowing() {
         return mIsFollowing;
     }
 

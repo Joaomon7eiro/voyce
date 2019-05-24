@@ -9,6 +9,7 @@ import com.android.voyce.data.local.AppDatabase;
 import com.android.voyce.data.local.UserSponsoringDao;
 import com.android.voyce.data.model.Goal;
 import com.android.voyce.data.model.Post;
+import com.android.voyce.data.model.Song;
 import com.android.voyce.data.model.UserSponsoringProposal;
 import com.android.voyce.utils.AppExecutors;
 import com.android.voyce.data.local.UserFollowingMusicianDao;
@@ -434,5 +435,26 @@ public class MusicianDetailsRepository {
             }
         });
         return mIsSponsoring;
+    }
+
+    public LiveData<List<Song>> getPopularSongs() {
+        final MutableLiveData<List<Song>> songsLiveData = new MutableLiveData<>();
+
+        Query reference = FirebaseFirestore.getInstance()
+                .collection("music")
+                .document(mUserFollowingMusician.getId())
+                .collection("singles")
+                .orderBy("position", Query.Direction.DESCENDING);
+
+        reference.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                if (queryDocumentSnapshots.size() > 0) {
+                    songsLiveData.setValue(queryDocumentSnapshots.toObjects(Song.class));
+                }
+            }
+        });
+
+        return songsLiveData;
     }
 }

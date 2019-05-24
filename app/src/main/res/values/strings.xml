@@ -93,4 +93,5 @@
     <string name="post_image">post image</string>
     <string name="post_cancel_icon">post cancel icon</string>
     <string name="channel_name">channel name</string>
+    <string name="popular">Popular</string>
 </resources>

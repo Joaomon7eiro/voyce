@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.android.voyce.R;
 import com.android.voyce.databinding.FragmentUserSettingsBinding;
 import com.android.voyce.ui.LoginActivity;
+import com.android.voyce.ui.main.MainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -73,6 +74,11 @@ public class UserSettingsFragment extends Fragment {
                 task.addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
+                        MainActivity activity = (MainActivity) getActivity();
+                        if (activity != null) {
+                            activity.stopPlayerService();
+                        }
+
                         OneSignal.setSubscription(false);
 
                         PreferenceManager.getDefaultSharedPreferences(getContext()).

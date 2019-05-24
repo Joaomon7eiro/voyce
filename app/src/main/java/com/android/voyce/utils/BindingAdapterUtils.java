@@ -10,6 +10,7 @@ import androidx.databinding.BindingAdapter;
 import com.android.voyce.R;
 import com.android.voyce.data.model.Post;
 import com.android.voyce.data.model.Proposal;
+import com.android.voyce.data.model.Song;
 import com.android.voyce.data.model.User;
 import com.android.voyce.data.model.UserFollowingMusician;
 import com.android.voyce.data.model.UserSponsoringProposal;
@@ -126,5 +127,21 @@ public class BindingAdapterUtils {
     @BindingAdapter("sponsoringProposalName")
     public static void setSponsoringProposalName(TextView view, UserSponsoringProposal sponsoringProposal) {
         view.setText(sponsoringProposal.getName());
+    }
+
+    // POPULAR SONGS ADAPTER
+    @BindingAdapter("popularSongTitle")
+    public static void setPopularSongTitle(TextView view, Song song) {
+        view.setText(song.getTitle());
+    }
+
+    @BindingAdapter("popularSongListeners")
+    public static void setPopularSongListeners(TextView view, Song song) {
+        view.setText(formatNumber("24433"));
+    }
+
+    @BindingAdapter("popularSongTime")
+    public static void setPopularSongTime(TextView view, Song song) {
+        view.setText("3:35");
     }
 }
