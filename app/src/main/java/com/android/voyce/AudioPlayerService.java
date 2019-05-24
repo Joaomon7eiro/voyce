@@ -60,8 +60,7 @@ public class AudioPlayerService extends Service {
     private boolean mServiceHasStarted = false;
     private boolean mPlayerHasError = false;
 
-    private NotificationChannel mNotificationChannel;
-    private String mChannelId;
+    private Context mContext;
 
     @Nullable
     @Override
@@ -82,25 +81,14 @@ public class AudioPlayerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        final Context context = this;
-        mPlayer = ExoPlayerFactory.newSimpleInstance(context, new DefaultTrackSelector());
+        mContext = this;
+        mPlayer = ExoPlayerFactory.newSimpleInstance(mContext, new DefaultTrackSelector());
         mPlayer.setRepeatMode(Player.REPEAT_MODE_ALL);
 
-        mDataSourceFactory = new DefaultDataSourceFactory(context,
-                Util.getUserAgent(context, "Voyce"));
+        mDataSourceFactory = new DefaultDataSourceFactory(mContext,
+                Util.getUserAgent(mContext, getString(R.string.app_name)));
 
         mPlayer.addListener(new Player.EventListener() {
-
-            @Override
-            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                if (playWhenReady) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        startForeground(1, new Notification.Builder(context, mChannelId).build());
-                    }
-                } else {
-                    stopForeground(false);
-                }
-            }
 
             @Override
             public void onSeekProcessed() {
@@ -130,20 +118,18 @@ public class AudioPlayerService extends Service {
         if (mPlayerNotificationManager == null) {
             startPlayerNotificationManager();
         }
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 
     public void startPlayerNotificationManager() {
-        final Context context = this;
-
-        mChannelId = "com.android.voyce";
+        String channelId = "com.android.voyce";
         if (Build.VERSION.SDK_INT >= 26) {
-            mNotificationChannel = new NotificationChannel("playback_channel", "player", NotificationManager.IMPORTANCE_HIGH);
-            mChannelId = mNotificationChannel.getId();
+            NotificationChannel notificationChannel = new NotificationChannel("playback_channel", "player", NotificationManager.IMPORTANCE_HIGH);
+            channelId = notificationChannel.getId();
         }
 
         mPlayerNotificationManager = PlayerNotificationManager.createWithNotificationChannel(
-                context, mChannelId, R.string.channel_name, 1,
+                mContext, channelId, R.string.channel_name, 1,
                 new PlayerNotificationManager.MediaDescriptionAdapter() {
                     @Override
                     public String getCurrentContentTitle(Player player) {
@@ -153,8 +139,8 @@ public class AudioPlayerService extends Service {
                     @Nullable
                     @Override
                     public PendingIntent createCurrentContentIntent(Player player) {
-                        Intent intentActivity = new Intent(context, MainActivity.class);
-                        return PendingIntent.getActivity(context, 0,
+                        Intent intentActivity = new Intent(mContext, MainActivity.class);
+                        return PendingIntent.getActivity(mContext, 0,
                                 intentActivity, PendingIntent.FLAG_UPDATE_CURRENT);
                     }
 
@@ -173,18 +159,18 @@ public class AudioPlayerService extends Service {
                 , new PlayerNotificationManager.NotificationListener() {
                     @Override
                     public void onNotificationCancelled(int notificationId, boolean dismissedByUser) {
-                        if (mPlayer.getPlaybackState() == Player.STATE_ENDED && dismissedByUser) {
+                        if (dismissedByUser) {
                             stopSelf();
                         }
                     }
 
                     @Override
                     public void onNotificationPosted(int notificationId, Notification notification, boolean ongoing) {
-                        if (ongoing) {
-                            startForeground(notificationId, notification);
-                        }
+                        startForeground(notificationId, notification);
                     }
                 });
+
+        mPlayerNotificationManager.setUseNavigationActionsInCompactView(true);
     }
 
     @Override
@@ -207,11 +193,10 @@ public class AudioPlayerService extends Service {
             mConcatenatingMediaSource.addMediaSource(mediaSource);
         }
         mPlayer.prepare(mConcatenatingMediaSource);
-        mPlayer.setPlayWhenReady(true);
-
         if (mChosenSongIndex != -1) {
             mPlayer.seekTo(mChosenSongIndex, 0);
         }
+        mPlayer.setPlayWhenReady(true);
         mPlayerNotificationManager.setPlayer(mPlayer);
 
         mCurrentIndex = mPlayer.getCurrentWindowIndex();
@@ -261,7 +246,7 @@ public class AudioPlayerService extends Service {
     }
 
     void downloadBitmap(final Song song, final int querySize) {
-        Glide.with(getApplicationContext()).asBitmap().load(song.getImage_url()).into(new CustomTarget<Bitmap>() {
+        Glide.with(mContext).asBitmap().load(song.getImage_url()).into(new CustomTarget<Bitmap>() {
             @Override
             public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                 song.setBitmap(resource);
