@@ -84,9 +84,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void startPlayerService() {
-        if (mAudioPlayerService != null && !mAudioPlayerService.serviceHasStarted()) {
-            Util.startForegroundService(this, mPlayerServiceIntent);
-        }
+        Util.startForegroundService(this, mPlayerServiceIntent);
     }
 
     public void stopPlayerService() {

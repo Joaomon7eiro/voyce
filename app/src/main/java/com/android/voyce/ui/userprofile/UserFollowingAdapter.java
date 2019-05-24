@@ -13,7 +13,6 @@ import com.android.voyce.R;
 import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.UserFollowingMusician;
 import com.android.voyce.databinding.UserFollowingListItemBinding;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;

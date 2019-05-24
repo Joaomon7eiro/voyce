@@ -12,13 +12,11 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 
 import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.android.voyce.databinding.ActivityNewPostBinding;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.bumptech.glide.Glide;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -26,9 +24,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.Post;
@@ -38,7 +33,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
 
 public class NewPostActivity extends AppCompatActivity {
     private static final int RC_PHOTO_PICKER = 1;
@@ -113,7 +107,9 @@ public class NewPostActivity extends AppCompatActivity {
             public void onChanged(Uri uri) {
                 if (uri != null) {
                     mSelectedImageUri = uri;
-                    Picasso.get().load(mSelectedImageUri).into(mBinding.newPostContent.postImageIv);
+                    Glide.with(getApplicationContext())
+                            .load(mSelectedImageUri)
+                            .into(mBinding.newPostContent.postImageIv);
                     mBinding.newPostContent.postImageIv.setVisibility(View.VISIBLE);
                     mBinding.newPostContent.cancelImageIcon.setVisibility(View.VISIBLE);
                 }

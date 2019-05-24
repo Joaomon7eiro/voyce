@@ -235,19 +235,6 @@ public class SignUpStepTwoFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static SignUpStepTwoFragment newInstance(String name, String email, String password) {
-        SignUpStepTwoFragment fragment = new SignUpStepTwoFragment();
-
-        Bundle args = new Bundle();
-
-        args.putString("sign_up_name", name);
-        args.putString("sign_up_email", email);
-        args.putString("sign_up_password", password);
-
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

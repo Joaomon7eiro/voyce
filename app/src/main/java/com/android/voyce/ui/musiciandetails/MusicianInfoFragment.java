@@ -29,10 +29,6 @@ public class MusicianInfoFragment extends Fragment {
     public MusicianInfoFragment() {
     }
 
-    public static MusicianInfoFragment newInstance() {
-        return new MusicianInfoFragment();
-    }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

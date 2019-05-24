@@ -19,9 +19,9 @@ public class MusicianFragmentPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int i) {
         switch (i) {
             case 0:
-                return MusicianInfoFragment.newInstance();
+                return new MusicianInfoFragment();
             case 1:
-                return MusicianContactFragment.newInstance();
+                return new MusicianContactFragment();
             default:
                 return null;
         }

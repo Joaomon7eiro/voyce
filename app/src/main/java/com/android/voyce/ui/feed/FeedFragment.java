@@ -67,11 +67,6 @@ public class FeedFragment extends Fragment
         // Required empty public constructor
     }
 
-    public static FeedFragment newInstance() {
-        FeedFragment fragment = new FeedFragment();
-        return fragment;
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

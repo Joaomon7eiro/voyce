@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import com.android.voyce.R;
 import com.android.voyce.databinding.FragmentUserEditBinding;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,7 +34,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,11 +48,6 @@ public class UserEditFragment extends Fragment {
 
     public UserEditFragment() {
         // Required empty public constructor
-    }
-
-    public static UserEditFragment newInstance() {
-        UserEditFragment fragment = new UserEditFragment();
-        return fragment;
     }
 
     @Override
@@ -163,7 +158,7 @@ public class UserEditFragment extends Fragment {
         mSelectedImageUri = uri;
         mSaveEnabled = true;
         getActivity().invalidateOptionsMenu();
-        Picasso.get().load(mSelectedImageUri).into(mBinding.editImage);
+        Glide.with(mBinding.getRoot()).load(mSelectedImageUri).into(mBinding.editImage);
         mBinding.editImage.setVisibility(View.VISIBLE);
         mBinding.editCancelImage.setVisibility(View.VISIBLE);
     }

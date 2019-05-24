@@ -14,13 +14,15 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.android.voyce.data.model.Song;
 import com.android.voyce.ui.main.MainActivity;
-import com.android.voyce.utils.ConnectivityHelper;
 import com.android.voyce.utils.PlayerServiceCallbacks;
-import com.google.android.exoplayer2.DefaultControlDispatcher;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
@@ -28,17 +30,11 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,8 +60,6 @@ public class AudioPlayerService extends Service {
     private boolean mServiceHasStarted = false;
     private boolean mPlayerHasError = false;
 
-    private Target mTarget;
-
     private NotificationChannel mNotificationChannel;
     private String mChannelId;
 
@@ -89,8 +83,9 @@ public class AudioPlayerService extends Service {
     public void onCreate() {
         super.onCreate();
         final Context context = this;
-        mPlayer = ExoPlayerFactory.newSimpleInstance(context);
+        mPlayer = ExoPlayerFactory.newSimpleInstance(context, new DefaultTrackSelector());
         mPlayer.setRepeatMode(Player.REPEAT_MODE_ALL);
+
         mDataSourceFactory = new DefaultDataSourceFactory(context,
                 Util.getUserAgent(context, "Voyce"));
 
@@ -132,7 +127,9 @@ public class AudioPlayerService extends Service {
     @Override
     public int onStartCommand(final Intent intent, int flags, int startId) {
         mServiceHasStarted = true;
-        startPlayerNotificationManager();
+        if (mPlayerNotificationManager == null) {
+            startPlayerNotificationManager();
+        }
         return START_NOT_STICKY;
     }
 
@@ -188,20 +185,6 @@ public class AudioPlayerService extends Service {
                         }
                     }
                 });
-
-        mPlayerNotificationManager.setPlayer(mPlayer);
-        mPlayerNotificationManager.setControlDispatcher(new CustomControlDispatcher());
-    }
-
-    class CustomControlDispatcher extends DefaultControlDispatcher {
-        @Override
-        public boolean dispatchSetPlayWhenReady(Player player, boolean playWhenReady) {
-            if (mPlayerHasError && ConnectivityHelper.isConnected(getApplicationContext())) {
-                resumePlayer();
-            }
-            player.setPlayWhenReady(playWhenReady);
-            return true;
-        }
     }
 
     @Override
@@ -224,10 +207,13 @@ public class AudioPlayerService extends Service {
             mConcatenatingMediaSource.addMediaSource(mediaSource);
         }
         mPlayer.prepare(mConcatenatingMediaSource);
+        mPlayer.setPlayWhenReady(true);
+
         if (mChosenSongIndex != -1) {
             mPlayer.seekTo(mChosenSongIndex, 0);
         }
-        mPlayer.setPlayWhenReady(true);
+        mPlayerNotificationManager.setPlayer(mPlayer);
+
         mCurrentIndex = mPlayer.getCurrentWindowIndex();
         mPlayerServiceCallbacks.updateUi(mSongList.get(mCurrentIndex));
     }
@@ -266,7 +252,7 @@ public class AudioPlayerService extends Service {
         }
         mSongCount = 0;
         mSongList.clear();
-        for (Song song: singles) {
+        for (Song song : singles) {
             if (song.getId().equals(songId)) {
                 mChosenSongIndex = mSongCount;
             }
@@ -275,10 +261,10 @@ public class AudioPlayerService extends Service {
     }
 
     void downloadBitmap(final Song song, final int querySize) {
-        mTarget = new Target() {
+        Glide.with(getApplicationContext()).asBitmap().load(song.getImage_url()).into(new CustomTarget<Bitmap>() {
             @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                song.setBitmap(bitmap);
+            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                song.setBitmap(resource);
                 mSongList.add(song);
                 mSongCount += 1;
                 if (mSongCount == querySize) {
@@ -287,7 +273,7 @@ public class AudioPlayerService extends Service {
             }
 
             @Override
-            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+            public void onLoadFailed(@Nullable Drawable errorDrawable) {
                 mSongList.add(song);
                 mSongCount += 1;
                 if (mSongCount == querySize) {
@@ -296,10 +282,9 @@ public class AudioPlayerService extends Service {
             }
 
             @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
+            public void onLoadCleared(@Nullable Drawable placeholder) {
             }
-        };
-        Picasso.get().load(song.getImage_url()).into(mTarget);
+        });
     }
 
     public boolean hasError() {

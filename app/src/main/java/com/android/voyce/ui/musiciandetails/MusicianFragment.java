@@ -22,6 +22,7 @@ import com.android.voyce.databinding.FeedListItemBinding;
 import com.android.voyce.databinding.FragmentMusicianBinding;
 import com.android.voyce.databinding.ProposalDialogBinding;
 import com.android.voyce.ui.main.MainActivity;
+import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 
@@ -48,7 +49,6 @@ import com.android.voyce.data.model.UserFollowingMusician;
 import com.android.voyce.utils.Constants;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -96,19 +96,6 @@ public class MusicianFragment extends Fragment implements ListItemClickListener,
     };
 
     public MusicianFragment() {
-    }
-
-    public static MusicianFragment newInstance(String id, String name, String image, boolean scrollToPlans) {
-        MusicianFragment fragment = new MusicianFragment();
-
-        Bundle args = new Bundle();
-        args.putString(Constants.KEY_MUSICIAN_ID, id);
-        args.putString(Constants.KEY_MUSICIAN_NAME, name);
-        args.putString(Constants.KEY_MUSICIAN_IMAGE, image);
-        args.putBoolean("scroll", scrollToPlans);
-
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -188,8 +175,11 @@ public class MusicianFragment extends Fragment implements ListItemClickListener,
                 if (user != null) {
                     mBinding.setMusician(user);
                     if (user.getImage() != null) {
-                        Picasso.get().load(user.getImage())
-                                .placeholder(R.drawable.profile_placeholder).into(mBinding.musicianProfileImage);
+                        Glide.with(mBinding.getRoot())
+                                .load(user.getImage())
+                                .thumbnail(0.4f)
+                                .placeholder(R.drawable.profile_placeholder)
+                                .into(mBinding.musicianProfileImage);
                     }
                     mSignalId = user.getSignal_id();
                 }

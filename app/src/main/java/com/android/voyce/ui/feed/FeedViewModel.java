@@ -26,7 +26,7 @@ public class FeedViewModel extends AndroidViewModel {
         mIsLoading = mRepository.getIsLoading();
     }
 
-    public LiveData<PagedList<Post>> getPostLiveData() {
+    LiveData<PagedList<Post>> getPostLiveData() {
         return mPostLiveData;
     }
 
@@ -34,7 +34,7 @@ public class FeedViewModel extends AndroidViewModel {
         return mIsLoading;
     }
 
-    public void refreshData(long refresh) {
+    void refreshData(long refresh) {
         mRepository.refreshData(refresh);
     }
 }

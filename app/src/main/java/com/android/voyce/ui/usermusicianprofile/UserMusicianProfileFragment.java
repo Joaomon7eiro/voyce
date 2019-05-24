@@ -24,32 +24,21 @@ import com.android.voyce.databinding.FragmentUserMusicianProfileBinding;
 import com.android.voyce.databinding.ProposalDialogBinding;
 import com.android.voyce.ui.newpost.NewPostActivity;
 import com.android.voyce.ui.userprofile.UserFollowingAdapter;
-import com.android.voyce.utils.StringUtils;
+import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
-import com.google.android.material.tabs.TabLayout;
 
 import androidx.fragment.app.Fragment;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.SnapHelper;
-import androidx.viewpager.widget.ViewPager;
-import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.Goal;
@@ -58,7 +47,6 @@ import com.android.voyce.data.model.User;
 import com.android.voyce.utils.Constants;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.squareup.picasso.Picasso;
 
 
 import java.util.List;
@@ -76,11 +64,6 @@ public class UserMusicianProfileFragment extends Fragment implements ListItemCli
 
     public UserMusicianProfileFragment() {
         // Required empty public constructor
-    }
-
-    public static UserMusicianProfileFragment newInstance() {
-        UserMusicianProfileFragment fragment = new UserMusicianProfileFragment();
-        return fragment;
     }
 
     @Override
@@ -199,8 +182,11 @@ public class UserMusicianProfileFragment extends Fragment implements ListItemCli
                     if (user != null) {
                         mBinding.setUser(user);
                         if (user.getImage() != null) {
-                            Picasso.get().load(user.getImage())
-                                    .placeholder(R.drawable.profile_placeholder).into(mBinding.userMusicianProfileImage);
+                            Glide.with(mBinding.getRoot())
+                                    .load(user.getImage())
+                                    .placeholder(R.drawable.profile_placeholder)
+                                    .thumbnail(0.4f)
+                                    .into(mBinding.userMusicianProfileImage);
                         }
                     }
                 }

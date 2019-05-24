@@ -13,7 +13,6 @@ import com.android.voyce.R;
 import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.UserSponsoringProposal;
 import com.android.voyce.databinding.UserSponsoringListItemBinding;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;

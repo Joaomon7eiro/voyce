@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="post"
             type="com.android.voyce.data.model.Post" />
@@ -30,19 +31,19 @@
                     android:id="@+id/post_user_image"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    app:userImage="@{post}"
                     android:background="?android:selectableItemBackground"
-                    android:src="@drawable/profile_placeholder" />
+                    android:src="@drawable/profile_placeholder"
+                    app:userImage="@{post}" />
 
                 <TextView
                     android:id="@+id/post_user_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    app:userName="@{post}"
                     android:layout_marginStart="8dp"
                     android:background="?android:selectableItemBackground"
-                    android:textColor="@android:color/white" />
+                    android:textColor="@android:color/white"
+                    app:userName="@{post}" />
 
             </LinearLayout>
 
@@ -51,28 +52,27 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:postImage="@{post}"
                 android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
+                android:contentDescription="@string/post_image"
                 android:visibility="gone"
-                android:contentDescription="@string/post_image" />
+                app:postImage="@{post}" />
 
             <TextView
                 android:id="@+id/post_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                app:postText="@{post}"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/white"
+                app:postText="@{post}" />
 
             <TextView
                 android:id="@+id/post_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                app:postTime="@{post}"
                 android:textColor="@android:color/darker_gray"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                app:postTime="@{post}" />
 
         </LinearLayout>
 

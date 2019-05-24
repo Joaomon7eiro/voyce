@@ -75,5 +75,6 @@ public class PopularSongsAdapter extends RecyclerView.Adapter<PopularSongsAdapte
 
     public void setData(List<Song> songs) {
         mSongs = songs;
+        notifyDataSetChanged();
     }
 }

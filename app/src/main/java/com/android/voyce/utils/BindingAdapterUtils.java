@@ -14,21 +14,29 @@ import com.android.voyce.data.model.Song;
 import com.android.voyce.data.model.User;
 import com.android.voyce.data.model.UserFollowingMusician;
 import com.android.voyce.data.model.UserSponsoringProposal;
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+
 
 public class BindingAdapterUtils {
 
     // FEED ADAPTER
     @BindingAdapter("userImage")
     public static void setUserImage(ImageView view, Post post) {
-        Picasso.get().load(post.getUser_image()).into(view);
+        Glide.with(view.getContext())
+                .load(post.getUser_image())
+                .placeholder(R.drawable.profile_placeholder)
+                .thumbnail(0.4f)
+                .into(view);
     }
 
     @BindingAdapter("postImage")
     public static void setPostImage(ImageView view, Post post) {
         if (post.getImage() != null) {
             view.setVisibility(View.VISIBLE);
-            Picasso.get().load(post.getImage()).into(view);
+            Glide.with(view.getContext())
+                    .load(post.getImage())
+                    .thumbnail(0.4f)
+                    .into(view);
         }
     }
 
@@ -71,7 +79,10 @@ public class BindingAdapterUtils {
 
     @BindingAdapter("musicianImage")
     public static void setMusicianImage(ImageView view, User musician) {
-        Picasso.get().load(musician.getImage()).into(view);
+        Glide.with(view.getContext())
+                .load(musician.getImage())
+                .thumbnail(0.4f)
+                .into(view);
     }
 
     @BindingAdapter("musicianFollowersNumber")
@@ -105,7 +116,11 @@ public class BindingAdapterUtils {
     // USER FOLLOWING ADAPTER
     @BindingAdapter("followingMusicianImage")
     public static void setFollowingMusicianImage(ImageView view, UserFollowingMusician musician) {
-        Picasso.get().load(musician.getImage()).placeholder(R.drawable.profile_placeholder).into(view);
+        Glide.with(view.getContext())
+                .load(musician.getImage())
+                .placeholder(R.drawable.profile_placeholder)
+                .thumbnail(0.4f)
+                .into(view);
     }
 
     @BindingAdapter("followingMusicianName")
@@ -116,7 +131,11 @@ public class BindingAdapterUtils {
     // USER SPONSORING ADAPTER
     @BindingAdapter("sponsoringMusicianImage")
     public static void setFollowingMusicianImage(ImageView view, UserSponsoringProposal sponsoringProposal) {
-        Picasso.get().load(sponsoringProposal.getUser_image()).into(view);
+        Glide.with(view.getContext())
+                .load(sponsoringProposal.getUser_image())
+                .placeholder(R.drawable.profile_placeholder)
+                .thumbnail(0.4f)
+                .into(view);
     }
 
     @BindingAdapter("sponsoringMusicianName")
@@ -137,7 +156,7 @@ public class BindingAdapterUtils {
 
     @BindingAdapter("popularSongListeners")
     public static void setPopularSongListeners(TextView view, Song song) {
-        view.setText(formatNumber("24433"));
+        view.setText("24433");
     }
 
     @BindingAdapter("popularSongTime")

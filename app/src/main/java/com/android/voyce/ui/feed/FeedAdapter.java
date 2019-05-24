@@ -19,10 +19,7 @@ import com.android.voyce.R;
 import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.Post;
 import com.android.voyce.databinding.FeedListItemBinding;
-import com.squareup.picasso.Picasso;
 
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FeedAdapter extends PagedListAdapter<Post, FeedAdapter.FeedAdapterViewHolder> {
 

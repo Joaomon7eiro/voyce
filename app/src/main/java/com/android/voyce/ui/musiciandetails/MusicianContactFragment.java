@@ -41,10 +41,6 @@ public class MusicianContactFragment extends Fragment{
         // Required empty public constructor
     }
 
-    public static MusicianContactFragment newInstance() {
-        return new MusicianContactFragment();
-    }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

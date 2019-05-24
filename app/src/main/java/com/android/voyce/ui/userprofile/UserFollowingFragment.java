@@ -44,11 +44,6 @@ public class UserFollowingFragment extends Fragment implements ListItemClickList
         // Required empty public constructor
     }
 
-    public static UserFollowingFragment newInstance() {
-        UserFollowingFragment fragment = new UserFollowingFragment();
-        return fragment;
-    }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

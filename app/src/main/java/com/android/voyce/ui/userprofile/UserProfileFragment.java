@@ -18,10 +18,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.android.voyce.R;
-import com.android.voyce.databinding.FragmentUserMusicianProfileBinding;
 import com.android.voyce.databinding.FragmentUserProfileBinding;
 import com.android.voyce.utils.Constants;
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,11 +32,6 @@ public class UserProfileFragment extends Fragment {
 
     public UserProfileFragment() {
         // Required empty public constructor
-    }
-
-    public static UserProfileFragment newInstance() {
-        UserProfileFragment fragment = new UserProfileFragment();
-        return fragment;
     }
 
     @Override
@@ -91,20 +85,12 @@ public class UserProfileFragment extends Fragment {
                 binding.getRoot().scrollTo(binding.userProfileImage.getLeft() / 2, 0);
             }
         });
-        Picasso.get().load(mUserImage)
-                .placeholder(R.drawable.profile_placeholder).into(binding.userProfileImage);
-
-        Picasso.get().load(R.drawable.followers)
-                .placeholder(R.drawable.followers).fit().into(binding.followersCircle);
-
-        Picasso.get().load(R.drawable.sponsoring)
-                .placeholder(R.drawable.sponsoring).fit().into(binding.sponsoringCircle);
-
-        Picasso.get().load(R.drawable.settings)
-                .placeholder(R.drawable.settings).fit().into(binding.settingsCircle);
-
-        Picasso.get().load(R.drawable.playlists)
-                .placeholder(R.drawable.playlists).fit().into(binding.playlistsCircle);
+        Glide.with(binding.getRoot()).load(mUserImage).placeholder(R.drawable.profile_placeholder)
+                .thumbnail(0.4f).dontAnimate().into(binding.userProfileImage);
+        Glide.with(binding.getRoot()).load(R.drawable.followers).thumbnail(0.4f).into(binding.followersCircle);
+        Glide.with(binding.getRoot()).load(R.drawable.sponsoring).thumbnail(0.4f).into(binding.sponsoringCircle);
+        Glide.with(binding.getRoot()).load(R.drawable.settings).thumbnail(0.4f).into(binding.settingsCircle);
+        Glide.with(binding.getRoot()).load(R.drawable.playlists).thumbnail(0.4f).into(binding.playlistsCircle);
 
         return binding.getRoot();
     }

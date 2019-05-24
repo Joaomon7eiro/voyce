@@ -78,10 +78,11 @@ dependencies {
 
     implementation 'de.hdodenhof:circleimageview:3.0.0'
     implementation 'com.github.jgabrielfreitas:BlurImageView:1.0.1'
-    implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.onesignal:OneSignal:3.10.8'
     implementation 'com.github.iammert:ScalingLayout:1.2.1'
     implementation 'com.github.santalu:mask-edittext:1.1.1'
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 
     implementation 'com.google.firebase:firebase-messaging:18.0.0'
     implementation 'com.google.firebase:firebase-auth:17.0.0'
