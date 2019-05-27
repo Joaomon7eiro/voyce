@@ -24,6 +24,8 @@ import android.view.inputmethod.InputMethodManager;
 import com.android.voyce.R;
 import com.android.voyce.databinding.FragmentSignUpStepOneBinding;
 
+import static com.android.voyce.ui.signup.SignUpStepOneFragmentDirections.*;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -37,8 +39,14 @@ public class SignUpStepOneFragment extends Fragment {
     private View.OnClickListener mNextClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            ActionSignUpStepOneFragmentToSignUpStepTwoFragment action =
+                    actionSignUpStepOneFragmentToSignUpStepTwoFragment(
+                    mBinding.signUpNameEt.getText().toString(),
+                    mBinding.signUpEmailEt.getText().toString(),
+                    mBinding.signUpPasswordEt.getText().toString()
+            );
             Navigation.findNavController(mBinding.getRoot())
-                    .navigate(R.id.action_signUpStepOneFragment_to_signUpStepTwoFragment);
+                    .navigate(action);
         }
     };
 

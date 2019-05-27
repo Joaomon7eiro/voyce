@@ -1,24 +1,25 @@
 package com.android.voyce;
 
 import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Binder;
-import android.os.Build;
 import android.os.IBinder;
+import android.support.v4.media.MediaDescriptionCompat;
+import android.support.v4.media.session.MediaSessionCompat;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.android.voyce.data.model.Song;
 import com.android.voyce.ui.main.MainActivity;
+import com.android.voyce.utils.CacheUtils;
 import com.android.voyce.utils.PlayerServiceCallbacks;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
@@ -27,6 +28,8 @@ import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
+import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
@@ -34,16 +37,20 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
+import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.android.voyce.utils.Constants.CHANNEL_ID;
+
 public class AudioPlayerService extends Service {
     private List<Song> mSongList = new ArrayList<>();
 
     private SimpleExoPlayer mPlayer;
-    private DataSource.Factory mDataSourceFactory;
+    private CacheDataSourceFactory mCachedDataSourceFactory;
     private ConcatenatingMediaSource mConcatenatingMediaSource;
     private PlayerNotificationManager mPlayerNotificationManager;
 
@@ -61,10 +68,16 @@ public class AudioPlayerService extends Service {
     private boolean mPlayerHasError = false;
 
     private Context mContext;
+    private MediaSessionCompat mMediaSession;
+    private MediaSessionConnector mMediaSessionConnector;
+    private Intent mIntent;
+    private Notification mNotification;
+    private int mNotificationId;
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+        mIntent = intent;
         return mPlayerBinder;
     }
 
@@ -85,10 +98,26 @@ public class AudioPlayerService extends Service {
         mPlayer = ExoPlayerFactory.newSimpleInstance(mContext, new DefaultTrackSelector());
         mPlayer.setRepeatMode(Player.REPEAT_MODE_ALL);
 
-        mDataSourceFactory = new DefaultDataSourceFactory(mContext,
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(mContext,
                 Util.getUserAgent(mContext, getString(R.string.app_name)));
 
+        mCachedDataSourceFactory = new CacheDataSourceFactory(
+                CacheUtils.getCache(mContext),
+                dataSourceFactory,
+                CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR);
+
         mPlayer.addListener(new Player.EventListener() {
+
+            @Override
+            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                if (playWhenReady) {
+                    ContextWrapper contextWrapper = new ContextWrapper(mContext);
+                    contextWrapper.startService(mIntent);
+                    startForeground(mNotificationId, mNotification);
+                } else {
+                    stopForeground(false);
+                }
+            }
 
             @Override
             public void onSeekProcessed() {
@@ -122,14 +151,8 @@ public class AudioPlayerService extends Service {
     }
 
     public void startPlayerNotificationManager() {
-        String channelId = "com.android.voyce";
-        if (Build.VERSION.SDK_INT >= 26) {
-            NotificationChannel notificationChannel = new NotificationChannel("playback_channel", "player", NotificationManager.IMPORTANCE_HIGH);
-            channelId = notificationChannel.getId();
-        }
-
         mPlayerNotificationManager = PlayerNotificationManager.createWithNotificationChannel(
-                mContext, channelId, R.string.channel_name, 1,
+                mContext, CHANNEL_ID, R.string.channel_name, 1,
                 new PlayerNotificationManager.MediaDescriptionAdapter() {
                     @Override
                     public String getCurrentContentTitle(Player player) {
@@ -166,11 +189,31 @@ public class AudioPlayerService extends Service {
 
                     @Override
                     public void onNotificationPosted(int notificationId, Notification notification, boolean ongoing) {
-                        startForeground(notificationId, notification);
+                        mNotification = notification;
+                        mNotificationId = notificationId;
+                        if (ongoing) {
+                            startForeground(notificationId, notification);
+                        }
                     }
                 });
 
         mPlayerNotificationManager.setUseNavigationActionsInCompactView(true);
+
+        mMediaSession = new MediaSessionCompat(mContext, "voyce");
+        mMediaSession.setActive(true);
+
+        mPlayerNotificationManager.setMediaSessionToken(mMediaSession.getSessionToken());
+
+        mMediaSessionConnector = new MediaSessionConnector(mMediaSession);
+
+        mMediaSessionConnector.setQueueNavigator(new TimelineQueueNavigator(mMediaSession) {
+            @Override
+            public MediaDescriptionCompat getMediaDescription(Player player, int windowIndex) {
+                return Song.getMediaDescription(mSongList.get(windowIndex));
+            }
+        });
+
+        mMediaSessionConnector.setPlayer(mPlayer);
     }
 
     @Override
@@ -188,7 +231,7 @@ public class AudioPlayerService extends Service {
         mConcatenatingMediaSource = new ConcatenatingMediaSource();
         for (Song song : mSongList) {
             MediaSource mediaSource =
-                    new ProgressiveMediaSource.Factory(mDataSourceFactory)
+                    new ProgressiveMediaSource.Factory(mCachedDataSourceFactory)
                             .createMediaSource(Uri.parse(song.getUrl()));
             mConcatenatingMediaSource.addMediaSource(mediaSource);
         }
@@ -227,6 +270,8 @@ public class AudioPlayerService extends Service {
         mPlayer.seekTo(mCurrentIndex, mCurrentPosition);
         mPlayer.setPlayWhenReady(true);
         mPlayerNotificationManager.setPlayer(mPlayer);
+        mPlayerNotificationManager.setMediaSessionToken(mMediaSession.getSessionToken());
+        mMediaSessionConnector.setPlayer(mPlayer);
         mPlayerHasError = false;
     }
 

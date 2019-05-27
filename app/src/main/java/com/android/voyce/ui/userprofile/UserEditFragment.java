@@ -85,7 +85,7 @@ public class UserEditFragment extends Fragment {
             }
         });
 
-        mBinding.editImage.setOnClickListener(new View.OnClickListener() {
+        mBinding.editProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);

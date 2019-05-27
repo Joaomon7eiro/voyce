@@ -36,7 +36,7 @@ public class FeedRepository {
     private MutableLiveData<Boolean> mIsLoading = new MutableLiveData<>();
     private long mLastRefreshTime = System.currentTimeMillis();
 
-    public FeedRepository(UserPostDao userPostDao, Executor executor) {
+    private FeedRepository(UserPostDao userPostDao, Executor executor) {
         mUserPostDao = userPostDao;
         mExecutor = executor;
     }

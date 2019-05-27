@@ -1,7 +1,6 @@
 package com.android.voyce.ui.signup;
 
 
-
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -213,7 +212,7 @@ public class SignUpStepTwoFragment extends Fragment {
                 if (mBinding.signUpDateOfBirth.isFocused()) {
                     Rect outRect = new Rect();
                     mBinding.signUpDateOfBirth.getGlobalVisibleRect(outRect);
-                    if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                    if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
                         mBinding.signUpDateOfBirth.clearFocus();
                         hideKeyboard(view);
                     }
@@ -221,7 +220,7 @@ public class SignUpStepTwoFragment extends Fragment {
                 if (mBinding.signUpCity.isFocused()) {
                     Rect outRect = new Rect();
                     mBinding.signUpCity.getGlobalVisibleRect(outRect);
-                    if (!outRect.contains((int)event.getRawX(), (int)event.getRawY())) {
+                    if (!outRect.contains((int) event.getRawX(), (int) event.getRawY())) {
                         mBinding.signUpCity.clearFocus();
                         hideKeyboard(view);
                     }
@@ -239,13 +238,10 @@ public class SignUpStepTwoFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Bundle args = getArguments();
-
-        if (args != null) {
-            mName = args.getString("sign_up_name", null);
-            mEmail = args.getString("sign_up_email", null);
-            mPassword = args.getString("sign_up_password", null);
-        }
+        SignUpStepTwoFragmentArgs args = SignUpStepTwoFragmentArgs.fromBundle(getArguments());
+        mName = args.getName();
+        mEmail = args.getEmail();
+        mPassword = args.getPassword();
     }
 
     @Override

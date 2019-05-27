@@ -144,6 +144,7 @@ public class FeedFragment extends Fragment
         if (ConnectivityHelper.isConnected(getContext())) {
             mViewModel.refreshData(TimeUnit.MINUTES.toMillis(1));
         } else {
+            mBinding.feedRefresh.setRefreshing(false);
             Snackbar.make(getView(), getContext().getResources().getString(R.string.verify_connection), Snackbar.LENGTH_LONG).show();
         }
     }

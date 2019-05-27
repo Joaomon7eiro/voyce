@@ -23,4 +23,6 @@ public final class Constants {
     public static final String ADAPTER_CITY = "adapter_city";
     public static final String ADAPTER_STATE = "adapter_state";
 
+    public static final String CHANNEL_ID = "com.android.voyce";
+
 }

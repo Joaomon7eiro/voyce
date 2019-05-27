@@ -22,5 +22,15 @@
         android:id="@+id/signUpStepTwoFragment"
         android:name="com.android.voyce.ui.signup.SignUpStepTwoFragment"
         android:label="fragment_sign_up_step_two"
-        tools:layout="@layout/fragment_sign_up_step_two" />
+        tools:layout="@layout/fragment_sign_up_step_two" >
+
+        <argument
+            android:name="name"
+            app:argType="string" />
+        <argument android:name="email"
+            app:argType="string" />
+        <argument android:name="password"
+            app:argType="string" />
+
+    </fragment>
 </navigation>
