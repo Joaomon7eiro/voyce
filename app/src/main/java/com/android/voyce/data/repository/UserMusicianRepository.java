@@ -8,8 +8,10 @@ import com.android.voyce.data.local.AppDatabase;
 import com.android.voyce.data.local.UserDao;
 import com.android.voyce.data.local.UserGoalDao;
 import com.android.voyce.data.local.UserProposalsDao;
+import com.android.voyce.data.local.UserSinglesDao;
 import com.android.voyce.data.model.Goal;
 import com.android.voyce.data.model.Proposal;
+import com.android.voyce.data.model.Song;
 import com.android.voyce.data.model.User;
 import com.android.voyce.data.model.UserFollowingMusician;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -24,19 +26,27 @@ public class UserMusicianRepository {
     private String mUserId;
     private final UserDao mUserDao;
     private final UserGoalDao mUserGoalDao;
+    private final UserSinglesDao mUserSinglesDao;
     private final UserProposalsDao mUserProposalsDao;
 
-    private UserMusicianRepository(UserDao userDao, UserGoalDao userGoalDao, UserProposalsDao userProposalsDao) {
+    private UserMusicianRepository(UserDao userDao,
+                                   UserGoalDao userGoalDao,
+                                   UserProposalsDao userProposalsDao,
+                                   UserSinglesDao userSinglesDao
+    ) {
         mUserDao = userDao;
         mUserGoalDao = userGoalDao;
         mUserProposalsDao = userProposalsDao;
+        mUserSinglesDao = userSinglesDao;
     }
 
     public static UserMusicianRepository getInstance(Application application) {
         if (sInstance == null) {
             sInstance = new UserMusicianRepository(AppDatabase.getInstance(application).userDao(),
                     AppDatabase.getInstance(application).userGoalDao(),
-                    AppDatabase.getInstance(application).userProposalsDao());
+                    AppDatabase.getInstance(application).userProposalsDao(),
+                    AppDatabase.getInstance(application).userSinglesDao()
+                    );
         }
         return sInstance;
     }
@@ -55,6 +65,10 @@ public class UserMusicianRepository {
 
     public LiveData<List<Proposal>> getProposals() {
         return mUserProposalsDao.getProposals(mUserId);
+    }
+
+    public LiveData<List<Song>> getPopularSongs() {
+        return mUserSinglesDao.getSingles(mUserId);
     }
 
     public LiveData<List<UserFollowingMusician>> getFollowers() {

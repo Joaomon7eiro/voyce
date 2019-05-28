@@ -9,11 +9,14 @@ import android.util.Log;
 import com.android.voyce.data.model.Goal;
 import com.android.voyce.data.model.Post;
 import com.android.voyce.data.model.Proposal;
+import com.android.voyce.data.model.Song;
 import com.android.voyce.data.model.User;
 import com.android.voyce.data.model.UserFollowingMusician;
 import com.android.voyce.data.model.UserSponsoringProposal;
 
-@Database(entities = {User.class, Post.class, Goal.class, Proposal.class, UserFollowingMusician.class, UserSponsoringProposal.class}, version = 1, exportSchema = false)
+@Database(entities = {User.class, Post.class, Goal.class, Proposal.class, UserFollowingMusician.class,
+        UserSponsoringProposal.class, Song.class}, version = 1, exportSchema = false)
+
 public abstract class AppDatabase extends RoomDatabase {
 
     private static final String TAG = AppDatabase.class.getSimpleName();
@@ -44,5 +47,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract UserFollowingMusicianDao userFollowingMusicianDao();
 
     public abstract UserSponsoringDao userSponsoringDao();
+
+    public abstract UserSinglesDao userSinglesDao();
 
 }

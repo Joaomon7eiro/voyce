@@ -21,6 +21,7 @@ import com.android.voyce.data.model.Song;
 import com.android.voyce.databinding.FeedListItemBinding;
 import com.android.voyce.databinding.FragmentMusicianBinding;
 import com.android.voyce.databinding.ProposalDialogBinding;
+import com.android.voyce.ui.PopularSongsAdapter;
 import com.android.voyce.ui.main.MainActivity;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter;

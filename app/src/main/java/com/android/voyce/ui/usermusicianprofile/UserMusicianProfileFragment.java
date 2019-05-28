@@ -3,7 +3,6 @@ package com.android.voyce.ui.usermusicianprofile;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.databinding.ViewDataBinding;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -18,10 +17,13 @@ import androidx.annotation.Nullable;
 
 import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.Post;
+import com.android.voyce.data.model.Song;
 import com.android.voyce.data.model.UserFollowingMusician;
 import com.android.voyce.databinding.FeedListItemBinding;
 import com.android.voyce.databinding.FragmentUserMusicianProfileBinding;
 import com.android.voyce.databinding.ProposalDialogBinding;
+import com.android.voyce.ui.main.MainActivity;
+import com.android.voyce.ui.PopularSongsAdapter;
 import com.android.voyce.ui.newpost.NewPostActivity;
 import com.android.voyce.ui.userprofile.UserFollowingAdapter;
 import com.bumptech.glide.Glide;
@@ -54,13 +56,14 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserMusicianProfileFragment extends Fragment implements ListItemClickListener {
+public class UserMusicianProfileFragment extends Fragment implements ListItemClickListener , PopularSongsAdapter.SongListItemClick {
 
     private String mUserId;
     private UserMusicianProposalsAdapter mAdapter;
     private int mUserType;
     private UserMusicianProfileViewModel mViewModel;
     private FragmentUserMusicianProfileBinding mBinding;
+    private PopularSongsAdapter mSongsAdapter;
 
     public UserMusicianProfileFragment() {
         // Required empty public constructor
@@ -156,8 +159,12 @@ public class UserMusicianProfileFragment extends Fragment implements ListItemCli
 
         mBinding.userMusicianTabLayout.setupWithViewPager(mBinding.userMusicianViewPager);
 
-        mAdapter = new UserMusicianProposalsAdapter(this);
+        mSongsAdapter = new PopularSongsAdapter(this);
+        mBinding.userPopularSongsRv.setAdapter(mSongsAdapter);
+        mBinding.userPopularSongsRv.setLayoutManager(new LinearLayoutManager(getContext()));
+        mBinding.userPopularSongsRv.setHasFixedSize(true);
 
+        mAdapter = new UserMusicianProposalsAdapter(this);
         mBinding.rvUserMusicianProposals.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         mBinding.rvUserMusicianProposals.setAdapter(mAdapter);
 
@@ -219,6 +226,18 @@ public class UserMusicianProfileFragment extends Fragment implements ListItemCli
                     mAdapter.setData(proposals);
                 }
             });
+
+            mViewModel.getPopularSongs().observe(this, new Observer<List<Song>>() {
+                @Override
+                public void onChanged(List<Song> songs) {
+                    if (songs != null && songs.size() > 0) {
+                        mSongsAdapter.setData(songs);
+                        mBinding.songContainer.setVisibility(View.VISIBLE);
+                    } else {
+                        mBinding.songContainer.setVisibility(View.GONE);
+                    }
+                }
+            });
         }
     }
 
@@ -277,6 +296,18 @@ public class UserMusicianProfileFragment extends Fragment implements ListItemCli
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setView(binding.getRoot());
             builder.show();
+        }
+    }
+
+    @Override
+    public void onSongListItemClick(int index) {
+        Song song = mSongsAdapter.getData().get(index);
+        if (song != null) {
+            MainActivity activity = (MainActivity) getActivity();
+            if (activity != null) {
+                activity.startPlayerService();
+                activity.playSingles(mSongsAdapter.getData(), song.getId());
+            }
         }
     }
 

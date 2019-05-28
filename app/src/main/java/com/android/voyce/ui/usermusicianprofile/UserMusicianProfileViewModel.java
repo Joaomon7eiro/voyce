@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.android.voyce.data.model.Goal;
 import com.android.voyce.data.model.Proposal;
+import com.android.voyce.data.model.Song;
 import com.android.voyce.data.model.User;
 import com.android.voyce.data.model.UserFollowingMusician;
 import com.android.voyce.data.repository.UserMusicianRepository;
@@ -18,6 +19,7 @@ public class UserMusicianProfileViewModel extends AndroidViewModel {
     private LiveData<User> mUserLiveData;
     private LiveData<Goal> mGoalLiveData;
     private LiveData<List<Proposal>> mProposals;
+    private LiveData<List<Song>> mSongs;
     private LiveData<List<UserFollowingMusician>> mFollowersLiveData;
     private LiveData<List<UserFollowingMusician>> mSponsorsLiveData;
     private UserMusicianRepository mRepository;
@@ -35,6 +37,7 @@ public class UserMusicianProfileViewModel extends AndroidViewModel {
         mUserLiveData = mRepository.getUser();
         mGoalLiveData = mRepository.getGoalValue();
         mProposals = mRepository.getProposals();
+        mSongs = mRepository.getPopularSongs();
         mFollowersLiveData = mRepository.getFollowers();
         mSponsorsLiveData = mRepository.getSponsors();
     }
@@ -50,6 +53,10 @@ public class UserMusicianProfileViewModel extends AndroidViewModel {
 
     LiveData<List<Proposal>> getProposals() {
         return mProposals;
+    }
+
+    LiveData<List<Song>> getPopularSongs() {
+        return mSongs;
     }
 
     public LiveData<List<UserFollowingMusician>> getFollowers() {

@@ -226,7 +226,6 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/stats_card">
 
-
                         <LinearLayout
                             android:id="@+id/goal_container"
                             android:layout_width="match_parent"
@@ -335,36 +334,35 @@
                         <LinearLayout
                             android:id="@+id/song_container"
                             android:layout_width="match_parent"
-                            android:orientation="vertical"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
 
                             <TextView
                                 android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:text="@string/popular"
-                                android:textSize="20sp"
                                 android:layout_marginTop="8dp"
-                                android:textStyle="bold"
+                                android:text="@string/popular"
                                 android:textColor="@android:color/white"
-                                android:layout_height="wrap_content" />
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
 
                             <View
                                 android:layout_width="100dp"
-                                android:layout_gravity="center"
                                 android:layout_height="1dp"
+                                android:layout_gravity="center"
                                 android:layout_marginTop="4dp"
                                 android:background="@color/colorAccent" />
 
                             <androidx.recyclerview.widget.RecyclerView
                                 android:id="@+id/popular_songs_rv"
                                 android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
                                 android:layout_marginBottom="8dp"
-                                tools:listitem="@layout/song_list_item"
                                 tools:itemCount="3"
-                                android:layout_height="wrap_content" />
+                                tools:listitem="@layout/song_list_item" />
 
                         </LinearLayout>
-
 
                     </androidx.cardview.widget.CardView>
 

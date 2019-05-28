@@ -16,13 +16,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Launcher"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.PlayerActivity"></activity>
+        <activity
+            android:name=".ui.PlayerActivity"
+            android:parentActivityName=".ui.main.MainActivity"
+            android:launchMode="singleTop" />
         <activity
             android:name=".ui.loaduserdata.LoadUserDataActivity"
+            android:launchMode="singleTop"
             android:noHistory="true" />
         <activity
             android:name=".ui.newpost.NewPostActivity"
             android:label="@string/create_new_post"
+            android:launchMode="singleTop"
             android:parentActivityName=".ui.main.MainActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity
@@ -43,7 +48,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.LoginTesteActivity" />
-
         <service
             android:name=".AudioPlayerService"
             android:stopWithTask="true" />

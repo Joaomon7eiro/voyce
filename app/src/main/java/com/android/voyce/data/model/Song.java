@@ -6,15 +6,22 @@ import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.MediaMetadataCompat;
 
 import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
 
-
+@Entity
 public class Song {
-    private String url;
+    @NonNull
+    @PrimaryKey
     private String id;
+    private String url;
     private String title;
     private String description;
     private String image_url;
+    private String user_id;
 
+    @Ignore
     private Bitmap bitmap;
 
     public Song(){
@@ -75,6 +82,7 @@ public class Song {
         this.image_url = image_url;
     }
 
+    @Ignore
     public static MediaDescriptionCompat getMediaDescription(Song song) {
         Bundle extras = new Bundle();
         Bitmap bitmap = song.bitmap;
@@ -90,4 +98,11 @@ public class Song {
                 .build();
     }
 
+    public String getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
+    }
 }

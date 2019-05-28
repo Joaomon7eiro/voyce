@@ -1,6 +1,8 @@
 package com.android.voyce;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -10,15 +12,18 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.session.MediaSessionCompat;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 import com.android.voyce.data.model.Song;
-import com.android.voyce.ui.main.MainActivity;
+import com.android.voyce.ui.PlayerActivity;
 import com.android.voyce.utils.CacheUtils;
 import com.android.voyce.utils.PlayerServiceCallbacks;
 import com.bumptech.glide.Glide;
@@ -42,9 +47,12 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.android.voyce.utils.Constants.CHANNEL_ID;
+import static com.android.voyce.utils.Constants.NOTIFICATION_ID;
 
 public class AudioPlayerService extends Service {
     private List<Song> mSongList = new ArrayList<>();
@@ -152,9 +160,57 @@ public class AudioPlayerService extends Service {
         return START_STICKY;
     }
 
+    public class CustomActionReceiver implements PlayerNotificationManager.CustomActionReceiver {
+        static final String LIKE_ACTION = "likeAction";
+
+        @Override
+        public Map<String, NotificationCompat.Action> createCustomActions(Context context, int instanceId) {
+            Intent intent = new Intent(LIKE_ACTION).setPackage(context.getPackageName());
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                    context, instanceId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+            NotificationCompat.Action action = new NotificationCompat.Action(
+                    R.drawable.ic_thumbs_up, LIKE_ACTION, pendingIntent);
+
+            Map<String, NotificationCompat.Action> map = new HashMap<>();
+            map.put(LIKE_ACTION, action);
+            return map;
+        }
+
+        @Override
+        public List<String> getCustomActions(Player player) {
+            List<String> customActions = new ArrayList<>();
+            customActions.add(LIKE_ACTION);
+            return customActions;
+        }
+
+        @Override
+        public void onCustomAction(Player player, String action, Intent intent) {
+            switch (action) {
+                case LIKE_ACTION:
+                    Toast.makeText(
+                            getApplicationContext(),
+                            "Curtiu " + mSongList.get(mPlayer.getCurrentWindowIndex()).getTitle(),
+                            Toast.LENGTH_SHORT).show();
+                default:
+            }
+        }
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            int importance = NotificationManager.IMPORTANCE_LOW;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
     public void startPlayerNotificationManager() {
-        mPlayerNotificationManager = PlayerNotificationManager.createWithNotificationChannel(
-                mContext, CHANNEL_ID, R.string.channel_name, 1,
+        createNotificationChannel();
+        mPlayerNotificationManager = new PlayerNotificationManager(
+                mContext, CHANNEL_ID, NOTIFICATION_ID,
                 new PlayerNotificationManager.MediaDescriptionAdapter() {
                     @Override
                     public String getCurrentContentTitle(Player player) {
@@ -164,7 +220,7 @@ public class AudioPlayerService extends Service {
                     @Nullable
                     @Override
                     public PendingIntent createCurrentContentIntent(Player player) {
-                        Intent intentActivity = new Intent(mContext, MainActivity.class);
+                        Intent intentActivity = new Intent(mContext, PlayerActivity.class);
                         return PendingIntent.getActivity(mContext, 0,
                                 intentActivity, PendingIntent.FLAG_UPDATE_CURRENT);
                     }
@@ -182,23 +238,27 @@ public class AudioPlayerService extends Service {
                     }
                 }
                 , new PlayerNotificationManager.NotificationListener() {
-                    @Override
-                    public void onNotificationCancelled(int notificationId, boolean dismissedByUser) {
-                        if (dismissedByUser) {
-                            stopSelf();
-                        }
-                    }
+            @Override
+            public void onNotificationCancelled(int notificationId, boolean dismissedByUser) {
+                if (dismissedByUser) {
+                    stopSelf();
+                }
+            }
 
-                    @Override
-                    public void onNotificationPosted(int notificationId, Notification notification, boolean ongoing) {
-                        mNotification = notification;
-                        mNotificationId = notificationId;
-                        startForeground(notificationId, notification);
-                    }
-                });
+            @Override
+            public void onNotificationPosted(int notificationId, Notification notification, boolean ongoing) {
+                mNotification = notification;
+                mNotificationId = notificationId;
+                if (ongoing) {
+                    startForeground(notificationId, notification);
+                }
+            }
+        }, new CustomActionReceiver());
+
+        mPlayerNotificationManager.setRewindIncrementMs(0);
+        mPlayerNotificationManager.setFastForwardIncrementMs(0);
 
         mPlayerNotificationManager.setUseNavigationActionsInCompactView(true);
-
         mMediaSession = new MediaSessionCompat(mContext, "voyce");
         mMediaSession.setActive(true);
 
@@ -234,7 +294,7 @@ public class AudioPlayerService extends Service {
         }
         mSongCount = 0;
         mSongList.clear();
-        for  (Song song : singles) {
+        for (Song song : singles) {
             downloadBitmap(song, singles.size());
         }
     }
@@ -274,7 +334,7 @@ public class AudioPlayerService extends Service {
                             .createMediaSource(Uri.parse(song.getUrl()));
             mConcatenatingMediaSource.addMediaSource(mediaSource);
         }
-        for  (int i = 0; i < mSongList.size(); i++) {
+        for (int i = 0; i < mSongList.size(); i++) {
             if (mSongList.get(i).getId().equals(mSongId)) {
                 mChosenSongIndex = i;
             }
@@ -320,8 +380,6 @@ public class AudioPlayerService extends Service {
         mMediaSessionConnector.setPlayer(mPlayer);
         mPlayerHasError = false;
     }
-
-
 
     public boolean hasError() {
         return mPlayerHasError;

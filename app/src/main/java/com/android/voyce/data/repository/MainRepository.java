@@ -7,8 +7,10 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.android.voyce.data.local.AppDatabase;
 import com.android.voyce.data.local.UserPostDao;
+import com.android.voyce.data.local.UserSinglesDao;
 import com.android.voyce.data.local.UserSponsoringDao;
 import com.android.voyce.data.model.Post;
+import com.android.voyce.data.model.Song;
 import com.android.voyce.data.model.UserFollowingMusician;
 import com.android.voyce.data.model.UserSponsoringProposal;
 import com.android.voyce.utils.AppExecutors;
@@ -25,6 +27,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
@@ -44,6 +47,7 @@ public class MainRepository {
     private final Executor mDiskExecutor;
     private final UserDao mUserDao;
     private final UserGoalDao mUserGoalDao;
+    private final UserSinglesDao mUserSinglesDao;
     private final UserProposalsDao mUserProposalsDao;
     private final UserFollowingMusicianDao mUserFollowingMusiciansDao;
     private final UserSponsoringDao mUserSponsoringDao;
@@ -56,7 +60,8 @@ public class MainRepository {
                            UserGoalDao userGoalDao, UserProposalsDao userProposalsDao,
                            UserFollowingMusicianDao userFollowingMusicianDao,
                            UserSponsoringDao userSponsoringDao,
-                           UserPostDao userPostDao
+                           UserPostDao userPostDao,
+                           UserSinglesDao userSinglesDao
     ) {
         mUserDao = userDao;
         mUserGoalDao = userGoalDao;
@@ -65,6 +70,7 @@ public class MainRepository {
         mDiskExecutor = diskExecutor;
         mUserSponsoringDao = userSponsoringDao;
         mUserPostDao = userPostDao;
+        mUserSinglesDao = userSinglesDao;
     }
 
     public static MainRepository getInstance(Application application) {
@@ -76,7 +82,8 @@ public class MainRepository {
                     AppDatabase.getInstance(application).userProposalsDao(),
                     AppDatabase.getInstance(application).userFollowingMusicianDao(),
                     AppDatabase.getInstance(application).userSponsoringDao(),
-                    AppDatabase.getInstance(application).userPostDao()
+                    AppDatabase.getInstance(application).userPostDao(),
+                    AppDatabase.getInstance(application).userSinglesDao()
             );
         }
         return sInstance;
@@ -97,6 +104,7 @@ public class MainRepository {
         CollectionReference sponsorsReference = mDb.collection("user_sponsors").document(mUserId).collection("users");
         CollectionReference sponsoringReference = mDb.collection("user_sponsoring").document(mUserId).collection("sponsoring");
         CollectionReference userFeedReference = mDb.collection("feed").document(mUserId).collection("posts");
+        Query singlesReference = mDb.collection("music").document(mUserId).collection("singles").orderBy("position", Query.Direction.DESCENDING);
 
         proposalsCollectionReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -116,6 +124,30 @@ public class MainRepository {
                         public void run() {
                             mUserProposalsDao.deleteProposals();
                             mUserProposalsDao.insertProposals(proposals);
+                            mIsLoading.postValue(false);
+                        }
+                    });
+                }
+            }
+        });
+
+        singlesReference.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                if (queryDocumentSnapshots != null) {
+                    final List<Song> songList = new ArrayList<>();
+
+                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                        Song song = documentSnapshot.toObject(Song.class);
+                        song.setId(documentSnapshot.getId());
+                        song.setUser_id(mUserId);
+                        songList.add(song);
+                    }
+
+                    mDiskExecutor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            mUserSinglesDao.updateData(songList, mUserId);
                             mIsLoading.postValue(false);
                         }
                     });
@@ -228,7 +260,7 @@ public class MainRepository {
                 if (results != null) {
                     final List<Post> posts = results.toObjects(Post.class);
 
-                    for (Post post: posts) {
+                    for (Post post : posts) {
                         post.setCurrent_user_id(mUserId);
                     }
                     mDiskExecutor.execute(new Runnable() {

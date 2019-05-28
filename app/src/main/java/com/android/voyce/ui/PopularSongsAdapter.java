@@ -1,4 +1,4 @@
-package com.android.voyce.ui.musiciandetails;
+package com.android.voyce.ui;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +18,7 @@ public class PopularSongsAdapter extends RecyclerView.Adapter<PopularSongsAdapte
     private List<Song> mSongs = new ArrayList<>();
     private SongListItemClick mListItemClickListener;
 
-    PopularSongsAdapter(SongListItemClick listItemClickListener) {
+    public PopularSongsAdapter(SongListItemClick listItemClickListener) {
         mListItemClickListener = listItemClickListener;
     }
 
@@ -65,7 +65,7 @@ public class PopularSongsAdapter extends RecyclerView.Adapter<PopularSongsAdapte
         }
     }
 
-    interface SongListItemClick {
+    public interface SongListItemClick {
         void onSongListItemClick(int index);
     }
 
