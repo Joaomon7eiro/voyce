@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
 
-import com.android.voyce.AudioPlayerService;
+import com.android.voyce.service.AudioPlayerService;
 import com.android.voyce.R;
 import com.android.voyce.data.model.Song;
 import com.android.voyce.databinding.ActivityPlayerBinding;

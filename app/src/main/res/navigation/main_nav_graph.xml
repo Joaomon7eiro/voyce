@@ -61,7 +61,7 @@
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_navigation_profile_to_userSponsorsFragment"
-            app:destination="@id/userSponsorsFragment"
+            app:destination="@id/userSponsoringFragment"
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
@@ -86,7 +86,14 @@
         android:id="@+id/navigation_musician"
         android:name="com.android.voyce.ui.usermusicianprofile.UserMusicianProfileFragment"
         android:label="fragment_user_musician_profile"
-        tools:layout="@layout/fragment_user_musician_profile" />
+        tools:layout="@layout/fragment_user_musician_profile" >
+        <action
+            android:id="@+id/action_navigation_musician_to_userSponsorsFragment"
+            app:destination="@id/userSponsorsFragment" />
+        <action
+            android:id="@+id/action_navigation_musician_to_userFollowersFragment"
+            app:destination="@id/userFollowersFragment" />
+    </fragment>
     <fragment
         android:id="@+id/musicianFragment"
         android:name="com.android.voyce.ui.musiciandetails.MusicianFragment"
@@ -137,10 +144,10 @@
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
-        android:id="@+id/userSponsorsFragment"
-        android:name="com.android.voyce.ui.userprofile.UserSponsorsFragment"
+        android:id="@+id/userSponsoringFragment"
+        android:name="com.android.voyce.ui.userprofile.UserSponsoringFragment"
         android:label="fragment_user_sponsors"
-        tools:layout="@layout/fragment_user_sponsors" >
+        tools:layout="@layout/fragment_user_sponsoring" >
         <action
             android:id="@+id/action_userSponsorsFragment_to_musicianFragment"
             app:destination="@id/musicianFragment"
@@ -159,4 +166,13 @@
         android:name="com.android.voyce.ui.userprofile.UserEditFragment"
         android:label="fragment_user_edit"
         tools:layout="@layout/fragment_user_edit" />
+    <fragment
+        android:id="@+id/userSponsorsFragment"
+        android:name="com.android.voyce.ui.usermusicianprofile.UserSponsorsFragment"
+        android:label="fragment_user_sponsors"
+        tools:layout="@layout/fragment_user_sponsors" />
+    <fragment
+        android:id="@+id/userFollowersFragment"
+        android:name="com.android.voyce.ui.usermusicianprofile.UserFollowersFragment"
+        android:label="UserFollowersFragment" />
 </navigation>

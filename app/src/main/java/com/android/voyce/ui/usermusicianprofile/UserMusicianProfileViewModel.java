@@ -38,7 +38,15 @@ public class UserMusicianProfileViewModel extends AndroidViewModel {
         mGoalLiveData = mRepository.getGoalValue();
         mProposals = mRepository.getProposals();
         mSongs = mRepository.getPopularSongs();
+    }
+
+    public void initFollowers(String userId) {
+        mRepository.setUserId(userId);
         mFollowersLiveData = mRepository.getFollowers();
+    }
+
+    public void initSponsors(String userId) {
+        mRepository.setUserId(userId);
         mSponsorsLiveData = mRepository.getSponsors();
     }
 

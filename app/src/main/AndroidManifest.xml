@@ -49,7 +49,7 @@
         </activity>
         <activity android:name=".ui.LoginTesteActivity" />
         <service
-            android:name=".AudioPlayerService"
+            android:name=".service.AudioPlayerService"
             android:stopWithTask="true" />
     </application>
 

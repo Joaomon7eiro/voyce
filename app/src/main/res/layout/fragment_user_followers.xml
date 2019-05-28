@@ -7,7 +7,7 @@
         android:background="@color/colorPrimaryVeryDark">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/sponsors_rv"
+            android:id="@+id/followers_rv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

@@ -15,7 +15,7 @@ import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.android.voyce.AudioPlayerService;
+import com.android.voyce.service.AudioPlayerService;
 import com.android.voyce.data.model.Song;
 import com.android.voyce.databinding.ActivityMainBinding;
 import com.android.voyce.ui.PlayerActivity;

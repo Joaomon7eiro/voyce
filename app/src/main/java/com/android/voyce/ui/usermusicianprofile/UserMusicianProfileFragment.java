@@ -32,6 +32,7 @@ import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.SnapHelper;
@@ -88,50 +89,14 @@ public class UserMusicianProfileFragment extends Fragment implements ListItemCli
         mBinding.followersLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final UserFollowingAdapter adapter = new UserFollowingAdapter(null);
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                View dialogView = LayoutInflater
-                        .from(getContext())
-                        .inflate(R.layout.followers_sponsors_listeners_dialog,
-                                null,
-                                false);
-                RecyclerView listRecyclerView = dialogView.findViewById(R.id.followers_sponsors_listeners_rv);
-                listRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                listRecyclerView.setAdapter(adapter);
-                listRecyclerView.setHasFixedSize(true);
-                builder.setView(dialogView);
-                builder.show();
-                mViewModel.getFollowers().observe(getViewLifecycleOwner(), new Observer<List<UserFollowingMusician>>() {
-                    @Override
-                    public void onChanged(List<UserFollowingMusician> userFollowingMusicians) {
-                        adapter.setData(userFollowingMusicians);
-                    }
-                });
+                Navigation.findNavController(mBinding.getRoot()).navigate(R.id.action_navigation_musician_to_userFollowersFragment);
             }
         });
 
         mBinding.sponsorsLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final UserFollowingAdapter adapter = new UserFollowingAdapter(null);
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                View dialogView = LayoutInflater
-                        .from(getContext())
-                        .inflate(R.layout.followers_sponsors_listeners_dialog,
-                                null,
-                                false);
-                RecyclerView listRecyclerView = dialogView.findViewById(R.id.followers_sponsors_listeners_rv);
-                listRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                listRecyclerView.setAdapter(adapter);
-                listRecyclerView.setHasFixedSize(true);
-                builder.setView(dialogView);
-                builder.show();
-                mViewModel.getSponsors().observe(getViewLifecycleOwner(), new Observer<List<UserFollowingMusician>>() {
-                    @Override
-                    public void onChanged(List<UserFollowingMusician> userFollowingMusicians) {
-                        adapter.setData(userFollowingMusicians);
-                    }
-                });
+                Navigation.findNavController(mBinding.getRoot()).navigate(R.id.action_navigation_musician_to_userSponsorsFragment);
             }
         });
 

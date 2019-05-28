@@ -2,9 +2,6 @@ package com.android.voyce.ui.userprofile;
 
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.databinding.DataBindingUtil;
-import androidx.databinding.ViewDataBinding;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -13,17 +10,15 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.android.voyce.R;
 import com.android.voyce.common.ListItemClickListener;
 import com.android.voyce.data.model.UserSponsoringProposal;
-import com.android.voyce.databinding.FragmentUserSponsorsBinding;
+import com.android.voyce.databinding.FragmentUserSponsoringBinding;
 import com.android.voyce.utils.ConnectivityHelper;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -32,11 +27,11 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserSponsorsFragment extends Fragment implements ListItemClickListener {
+public class UserSponsoringFragment extends Fragment implements ListItemClickListener {
     private UserSponsoringAdapter mAdapter;
-    private FragmentUserSponsorsBinding mBinding;
+    private FragmentUserSponsoringBinding mBinding;
 
-    public UserSponsorsFragment() {
+    public UserSponsoringFragment() {
         // Required empty public constructor
     }
 
@@ -44,7 +39,7 @@ public class UserSponsorsFragment extends Fragment implements ListItemClickListe
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_user_sponsors, container, false);
+        mBinding = FragmentUserSponsoringBinding.inflate(getLayoutInflater());
 
         ((AppCompatActivity)getActivity()).setSupportActionBar(mBinding.toolbarSponsors);
 
@@ -90,8 +85,8 @@ public class UserSponsorsFragment extends Fragment implements ListItemClickListe
         if (ConnectivityHelper.isConnected(getContext())) {
             UserSponsoringProposal proposal = mAdapter.getData().get(index);
             if (proposal != null) {
-                UserSponsorsFragmentDirections.ActionUserSponsorsFragmentToMusicianFragment action =
-                        UserSponsorsFragmentDirections.actionUserSponsorsFragmentToMusicianFragment(
+                UserSponsoringFragmentDirections.ActionUserSponsorsFragmentToMusicianFragment action =
+                        UserSponsoringFragmentDirections.actionUserSponsorsFragmentToMusicianFragment(
                                 proposal.getUser_id(),
                                 proposal.getUser_name(), proposal.getUser_image(), true);
 

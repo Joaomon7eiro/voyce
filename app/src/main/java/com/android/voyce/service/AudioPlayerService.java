@@ -1,4 +1,4 @@
-package com.android.voyce;
+package com.android.voyce.service;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -21,7 +21,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.TaskStackBuilder;
 
+import com.android.voyce.R;
 import com.android.voyce.data.model.Song;
 import com.android.voyce.ui.PlayerActivity;
 import com.android.voyce.utils.CacheUtils;
@@ -220,9 +222,10 @@ public class AudioPlayerService extends Service {
                     @Nullable
                     @Override
                     public PendingIntent createCurrentContentIntent(Player player) {
-                        Intent intentActivity = new Intent(mContext, PlayerActivity.class);
-                        return PendingIntent.getActivity(mContext, 0,
-                                intentActivity, PendingIntent.FLAG_UPDATE_CURRENT);
+                        Intent intent = new Intent(mContext, PlayerActivity.class);
+                        return TaskStackBuilder.create(mContext)
+                                .addNextIntentWithParentStack(intent)
+                                .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
                     }
 
                     @Nullable
