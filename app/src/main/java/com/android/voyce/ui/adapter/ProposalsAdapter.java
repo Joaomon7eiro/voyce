@@ -1,4 +1,4 @@
-package com.android.voyce.ui.musiciandetails;
+package com.android.voyce.ui.adapter;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -6,9 +6,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.android.voyce.R;
 import com.android.voyce.common.ListItemClickListener;
@@ -23,7 +20,7 @@ public class ProposalsAdapter extends RecyclerView.Adapter<ProposalsAdapter.Prop
     private List<Proposal> mProposals = new ArrayList<>();
     private ListItemClickListener mOnClickListener;
 
-    ProposalsAdapter(ListItemClickListener listener) {
+    public ProposalsAdapter(ListItemClickListener listener) {
         mOnClickListener = listener;
     }
 

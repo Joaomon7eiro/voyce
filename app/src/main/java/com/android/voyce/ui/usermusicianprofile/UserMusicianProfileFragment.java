@@ -22,8 +22,9 @@ import com.android.voyce.data.model.UserFollowingMusician;
 import com.android.voyce.databinding.FeedListItemBinding;
 import com.android.voyce.databinding.FragmentUserMusicianProfileBinding;
 import com.android.voyce.databinding.ProposalDialogBinding;
+import com.android.voyce.ui.adapter.ProposalsAdapter;
 import com.android.voyce.ui.main.MainActivity;
-import com.android.voyce.ui.PopularSongsAdapter;
+import com.android.voyce.ui.adapter.PopularSongsAdapter;
 import com.android.voyce.ui.newpost.NewPostActivity;
 import com.android.voyce.ui.userprofile.UserFollowingAdapter;
 import com.bumptech.glide.Glide;
@@ -59,7 +60,7 @@ import java.util.List;
 public class UserMusicianProfileFragment extends Fragment implements ListItemClickListener , PopularSongsAdapter.SongListItemClick {
 
     private String mUserId;
-    private UserMusicianProposalsAdapter mAdapter;
+    private ProposalsAdapter mAdapter;
     private int mUserType;
     private UserMusicianProfileViewModel mViewModel;
     private FragmentUserMusicianProfileBinding mBinding;
@@ -164,7 +165,7 @@ public class UserMusicianProfileFragment extends Fragment implements ListItemCli
         mBinding.userPopularSongsRv.setLayoutManager(new LinearLayoutManager(getContext()));
         mBinding.userPopularSongsRv.setHasFixedSize(true);
 
-        mAdapter = new UserMusicianProposalsAdapter(this);
+        mAdapter = new ProposalsAdapter(this);
         mBinding.rvUserMusicianProposals.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         mBinding.rvUserMusicianProposals.setAdapter(mAdapter);
 

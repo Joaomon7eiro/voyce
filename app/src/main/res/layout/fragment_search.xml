@@ -42,8 +42,7 @@
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/main_artists_rv"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_horizontal" />
+                        android:layout_height="match_parent" />
 
                     <TextView
                         android:id="@+id/local_artists_label"
@@ -60,8 +59,7 @@
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/local_artists_rv"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_horizontal" />
+                        android:layout_height="match_parent" />
 
                     <TextView
                         android:id="@+id/region_artists_label"
@@ -78,8 +76,7 @@
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/region_artists_rv"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center_horizontal" />
+                        android:layout_height="match_parent" />
 
                 </LinearLayout>
 

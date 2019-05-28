@@ -1,4 +1,4 @@
-package com.android.voyce.ui;
+package com.android.voyce.ui.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
