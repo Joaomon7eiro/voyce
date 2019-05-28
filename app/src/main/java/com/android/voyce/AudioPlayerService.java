@@ -74,6 +74,8 @@ public class AudioPlayerService extends Service {
     private Notification mNotification;
     private int mNotificationId;
 
+    private String mSongId;
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -191,9 +193,7 @@ public class AudioPlayerService extends Service {
                     public void onNotificationPosted(int notificationId, Notification notification, boolean ongoing) {
                         mNotification = notification;
                         mNotificationId = notificationId;
-                        if (ongoing) {
-                            startForeground(notificationId, notification);
-                        }
+                        startForeground(notificationId, notification);
                     }
                 });
 
@@ -227,7 +227,46 @@ public class AudioPlayerService extends Service {
         super.onDestroy();
     }
 
-    private void concatSongs(int mChosenSongIndex) {
+    public void playSingles(List<Song> singles, String songId) {
+        mSongId = songId;
+        if (mSongId == null) {
+            mSongId = "";
+        }
+        mSongCount = 0;
+        mSongList.clear();
+        for  (Song song : singles) {
+            downloadBitmap(song, singles.size());
+        }
+    }
+
+    void downloadBitmap(final Song song, final int querySize) {
+        Glide.with(mContext).asBitmap().load(song.getImage_url()).into(new CustomTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                song.setBitmap(resource);
+                mSongList.add(song);
+                mSongCount += 1;
+                if (mSongCount == querySize) {
+                    concatSongs();
+                }
+            }
+
+            @Override
+            public void onLoadFailed(@Nullable Drawable errorDrawable) {
+                mSongList.add(song);
+                mSongCount += 1;
+                if (mSongCount == querySize) {
+                    concatSongs();
+                }
+            }
+
+            @Override
+            public void onLoadCleared(@Nullable Drawable placeholder) {
+            }
+        });
+    }
+
+    private void concatSongs() {
         mConcatenatingMediaSource = new ConcatenatingMediaSource();
         for (Song song : mSongList) {
             MediaSource mediaSource =
@@ -235,11 +274,18 @@ public class AudioPlayerService extends Service {
                             .createMediaSource(Uri.parse(song.getUrl()));
             mConcatenatingMediaSource.addMediaSource(mediaSource);
         }
+        for  (int i = 0; i < mSongList.size(); i++) {
+            if (mSongList.get(i).getId().equals(mSongId)) {
+                mChosenSongIndex = i;
+            }
+        }
+
         mPlayer.prepare(mConcatenatingMediaSource);
+        mPlayer.setPlayWhenReady(true);
         if (mChosenSongIndex != -1) {
             mPlayer.seekTo(mChosenSongIndex, 0);
         }
-        mPlayer.setPlayWhenReady(true);
+
         mPlayerNotificationManager.setPlayer(mPlayer);
 
         mCurrentIndex = mPlayer.getCurrentWindowIndex();
@@ -275,47 +321,7 @@ public class AudioPlayerService extends Service {
         mPlayerHasError = false;
     }
 
-    public void playSingles(List<Song> singles, String songId) {
-        if (songId == null) {
-            songId = "";
-            mChosenSongIndex = -1;
-        }
-        mSongCount = 0;
-        mSongList.clear();
-        for (Song song : singles) {
-            if (song.getId().equals(songId)) {
-                mChosenSongIndex = mSongCount;
-            }
-            downloadBitmap(song, singles.size());
-        }
-    }
 
-    void downloadBitmap(final Song song, final int querySize) {
-        Glide.with(mContext).asBitmap().load(song.getImage_url()).into(new CustomTarget<Bitmap>() {
-            @Override
-            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                song.setBitmap(resource);
-                mSongList.add(song);
-                mSongCount += 1;
-                if (mSongCount == querySize) {
-                    concatSongs(mChosenSongIndex);
-                }
-            }
-
-            @Override
-            public void onLoadFailed(@Nullable Drawable errorDrawable) {
-                mSongList.add(song);
-                mSongCount += 1;
-                if (mSongCount == querySize) {
-                    concatSongs(mChosenSongIndex);
-                }
-            }
-
-            @Override
-            public void onLoadCleared(@Nullable Drawable placeholder) {
-            }
-        });
-    }
 
     public boolean hasError() {
         return mPlayerHasError;

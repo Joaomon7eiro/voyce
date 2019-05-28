@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import com.android.voyce.AudioPlayerService;
 import com.android.voyce.data.model.Song;
 import com.android.voyce.databinding.ActivityMainBinding;
+import com.android.voyce.ui.PlayerActivity;
 import com.android.voyce.ui.userprofile.UserEditFragment;
 import com.android.voyce.utils.ConnectivityHelper;
 import com.android.voyce.utils.PlayerServiceCallbacks;
@@ -80,6 +81,20 @@ public class MainActivity extends AppCompatActivity implements
     public void playSingles(List<Song> singles, String songId) {
         if (mAudioPlayerService != null) {
             mAudioPlayerService.playSingles(singles, songId);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unbindService(mPlayerServiceConnection);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mAudioPlayerService != null && mAudioPlayerService.serviceHasStarted()) {
+            bindService(mPlayerServiceIntent, mPlayerServiceConnection, BIND_AUTO_CREATE);
         }
     }
 
@@ -159,12 +174,19 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
+        mBinding.playerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), PlayerActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unbindService(mPlayerServiceConnection);
         mBinding.playerView.setPlayer(null);
     }
 

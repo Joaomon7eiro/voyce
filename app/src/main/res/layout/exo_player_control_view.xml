@@ -7,30 +7,28 @@
 
     <ImageView
         android:id="@+id/exo_play"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/exo_progress"
-        app:srcCompat="@drawable/ic_music_player_play" />
+        app:srcCompat="@drawable/ic_player_play" />
 
     <ImageView
         android:id="@+id/exo_pause"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/exo_progress"
-        app:srcCompat="@drawable/ic_music_player_pause" />
+        app:srcCompat="@drawable/ic_player_pause" />
 
     <ImageView
         android:id="@+id/like"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_marginStart="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -41,6 +39,7 @@
         android:id="@+id/exo_progress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clickable="false"
         app:buffered_color="@color/colorPrimaryDark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
