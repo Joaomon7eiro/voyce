@@ -31,6 +31,7 @@ import com.android.voyce.ui.newpost.NewPostActivity;
 import com.android.voyce.utils.ConnectivityHelper;
 import com.android.voyce.utils.Constants;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.concurrent.TimeUnit;
 
@@ -158,14 +159,19 @@ public class FeedFragment extends Fragment
         if (ConnectivityHelper.isConnected(getContext())) {
             Post post = mAdapter.getItem(index);
             if (post != null) {
-                FeedFragmentDirections.ActionNavigationFeedToMusicianFragment action =
-                        FeedFragmentDirections.actionNavigationFeedToMusicianFragment(
-                                post.getUser_id(),
-                                post.getUser_name(),
-                                post.getUser_image(),
-                                false);
 
-                Navigation.findNavController(mBinding.getRoot()).navigate(action);
+                if (post.getUser_id().equals(FirebaseAuth.getInstance().getUid())) {
+                    Navigation.findNavController(mBinding.getRoot()).navigate(R.id.action_navigation_feed_to_navigation_musician);
+                } else {
+                    FeedFragmentDirections.ActionNavigationFeedToMusicianFragment action =
+                            FeedFragmentDirections.actionNavigationFeedToMusicianFragment(
+                                    post.getUser_id(),
+                                    post.getUser_name(),
+                                    post.getUser_image(),
+                                    false);
+
+                    Navigation.findNavController(mBinding.getRoot()).navigate(action);
+                }
             }
         } else {
             mBinding.feedRefresh.setRefreshing(false);

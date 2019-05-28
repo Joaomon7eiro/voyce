@@ -18,7 +18,7 @@ public class FeedViewModel extends AndroidViewModel {
     private LiveData<PagedList<Post>> mPostLiveData;
     private LiveData<Boolean> mIsLoading;
 
-    FeedViewModel(@NonNull Application application) {
+    public FeedViewModel(@NonNull Application application) {
         super(application);
         mRepository = FeedRepository.getInstance(application);
         mRepository.refreshData(REFRESH_DELAY);

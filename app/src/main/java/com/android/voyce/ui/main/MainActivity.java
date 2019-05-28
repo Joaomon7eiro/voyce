@@ -93,9 +93,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        if (mAudioPlayerService != null && mAudioPlayerService.serviceHasStarted()) {
-            bindService(mPlayerServiceIntent, mPlayerServiceConnection, BIND_AUTO_CREATE);
-        }
+        bindService(mPlayerServiceIntent, mPlayerServiceConnection, BIND_AUTO_CREATE);
     }
 
     public void startPlayerService() {
@@ -159,7 +157,6 @@ public class MainActivity extends AppCompatActivity implements
         NavigationUI.setupWithNavController(mBinding.bottomNavigation, mNavController);
 
         mPlayerServiceIntent = new Intent(this, AudioPlayerService.class);
-        bindService(mPlayerServiceIntent, mPlayerServiceConnection, BIND_AUTO_CREATE);
 
         mBinding.playerView.findViewById(R.id.exo_play).setOnTouchListener(new View.OnTouchListener() {
             @Override

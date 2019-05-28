@@ -252,7 +252,7 @@ public class MusicianDetailsRepository {
 
     private void addPostsOnFeed() {
         long nowTimestamp = new Timestamp(System.currentTimeMillis()).getTime();
-        long twoDaysInMillis = TimeUnit.DAYS.toMillis(3);
+        long twoDaysInMillis = TimeUnit.DAYS.toMillis(14);
         long dayAgoTimestamp = nowTimestamp - twoDaysInMillis;
 
         final List<Post> posts = new ArrayList<>();

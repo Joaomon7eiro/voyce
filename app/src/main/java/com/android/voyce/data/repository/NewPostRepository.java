@@ -31,10 +31,19 @@ public class NewPostRepository {
             public void onSuccess(DocumentReference documentReference) {
                 if (documentReference != null) {
                     post.setId(documentReference.getId());
+
+                    mDb.collection("feed")
+                            .document(post.getUser_id())
+                            .collection("posts")
+                            .document(post.getId())
+                            .set(post);
+
                     postOnFollowersFeed(post);
                 }
             }
         });
+
+
     }
 
     private void postOnFollowersFeed(final Post post) {
