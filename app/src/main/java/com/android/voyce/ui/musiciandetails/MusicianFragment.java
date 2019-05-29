@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -25,6 +26,10 @@ import com.android.voyce.ui.adapter.PopularSongsAdapter;
 import com.android.voyce.ui.adapter.ProposalsAdapter;
 import com.android.voyce.ui.main.MainActivity;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.firebase.ui.firestore.paging.FirestorePagingAdapter;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 
@@ -38,6 +43,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -103,6 +109,7 @@ public class MusicianFragment extends Fragment implements ListItemClickListener,
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setSharedElementEnterTransition(TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move));
 
         MusicianFragmentArgs args = MusicianFragmentArgs.fromBundle(getArguments());
         mMusicianId = args.getId();
@@ -120,8 +127,7 @@ public class MusicianFragment extends Fragment implements ListItemClickListener,
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        mBinding = DataBindingUtil
-                .inflate(inflater, R.layout.fragment_musician, container, false);
+        mBinding = FragmentMusicianBinding.inflate(inflater);
 
         mBinding.musicianBackButton.setOnClickListener(mBackOnClickListener);
 
@@ -158,6 +164,26 @@ public class MusicianFragment extends Fragment implements ListItemClickListener,
     }
 
     @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        postponeEnterTransition();
+        mBinding.musicianProfileImage.setTransitionName(mMusicianId);
+        Glide.with(this).load(mMusicianImage).listener(new RequestListener<Drawable>() {
+            @Override
+            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                startPostponedEnterTransition();
+                return false;
+            }
+
+            @Override
+            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                startPostponedEnterTransition();
+                return false;
+            }
+        }).into(mBinding.musicianProfileImage);
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
@@ -176,13 +202,6 @@ public class MusicianFragment extends Fragment implements ListItemClickListener,
             public void onChanged(@Nullable User user) {
                 if (user != null) {
                     mBinding.setMusician(user);
-                    if (user.getImage() != null) {
-                        Glide.with(mBinding.getRoot())
-                                .load(user.getImage())
-                                .thumbnail(0.4f)
-                                .placeholder(R.drawable.profile_placeholder)
-                                .into(mBinding.musicianProfileImage);
-                    }
                     mSignalId = user.getSignal_id();
                 }
             }
@@ -230,7 +249,7 @@ public class MusicianFragment extends Fragment implements ListItemClickListener,
                 if (isLoading != null) {
                     if (isLoading) {
                         mBinding.musicianProgressBar.setVisibility(View.VISIBLE);
-                        mBinding.containerMusician.setVisibility(View.GONE);
+                        //mBinding.containerMusician.setVisibility(View.GONE);
                     } else {
                         mBinding.musicianProgressBar.setVisibility(View.GONE);
                         mBinding.containerMusician.setVisibility(View.VISIBLE);

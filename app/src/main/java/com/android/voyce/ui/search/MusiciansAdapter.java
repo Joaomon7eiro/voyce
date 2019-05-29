@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.User;
@@ -60,17 +61,18 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
 
         @Override
         public void onClick(View view) {
-            mOnClickListener.onListItemClick(getAdapterPosition(), mAdapterName);
+            mOnClickListener.onListItemClick(getAdapterPosition(), mAdapterName, mBinding.musicianImage);
         }
 
         void bindTo(User musician) {
+            mBinding.musicianImage.setTransitionName(musician.getId());
             mBinding.setMusician(musician);
             mBinding.executePendingBindings();
         }
     }
 
     public interface RecyclerViewItemClickListener {
-        void onListItemClick(int index, String adapterName);
+        void onListItemClick(int index, String adapterName, ImageView view);
     }
 
     public List<User> getData() {

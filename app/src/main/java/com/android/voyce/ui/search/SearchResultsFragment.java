@@ -14,16 +14,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.ImageView;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.User;
@@ -128,7 +125,7 @@ public class SearchResultsFragment extends Fragment implements MusiciansAdapter.
     }
 
     @Override
-    public void onListItemClick(int index, String adapterName) {
+    public void onListItemClick(int index, String adapterName, ImageView view) {
         if (ConnectivityHelper.isConnected(getContext())) {
             User musician = mAdapter.getData().get(index);
 
@@ -138,7 +135,9 @@ public class SearchResultsFragment extends Fragment implements MusiciansAdapter.
                 SearchResultsFragmentDirections.ActionSearchResultsFragmentToMusicianFragment action =
                         SearchResultsFragmentDirections.actionSearchResultsFragmentToMusicianFragment(
                                 musician.getId(),
-                                musician.getName(), musician.getImage(), false);
+                                musician.getName(),
+                                musician.getImage(),
+                                false);
                 Navigation.findNavController(mBinding.getRoot()).navigate(action);
             }
         } else {

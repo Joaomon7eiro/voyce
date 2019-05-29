@@ -88,7 +88,9 @@ public class UserSponsoringFragment extends Fragment implements ListItemClickLis
                 UserSponsoringFragmentDirections.ActionUserSponsorsFragmentToMusicianFragment action =
                         UserSponsoringFragmentDirections.actionUserSponsorsFragmentToMusicianFragment(
                                 proposal.getUser_id(),
-                                proposal.getUser_name(), proposal.getUser_image(), true);
+                                proposal.getUser_name(),
+                                proposal.getUser_image(),
+                                true);
 
                 Navigation.findNavController(mBinding.getRoot()).navigate(action);
             }

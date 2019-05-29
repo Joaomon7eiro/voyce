@@ -14,12 +14,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.core.widget.NestedScrollView;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.FragmentNavigator;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.android.voyce.data.model.User;
 import com.android.voyce.R;
@@ -194,7 +196,7 @@ public class SearchFragment extends Fragment implements
     }
 
     @Override
-    public void onListItemClick(int index, String adapterName) {
+    public void onListItemClick(int index, String adapterName, ImageView imageView) {
         if (ConnectivityHelper.isConnected(getContext())) {
             User musician = null;
             switch (adapterName) {
@@ -217,7 +219,11 @@ public class SearchFragment extends Fragment implements
                                 musician.getImage(),
                                 false);
 
-                Navigation.findNavController(mBinding.getRoot()).navigate(action);
+                FragmentNavigator.Extras extras = new FragmentNavigator.Extras.Builder()
+                        .addSharedElement(imageView, imageView.getTransitionName())
+                        .build();
+
+                Navigation.findNavController(mBinding.getRoot()).navigate(action, extras);
             }
         } else {
             Snackbar.make(getView(), getContext().getResources().getString(R.string.verify_connection), Snackbar.LENGTH_LONG).show();

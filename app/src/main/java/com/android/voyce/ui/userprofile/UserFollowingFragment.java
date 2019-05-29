@@ -75,7 +75,10 @@ public class UserFollowingFragment extends Fragment implements ListItemClickList
             if (user != null) {
                 UserFollowingFragmentDirections.ActionUserFollowingFragmentToMusicianFragment action =
                         UserFollowingFragmentDirections.actionUserFollowingFragmentToMusicianFragment(
-                                user.getId(), user.getName(), user.getImage(), false);
+                                user.getId(),
+                                user.getName(),
+                                user.getImage(),
+                                false);
 
                 Navigation.findNavController(mBinding.getRoot()).navigate(action);
             }

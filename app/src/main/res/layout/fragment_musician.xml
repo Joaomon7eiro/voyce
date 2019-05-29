@@ -58,7 +58,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <de.hdodenhof.circleimageview.CircleImageView
+                    <ImageView
                         android:id="@+id/musician_profile_image"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
