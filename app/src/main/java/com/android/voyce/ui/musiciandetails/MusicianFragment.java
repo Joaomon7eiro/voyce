@@ -1,6 +1,9 @@
 package com.android.voyce.ui.musiciandetails;
 
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
+import android.animation.LayoutTransition;
 import android.app.AlertDialog;
 
 import androidx.databinding.DataBindingUtil;
@@ -91,7 +94,7 @@ public class MusicianFragment extends Fragment implements ListItemClickListener,
         @Override
         public void run() {
             int scrollTo = mBinding.goalCard.getTop() + OFFSET;
-            mBinding.containerMusician.smoothScrollTo(0, scrollTo);
+            mBinding.containerMusicianScroll.smoothScrollTo(0, scrollTo);
             mScrollHandler.removeCallbacks(mScrollRunnable);
         }
     };
@@ -131,6 +134,13 @@ public class MusicianFragment extends Fragment implements ListItemClickListener,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mBinding = FragmentMusicianBinding.inflate(inflater);
+
+        Animator animator = AnimatorInflater.loadAnimator(getContext(), R.animator.pop_up);
+
+        LayoutTransition transition = new LayoutTransition();
+        transition.setAnimator(LayoutTransition.APPEARING, animator);
+        transition.setAnimator(LayoutTransition.CHANGE_APPEARING, animator);
+        mBinding.containerMusician.setLayoutTransition(transition);
 
         mBinding.musicianBackButton.setOnClickListener(mBackOnClickListener);
 
@@ -205,6 +215,7 @@ public class MusicianFragment extends Fragment implements ListItemClickListener,
             public void onChanged(@Nullable User user) {
                 if (user != null) {
                     mBinding.setMusician(user);
+                    mBinding.musicianLocation.setVisibility(View.VISIBLE);
                     mSignalId = user.getSignal_id();
                 }
             }
@@ -250,23 +261,7 @@ public class MusicianFragment extends Fragment implements ListItemClickListener,
             @Override
             public void onChanged(@Nullable Boolean isLoading) {
                 if (isLoading != null) {
-                    if (isLoading) {
-                        mBinding.musicianProgressBar.setVisibility(View.VISIBLE);
-                        //mBinding.containerMusician.setVisibility(View.GONE);
-                        mBinding.infoCard.setVisibility(View.INVISIBLE);
-                        mBinding.goalCard.setVisibility(View.INVISIBLE);
-                        mBinding.popularSongsCard.setVisibility(View.INVISIBLE);
-                        mBinding.statsCard.setVisibility(View.INVISIBLE);
-                        mBinding.proposalCard.setVisibility(View.INVISIBLE);
-                        mBinding.postsCard.setVisibility(View.INVISIBLE);
-                    } else {
-                        mBinding.musicianProgressBar.setVisibility(View.GONE);
-                        mBinding.infoCard.setVisibility(View.VISIBLE);
-                        mBinding.goalCard.setVisibility(View.VISIBLE);
-                        mBinding.popularSongsCard.setVisibility(View.VISIBLE);
-                        mBinding.statsCard.setVisibility(View.VISIBLE);
-                        mBinding.proposalCard.setVisibility(View.VISIBLE);
-                        mBinding.postsCard.setVisibility(View.VISIBLE);
+                    if (!isLoading) {
                         if (mScrollToPlans) {
                             mScrollHandler = new Handler();
                             mScrollHandler.postDelayed(mScrollRunnable, SCROLL_DELAY);

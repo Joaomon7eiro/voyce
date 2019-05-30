@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import com.android.voyce.data.model.User;
@@ -111,20 +112,31 @@ public class SearchFragment extends Fragment implements
         mCityMusiciansAdapter = new MusiciansAdapter(this, Constants.ADAPTER_CITY);
         mStateMusiciansAdapter = new MusiciansAdapter(this, Constants.ADAPTER_STATE);
 
+        ViewTreeObserver.OnDrawListener onDrawListener = new ViewTreeObserver.OnDrawListener() {
+            @Override
+            public void onDraw() {
+                startPostponedEnterTransition();
+            }
+        };
+        postponeEnterTransition();
+
         mBinding.mainArtistsRv.setLayoutManager(layoutManager);
         mBinding.mainArtistsRv.setNestedScrollingEnabled(false);
         mBinding.mainArtistsRv.setHasFixedSize(true);
         mBinding.mainArtistsRv.setAdapter(mMusiciansAdapter);
+        mBinding.mainArtistsRv.getViewTreeObserver().addOnDrawListener(onDrawListener);
 
         mBinding.localArtistsRv.setLayoutManager(layoutManagerCity);
         mBinding.localArtistsRv.setNestedScrollingEnabled(false);
         mBinding.localArtistsRv.setHasFixedSize(true);
         mBinding.localArtistsRv.setAdapter(mCityMusiciansAdapter);
+        mBinding.localArtistsRv.getViewTreeObserver().addOnDrawListener(onDrawListener);
 
         mBinding.regionArtistsRv.setLayoutManager(layoutManagerState);
         mBinding.regionArtistsRv.setNestedScrollingEnabled(false);
         mBinding.regionArtistsRv.setHasFixedSize(true);
         mBinding.regionArtistsRv.setAdapter(mStateMusiciansAdapter);
+        mBinding.regionArtistsRv.getViewTreeObserver().addOnDrawListener(onDrawListener);
 
         return mBinding.getRoot();
     }
