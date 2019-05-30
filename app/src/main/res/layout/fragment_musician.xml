@@ -58,7 +58,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <ImageView
+                    <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/musician_profile_image"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
@@ -114,6 +114,7 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="16dp"
+                        android:animateLayoutChanges="true"
                         app:cardBackgroundColor="@color/colorPrimary"
                         app:cardCornerRadius="10dp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -219,6 +220,7 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="16dp"
+                        android:animateLayoutChanges="true"
                         app:cardBackgroundColor="@color/colorPrimary"
                         app:cardCornerRadius="10dp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -273,6 +275,7 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="16dp"
+                        android:animateLayoutChanges="true"
                         app:cardBackgroundColor="@color/colorPrimary"
                         app:cardCornerRadius="10dp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -324,6 +327,7 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="16dp"
+                        android:animateLayoutChanges="true"
                         app:cardBackgroundColor="@color/colorPrimary"
                         app:cardCornerRadius="10dp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -373,6 +377,7 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="16dp"
+                        android:animateLayoutChanges="true"
                         app:cardBackgroundColor="@color/colorPrimary"
                         app:cardCornerRadius="10dp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -402,11 +407,13 @@
                     </androidx.cardview.widget.CardView>
 
                     <androidx.cardview.widget.CardView
+                        android:id="@+id/posts_card"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="16dp"
+                        android:animateLayoutChanges="true"
                         app:cardBackgroundColor="@color/colorPrimary"
                         app:cardCornerRadius="10dp"
                         app:layout_constraintEnd_toEndOf="parent"

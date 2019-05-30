@@ -78,7 +78,8 @@ public class UserFollowingFragment extends Fragment implements ListItemClickList
                                 user.getId(),
                                 user.getName(),
                                 user.getImage(),
-                                false);
+                                false,
+                                String.valueOf(index));
 
                 Navigation.findNavController(mBinding.getRoot()).navigate(action);
             }

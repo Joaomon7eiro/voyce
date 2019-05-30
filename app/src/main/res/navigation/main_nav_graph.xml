@@ -105,6 +105,9 @@
         <argument
             android:name="scrollToPlans"
             app:argType="boolean" />
+        <argument
+            android:name="position"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/searchResultsFragment"

@@ -137,7 +137,8 @@ public class SearchResultsFragment extends Fragment implements MusiciansAdapter.
                                 musician.getId(),
                                 musician.getName(),
                                 musician.getImage(),
-                                false);
+                                false,
+                                String.valueOf(index));
                 Navigation.findNavController(mBinding.getRoot()).navigate(action);
             }
         } else {

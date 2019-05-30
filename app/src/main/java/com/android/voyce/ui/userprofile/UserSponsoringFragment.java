@@ -90,7 +90,8 @@ public class UserSponsoringFragment extends Fragment implements ListItemClickLis
                                 proposal.getUser_id(),
                                 proposal.getUser_name(),
                                 proposal.getUser_image(),
-                                true);
+                                true,
+                                String.valueOf(index));
 
                 Navigation.findNavController(mBinding.getRoot()).navigate(action);
             }

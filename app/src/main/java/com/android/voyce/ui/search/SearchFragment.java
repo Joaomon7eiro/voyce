@@ -217,7 +217,8 @@ public class SearchFragment extends Fragment implements
                                 musician.getId(),
                                 musician.getName(),
                                 musician.getImage(),
-                                false);
+                                false,
+                                musician.getId()+adapterName);
 
                 FragmentNavigator.Extras extras = new FragmentNavigator.Extras.Builder()
                         .addSharedElement(imageView, imageView.getTransitionName())

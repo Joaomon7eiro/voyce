@@ -102,6 +102,7 @@ public class MusicianFragment extends Fragment implements ListItemClickListener,
             Navigation.findNavController(mBinding.getRoot()).popBackStack();
         }
     };
+    private String mPosition;
 
     public MusicianFragment() {
     }
@@ -110,11 +111,13 @@ public class MusicianFragment extends Fragment implements ListItemClickListener,
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setSharedElementEnterTransition(TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move));
+        setSharedElementReturnTransition(TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move));
 
         MusicianFragmentArgs args = MusicianFragmentArgs.fromBundle(getArguments());
         mMusicianId = args.getId();
         mMusicianName = args.getName();
         mMusicianImage = args.getImage();
+        mPosition = args.getPosition();
         mScrollToPlans = args.getScrollToPlans();
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -167,7 +170,7 @@ public class MusicianFragment extends Fragment implements ListItemClickListener,
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         postponeEnterTransition();
-        mBinding.musicianProfileImage.setTransitionName(mMusicianId);
+        mBinding.musicianProfileImage.setTransitionName(mPosition);
         Glide.with(this).load(mMusicianImage).listener(new RequestListener<Drawable>() {
             @Override
             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
@@ -250,9 +253,20 @@ public class MusicianFragment extends Fragment implements ListItemClickListener,
                     if (isLoading) {
                         mBinding.musicianProgressBar.setVisibility(View.VISIBLE);
                         //mBinding.containerMusician.setVisibility(View.GONE);
+                        mBinding.infoCard.setVisibility(View.INVISIBLE);
+                        mBinding.goalCard.setVisibility(View.INVISIBLE);
+                        mBinding.popularSongsCard.setVisibility(View.INVISIBLE);
+                        mBinding.statsCard.setVisibility(View.INVISIBLE);
+                        mBinding.proposalCard.setVisibility(View.INVISIBLE);
+                        mBinding.postsCard.setVisibility(View.INVISIBLE);
                     } else {
                         mBinding.musicianProgressBar.setVisibility(View.GONE);
-                        mBinding.containerMusician.setVisibility(View.VISIBLE);
+                        mBinding.infoCard.setVisibility(View.VISIBLE);
+                        mBinding.goalCard.setVisibility(View.VISIBLE);
+                        mBinding.popularSongsCard.setVisibility(View.VISIBLE);
+                        mBinding.statsCard.setVisibility(View.VISIBLE);
+                        mBinding.proposalCard.setVisibility(View.VISIBLE);
+                        mBinding.postsCard.setVisibility(View.VISIBLE);
                         if (mScrollToPlans) {
                             mScrollHandler = new Handler();
                             mScrollHandler.postDelayed(mScrollRunnable, SCROLL_DELAY);

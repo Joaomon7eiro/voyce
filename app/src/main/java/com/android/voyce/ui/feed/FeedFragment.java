@@ -168,7 +168,8 @@ public class FeedFragment extends Fragment
                                     post.getUser_id(),
                                     post.getUser_name(),
                                     post.getUser_image(),
-                                    false);
+                                    false,
+                                    String.valueOf(index));
 
                     Navigation.findNavController(mBinding.getRoot()).navigate(action);
                 }

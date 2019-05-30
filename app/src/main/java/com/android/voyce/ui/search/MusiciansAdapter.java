@@ -65,7 +65,7 @@ public class MusiciansAdapter extends RecyclerView.Adapter<MusiciansAdapter.Musi
         }
 
         void bindTo(User musician) {
-            mBinding.musicianImage.setTransitionName(musician.getId());
+            mBinding.musicianImage.setTransitionName(musician.getId()+mAdapterName);
             mBinding.setMusician(musician);
             mBinding.executePendingBindings();
         }
