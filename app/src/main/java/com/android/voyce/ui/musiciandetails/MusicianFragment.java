@@ -87,7 +87,7 @@ public class MusicianFragment extends Fragment implements ListItemClickListener,
 
     private boolean mScrollToPlans = false;
     private Handler mScrollHandler;
-    private static final int SCROLL_DELAY = 600;
+    private static final int SCROLL_DELAY = 1000;
     private static final int OFFSET = 150;
 
     private Runnable mScrollRunnable = new Runnable() {
@@ -222,15 +222,21 @@ public class MusicianFragment extends Fragment implements ListItemClickListener,
             }
         });
 
+        mViewModel.getGoal().observe(this, new Observer<Goal>() {
+            @Override
+            public void onChanged(@Nullable Goal goal) {
+                if (goal != null) {
+                    mBinding.setGoal(goal);
+                }
+            }
+        });
+
         mViewModel.getProposals().observe(this, new Observer<List<Proposal>>() {
             @Override
             public void onChanged(@Nullable List<Proposal> proposals) {
                 if (proposals != null && proposals.size() > 0) {
-                    mBinding.setProposalsSize(proposals.size());
                     mAdapter.setData(proposals);
-                 //   mBinding.proposalsContainer.setVisibility(View.VISIBLE);
-                } else {
-                   // mBinding.proposalsContainer.setVisibility(View.GONE);
+                    mBinding.setProposalsSize(proposals.size());
                 }
             }
         });
@@ -240,21 +246,7 @@ public class MusicianFragment extends Fragment implements ListItemClickListener,
             public void onChanged(List<Song> songs) {
                 if (songs != null && songs.size() > 0) {
                     mSongsAdapter.setData(songs);
-                    mBinding.songContainer.setVisibility(View.VISIBLE);
-                } else {
-                    mBinding.songContainer.setVisibility(View.GONE);
-                }
-            }
-        });
-
-        mViewModel.getGoal().observe(this, new Observer<Goal>() {
-            @Override
-            public void onChanged(@Nullable Goal goal) {
-                if (goal != null) {
-                    mBinding.setGoal(goal);
-                    mBinding.goalContainer.setVisibility(View.VISIBLE);
-                } else {
-                    mBinding.goalContainer.setVisibility(View.GONE);
+                    mBinding.setSongsSize(songs.size());
                 }
             }
         });
@@ -263,6 +255,7 @@ public class MusicianFragment extends Fragment implements ListItemClickListener,
             @Override
             public void onChanged(@Nullable Boolean isLoading) {
                 if (isLoading != null) {
+                    mBinding.setIsLoading(isLoading);
                     if (!isLoading) {
                         if (mScrollToPlans) {
                             mScrollHandler = new Handler();
@@ -277,11 +270,10 @@ public class MusicianFragment extends Fragment implements ListItemClickListener,
             @Override
             public void onChanged(@Nullable Boolean isFollowing) {
                 if (isFollowing != null) {
+                    mBinding.setIsFollowing(isFollowing);
                     if (isFollowing) {
-                        mBinding.followButton.setBackground(getResources().getDrawable(R.drawable.rounded_background));
                         mBinding.followButton.setText(getString(R.string.following));
                     } else {
-                        mBinding.followButton.setBackground(getResources().getDrawable(R.drawable.transparent_bg_bordered));
                         mBinding.followButton.setText(getString(R.string.follow));
                     }
                 }

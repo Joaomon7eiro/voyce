@@ -20,6 +20,18 @@
         <variable
             name="proposalsSize"
             type="Integer" />
+
+        <variable
+            name="songsSize"
+            type="Integer" />
+
+        <variable
+            name="isLoading"
+            type="Boolean" />
+
+        <variable
+            name="isFollowing"
+            type="Boolean" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -104,12 +116,12 @@
                     <Button
                         android:id="@+id/follow_button"
                         android:layout_width="wrap_content"
-                        android:layout_height="32dp"
+                        android:layout_height="36dp"
                         android:layout_marginTop="8dp"
-                        android:background="@drawable/transparent_bg_bordered"
+                        android:background="@{isFollowing ? @drawable/rounded_background : @drawable/transparent_bg_bordered}"
+                        android:gravity="center"
                         android:paddingStart="4dp"
                         android:paddingEnd="4dp"
-                        android:text="@string/follow"
                         android:textColor="@android:color/white"
                         android:textSize="12sp"
                         android:visibility="@{musician != null ? View.VISIBLE : View.GONE}"
@@ -230,7 +242,7 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="16dp"
-                        android:visibility="@{musician != null ? View.VISIBLE : View.GONE}"
+                        android:visibility="@{ musician != null ? View.VISIBLE : View.GONE}"
                         app:cardBackgroundColor="@color/colorPrimary"
                         app:cardCornerRadius="10dp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -285,18 +297,16 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="16dp"
-                        android:visibility="@{musician != null ? View.VISIBLE : View.GONE}"
+                        android:visibility="@{proposalsSize > 0 ? View.VISIBLE : View.GONE}"
                         app:cardBackgroundColor="@color/colorPrimary"
                         app:cardCornerRadius="10dp"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/goal_card">
 
                         <RelativeLayout
                             android:id="@+id/proposals_container"
                             android:layout_width="match_parent"
-                            android:visibility="@{proposalsSize > 0 ? View.VISIBLE : View.GONE}"
                             android:layout_height="match_parent"
                             android:orientation="vertical">
 
@@ -338,7 +348,7 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="16dp"
-                        android:visibility="@{musician != null ? View.VISIBLE : View.GONE}"
+                        android:visibility="@{songsSize > 0 ? View.VISIBLE : View.GONE}"
                         app:cardBackgroundColor="@color/colorPrimary"
                         app:cardCornerRadius="10dp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -388,7 +398,7 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="16dp"
-                        android:visibility="@{musician != null ? View.VISIBLE : View.GONE}"
+                        android:visibility="@{musician.biography != null ? View.VISIBLE : View.GONE}"
                         app:cardBackgroundColor="@color/colorPrimary"
                         app:cardCornerRadius="10dp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -460,7 +470,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:visibility="@{musician == null ? View.VISIBLE : View.GONE}" />
+            android:visibility="@{isLoading ? View.VISIBLE : View.GONE}" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
