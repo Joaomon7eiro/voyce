@@ -16,6 +16,10 @@
         <variable
             name="goal"
             type="com.android.voyce.data.model.Goal" />
+
+        <variable
+            name="proposalsSize"
+            type="Integer" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -292,6 +296,7 @@
                         <RelativeLayout
                             android:id="@+id/proposals_container"
                             android:layout_width="match_parent"
+                            android:visibility="@{proposalsSize > 0 ? View.VISIBLE : View.GONE}"
                             android:layout_height="match_parent"
                             android:orientation="vertical">
 

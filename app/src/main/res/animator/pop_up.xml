@@ -4,33 +4,31 @@
 
     <set android:ordering="together">
         <objectAnimator
-            android:duration="1000"
+            android:duration="10"
             android:propertyName="scaleX"
             android:valueFrom="0f"
             android:valueTo="1.02f"
             android:valueType="floatType" />
 
         <objectAnimator
-            android:duration="1000"
+            android:duration="10"
             android:propertyName="scaleY"
             android:valueFrom="0f"
             android:valueTo="1.02f"
             android:valueType="floatType" />
 
-
     </set>
 
     <set android:ordering="together">
-
         <objectAnimator
-            android:duration="1000"
+            android:duration="10"
             android:propertyName="scaleX"
             android:valueFrom="1.02f"
             android:valueTo="1f"
             android:valueType="floatType" />
 
         <objectAnimator
-            android:duration="1000"
+            android:duration="10"
             android:propertyName="scaleY"
             android:valueFrom="1.02f"
             android:valueTo="1f"

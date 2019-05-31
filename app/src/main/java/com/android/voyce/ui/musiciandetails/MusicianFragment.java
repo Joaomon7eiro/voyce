@@ -113,6 +113,8 @@ public class MusicianFragment extends Fragment implements ListItemClickListener,
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        postponeEnterTransition();
+
         setSharedElementEnterTransition(TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move));
         setSharedElementReturnTransition(TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move));
 
@@ -139,7 +141,7 @@ public class MusicianFragment extends Fragment implements ListItemClickListener,
 
         LayoutTransition transition = new LayoutTransition();
         transition.setAnimator(LayoutTransition.APPEARING, animator);
-        transition.setAnimator(LayoutTransition.CHANGE_APPEARING, animator);
+        transition.setStartDelay(LayoutTransition.APPEARING, 0);
         mBinding.containerMusician.setLayoutTransition(transition);
 
         mBinding.musicianBackButton.setOnClickListener(mBackOnClickListener);
@@ -179,7 +181,6 @@ public class MusicianFragment extends Fragment implements ListItemClickListener,
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        postponeEnterTransition();
         mBinding.musicianProfileImage.setTransitionName(mPosition);
         Glide.with(this).load(mMusicianImage).listener(new RequestListener<Drawable>() {
             @Override
@@ -225,10 +226,11 @@ public class MusicianFragment extends Fragment implements ListItemClickListener,
             @Override
             public void onChanged(@Nullable List<Proposal> proposals) {
                 if (proposals != null && proposals.size() > 0) {
+                    mBinding.setProposalsSize(proposals.size());
                     mAdapter.setData(proposals);
-                    mBinding.proposalsContainer.setVisibility(View.VISIBLE);
+                 //   mBinding.proposalsContainer.setVisibility(View.VISIBLE);
                 } else {
-                    mBinding.proposalsContainer.setVisibility(View.GONE);
+                   // mBinding.proposalsContainer.setVisibility(View.GONE);
                 }
             }
         });

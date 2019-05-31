@@ -85,10 +85,18 @@
         tools:layout="@layout/fragment_user_musician_profile" >
         <action
             android:id="@+id/action_navigation_musician_to_userSponsorsFragment"
-            app:destination="@id/userSponsorsFragment" />
+            app:destination="@id/userSponsorsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_navigation_musician_to_userFollowersFragment"
-            app:destination="@id/userFollowersFragment" />
+            app:destination="@id/userFollowersFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/musicianFragment"
@@ -169,9 +177,17 @@
         android:id="@+id/userSponsorsFragment"
         android:name="com.android.voyce.ui.usermusicianprofile.UserSponsorsFragment"
         android:label="fragment_user_sponsors"
-        tools:layout="@layout/fragment_user_sponsors" />
+        tools:layout="@layout/fragment_user_sponsors" >
+        <action
+            android:id="@+id/action_userSponsorsFragment_to_musicianFragment2"
+            app:destination="@id/musicianFragment" />
+    </fragment>
     <fragment
         android:id="@+id/userFollowersFragment"
         android:name="com.android.voyce.ui.usermusicianprofile.UserFollowersFragment"
-        android:label="UserFollowersFragment" />
+        android:label="UserFollowersFragment" >
+        <action
+            android:id="@+id/action_userFollowersFragment_to_musicianFragment"
+            app:destination="@id/musicianFragment" />
+    </fragment>
 </navigation>
