@@ -441,7 +441,7 @@ public class MusicianDetailsRepository {
         final MutableLiveData<List<Song>> songsLiveData = new MutableLiveData<>();
 
         Query reference = FirebaseFirestore.getInstance()
-                .collection("music")
+                .collection("musics")
                 .document(mUserFollowingMusician.getId())
                 .collection("singles")
                 .orderBy("position", Query.Direction.DESCENDING);

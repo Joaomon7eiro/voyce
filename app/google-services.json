@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "48253012767",
+    "firebase_url": "https://voyce2-dcae6.firebaseio.com",
+    "project_id": "voyce2-dcae6",
+    "storage_bucket": "voyce2-dcae6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:48253012767:android:4ea7bab83182b161553e2a",
+        "android_client_info": {
+          "package_name": "com.android.voyce"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "48253012767-90eqqhshfj0hb71o7059imkr2b0r4se9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.android.voyce",
+            "certificate_hash": "9a66aaf2675797eaf993089d3b1f01150f9175d7"
+          }
+        },
+        {
+          "client_id": "48253012767-ts3chsai1mfccmkqah03p1270dba76cf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZ-R4YjNjRx3yQEhBlEfeXGU2Dq7EYHvQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "48253012767-ts3chsai1mfccmkqah03p1270dba76cf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
