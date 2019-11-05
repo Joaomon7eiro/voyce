@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import com.android.voyce.service.AudioPlayerService;
 import com.android.voyce.data.model.Song;
 import com.android.voyce.databinding.ActivityMainBinding;
+import com.android.voyce.ui.LoginActivity;
 import com.android.voyce.ui.PlayerActivity;
 import com.android.voyce.ui.userprofile.UserEditFragment;
 import com.android.voyce.utils.ConnectivityHelper;
@@ -41,7 +42,6 @@ import android.widget.TextView;
 import com.android.voyce.R;
 import com.android.voyce.data.model.User;
 import com.android.voyce.ui.feed.FeedFragment;
-import com.android.voyce.ui.LoginTesteActivity;
 import com.android.voyce.ui.search.SearchFragment;
 import com.android.voyce.utils.Constants;
 import com.google.firebase.auth.FirebaseAuth;
@@ -234,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements
                 }
             });
         } else {
-            Intent intent = new Intent(this, LoginTesteActivity.class);
+            Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
         }

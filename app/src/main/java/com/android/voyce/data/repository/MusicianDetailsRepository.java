@@ -18,6 +18,7 @@ import com.android.voyce.data.model.User;
 import com.android.voyce.data.model.UserFollowingMusician;
 import com.android.voyce.utils.StringUtils;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -89,6 +90,18 @@ public class MusicianDetailsRepository {
     }
 
     public LiveData<Goal> getGoal() {
+        final DocumentReference reference = mUsersCollectionReference.document(mUserFollowingMusician.getId());
+        CollectionReference goals = reference.collection("goals");
+
+        goals.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                List<Goal> goalsList = queryDocumentSnapshots.toObjects(Goal.class);
+
+                mGoal.setValue(goalsList.get(0));
+            }
+        });
+
         return mGoal;
     }
 
@@ -109,9 +122,6 @@ public class MusicianDetailsRepository {
                 if (documentSnapshot != null) {
                     User musician = documentSnapshot.toObject(User.class);
                     userLiveData.setValue(musician);
-
-                    Goal goal = hashToGoalObject(documentSnapshot.get("goal"));
-                    mGoal.setValue(goal);
                 }
             }
         });

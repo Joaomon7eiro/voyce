@@ -264,6 +264,9 @@ public class AudioPlayerService extends Service {
         mPlayerNotificationManager.setUseNavigationActionsInCompactView(true);
         mMediaSession = new MediaSessionCompat(mContext, "voyce");
         mMediaSession.setActive(true);
+        mMediaSession.setFlags(
+                MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
+                        MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
 
         mPlayerNotificationManager.setMediaSessionToken(mMediaSession.getSessionToken());
 

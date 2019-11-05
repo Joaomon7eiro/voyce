@@ -12,7 +12,7 @@ import android.preference.PreferenceManager;
 
 import com.android.voyce.R;
 import com.android.voyce.data.model.User;
-import com.android.voyce.ui.LoginTesteActivity;
+import com.android.voyce.ui.LoginActivity;
 import com.android.voyce.ui.main.MainActivity;
 import com.android.voyce.utils.Constants;
 import com.google.firebase.auth.FirebaseAuth;
@@ -54,7 +54,7 @@ public class LoadUserDataActivity extends AppCompatActivity {
                 }
             });
         } else {
-            Intent intent = new Intent(this, LoginTesteActivity.class);
+            Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
         }
